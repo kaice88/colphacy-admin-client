@@ -1,13 +1,20 @@
 import { AppShell } from "@mantine/core"
-import { Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom"
+import Header from "./Header"
+import Navbar from "./Navbar/Navbar";
 
 const Layout: React.FC = () => {
   return (
-    <AppShell header={{ height: '100px' }} padding="md">
-      <AppShell.Header>
-        <div>Header</div>
-      </AppShell.Header>
-      <AppShell.Main><Outlet></Outlet></AppShell.Main>
+    <AppShell
+      padding="md"
+      navbarOffsetBreakpoint="sm"
+      navbar={<Navbar />}
+      header={<Header />}
+    >
+      {/* <Bread></Bread> */}
+      <div className="content">
+        <Outlet></Outlet>
+      </div>
     </AppShell>
   );
 };
