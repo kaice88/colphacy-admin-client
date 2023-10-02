@@ -9,6 +9,15 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <MantineProvider withGlobalStyles withNormalizeCSS
+        theme={{
+          colors: {
+            flashWhite: ['#F0F0F0'],
+            brightGray: ['#EBF2F2'],
+            munsellBlue: ['#0093AF'],
+            cobaltBlue: ['#00439C'],
+          },
+          fontFamily: 'Be Vietnam Pro, sans-serif',
+        }}
       >
         <RouterProvider router={router} />
       </MantineProvider>
