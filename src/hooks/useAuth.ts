@@ -1,11 +1,12 @@
 import { useMutation } from "@tanstack/react-query"
-import axios from "../settings/axious"
+import axios from "../settings/axios"
 import { REQUEST_AUTH_LOGIN } from "../constants/apis"
 import useAuthStore from "../store/AuthStore"
+import isEmpty from "lodash/isEmpty"
 
 function useAuth() {
-    
     const { login, logout, userProfile } = useAuthStore()
+    const isAuthenticated =  true//!isEmpty(userProfile)
     const handleLogin = useMutation({
         mutationKey: ['login'],
         mutationFn: (data) => {
@@ -21,7 +22,8 @@ function useAuth() {
     })
     return {
         login: handleLogin,
-        userProfile
+        userProfile,
+        isAuthenticated
     }
 }
 export default useAuth
