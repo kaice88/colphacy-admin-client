@@ -6,7 +6,7 @@ import isEmpty from "lodash/isEmpty"
 
 function useAuth() {
     const { login, logout, userProfile } = useAuthStore()
-    const isAuthenticated =  true//!isEmpty(userProfile)
+    const isAuthenticated =  false//!isEmpty(userProfile)
     const handleLogin = useMutation({
         mutationKey: ['login'],
         mutationFn: (data) => {
