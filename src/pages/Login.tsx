@@ -3,32 +3,27 @@ import LoginPasswordForm from "../components/LoginForm";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
+import LoginOTPForm from "../components/LoginOTPForm";
+import OTPForm from "../components/LoginOTPForm/OTPForm";
 
 const Login: React.FC = () => {
     const { isAuthenticated } = useAuth();
-    const theme = useMantineTheme();
     const navigate = useNavigate();
     const [loginWithOTP, setLoginWithOTP] = useState(false);
+    const handleLoginMethodToggle = () => {
+        setLoginWithOTP((prev) => !prev)
+    }
     useEffect(() => {
         if (isAuthenticated) {
             navigate("/");
         }
     }, [isAuthenticated])
+
     return (<>
         {!isAuthenticated &&
             <Center pt="10%">
                 <Paper shadow="sm" p="md" withBorder w="500px" className="login-container">
-                    {!loginWithOTP ?
-                        <><LoginPasswordForm />
-                            <Flex justify="space-between">
-                                <span>Quên mật khẩu</span>
-                                <span onClick={() => { setLoginWithOTP(true) }}>Đăng nhập bằng OTP</span>
-                            </Flex></>
-                        : <>
-                            <LoginOTPForm />
-                            <Center><span onClick={() => { setLoginWithOTP(false) }} >Đăng nhập bằng mật khẩu</span></Center>
-                        </>
-                    }
+                    {!loginWithOTP ? <LoginPasswordForm onMethodChange={handleLoginMethodToggle} /> : <LoginOTPForm onMethodChange={handleLoginMethodToggle} />}
                 </Paper>
             </Center>}</>
     );
