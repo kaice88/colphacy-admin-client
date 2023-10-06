@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import useEmployeeProfile from "../hooks/useEmployeeProfile";
 import {
-  Avatar,
   Button,
   Flex,
   Select,
