@@ -25,7 +25,6 @@ export default function HomeHeader() {
             styles={(theme) => ({
               root: {
                 backgroundColor: "white",
-                color: theme.colors.munsellBlue[0],
                 border: 0,
                 fontSize: "16px",
                 color: theme.fn.lighten(theme.colors.munsellBlue[0], 0.5),
@@ -48,10 +47,18 @@ export default function HomeHeader() {
           >
             Tài khoản
           </Menu.Item>
-          <Menu.Item component="a" href="/" icon={<IconPassword size={20} />}>
+          <Menu.Item
+            component="a"
+            href="/forgotPassword"
+            icon={<IconPassword size={20} />}
+          >
             Cập nhật mật khẩu
           </Menu.Item>
-          <Menu.Item component="a" href="/" icon={<IconLogout size={20} />}>
+          <Menu.Item
+            component="a"
+            href="/logout"
+            icon={<IconLogout size={20} />}
+          >
             Đăng xuất
           </Menu.Item>
         </Menu.Dropdown>
