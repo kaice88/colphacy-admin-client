@@ -4,7 +4,7 @@ import { IFormInputs } from "./type"
 import useAuth from "../../hooks/useAuth";
 import { useState } from "react";
 
-const LoginForm: React.FC = () => {
+const LoginForm: React.FC<{ onMethodChange: () => void }> = (props) => {
     const [error, setError] = useState({});
     const theme = useMantineTheme();
 
@@ -55,8 +55,11 @@ const LoginForm: React.FC = () => {
                             }),
                         }
                     })}
-                    type="submit">
-                    ĐĂNG NHẬP</Button>
+                    type="submit"> ĐĂNG NHẬP</Button>
+                <Flex justify="space-between">
+                    <span>Quên mật khẩu</span>
+                    <span onClick={props.onMethodChange}>Đăng nhập bằng OTP</span>
+                </Flex>
             </Flex>
         </form>
     );
