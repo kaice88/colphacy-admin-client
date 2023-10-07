@@ -1,3 +1,7 @@
-export interface IFormInputs {
-    phoneNumber: string
+export interface IPhoneNumberFormInputs {
+    phoneNumber: string,
+}
+
+export interface IOTPFormInputs {
+    otp: string,
 }

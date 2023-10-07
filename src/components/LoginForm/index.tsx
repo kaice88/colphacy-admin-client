@@ -1,11 +1,8 @@
 import { Button, Flex, TextInput, PasswordInput, Text, useMantineTheme } from "@mantine/core";
 import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import { IFormInputs } from "./type"
-import useAuth from "../../hooks/useAuth";
-import { useState } from "react";
 
 const LoginForm: React.FC<{ onMethodChange: () => void }> = (props) => {
-    const [error, setError] = useState({});
     const theme = useMantineTheme();
 
     const { control, handleSubmit } = useForm({
@@ -14,10 +11,8 @@ const LoginForm: React.FC<{ onMethodChange: () => void }> = (props) => {
             password: "",
         }
     })
-    const { login } = useAuth();
     const onSubmit: SubmitHandler<IFormInputs> = (data) => {
-        console.log(data);
-        // login.mutate(data);
+
     }
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
