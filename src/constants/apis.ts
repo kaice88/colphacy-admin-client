@@ -1,1 +1,1 @@
-export const REQUEST_AUTH_LOGIN  = "/auth/login"
+export const REQUEST_AUTH_LOGIN_PASSWORD  = "/auth/employee/login"
