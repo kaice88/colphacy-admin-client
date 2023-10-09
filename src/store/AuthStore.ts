@@ -3,7 +3,6 @@ import { create } from 'zustand'
 interface AuthStoreState {
   userProfile: object | null
   accessToken: string | null
-  // isAuthenticated: boolean | null
   setLocalStorage: (accessToken: string, userProfile: object) => void
   login: (accessToken: string, userProfile: object) => void
   logout: () => void
@@ -16,8 +15,6 @@ const useAuthStore = create<AuthStoreState>(set => ({
     : {},
   accessToken: localStorage.getItem('accessToken') ? localStorage.getItem('accessToken') : '',
 
-  // isAuthenticated: ,
-
   setLocalStorage: (accessToken, userProfile) => {
     localStorage.setItem('userProfile', JSON.stringify(userProfile))
     localStorage.setItem('accessToken', accessToken)
@@ -29,7 +26,6 @@ const useAuthStore = create<AuthStoreState>(set => ({
       return {
         accessToken,
         userProfile,
-        // isAuthenticated:!isEmpty(userProfile),
       }
     })
   },

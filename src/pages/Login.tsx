@@ -3,6 +3,7 @@ import LoginPasswordForm from "../components/LoginForm";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
+import { HOME } from "../constants/routes";
 
 
 const Login: React.FC = () => {
@@ -14,14 +15,14 @@ const Login: React.FC = () => {
     }
     useEffect(() => {
         if (isAuthenticated) {
-            navigate("/");
+            navigate(HOME);
         }
     }, [isAuthenticated])
 
     return (<>
         {!isAuthenticated &&
             <Center pt="10%">
-                <Paper shadow="sm" p="md" withBorder w="500px">
+                <Paper shadow="sm" p="md" withBorder w="500px" className="login-container">
                     {!loginWithOTP ? <LoginPasswordForm onMethodChange={handleLoginMethodToggle} /> : <></>}
                 </Paper>
             </Center>}</>

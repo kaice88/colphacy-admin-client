@@ -4,13 +4,14 @@ import Header from "./Header"
 import Navbar from "./Navbar/Navbar";
 import { useEffect } from "react";
 import useAuth from "../hooks/useAuth";
+import { LOGIN } from "../constants/routes";
 
 const Layout: React.FC = () => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate("/login");
+      navigate(LOGIN);
     }
   }, [isAuthenticated])
 
