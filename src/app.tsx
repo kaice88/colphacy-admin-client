@@ -2,6 +2,7 @@ import { MantineProvider } from '@mantine/core'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { router } from './routes'
 import { RouterProvider } from 'react-router-dom'
+import { Notifications } from '@mantine/notifications'
 
 export default function App() {
   // Create a client
@@ -19,6 +20,7 @@ export default function App() {
           fontFamily: 'Be Vietnam Pro, sans-serif',
         }}
       >
+        <Notifications position="top-right" zIndex={2077} />
         <RouterProvider router={router} />
       </MantineProvider>
     </QueryClientProvider>
