@@ -1,18 +1,40 @@
 import { Button, Flex, TextInput, PasswordInput, Text, useMantineTheme } from "@mantine/core";
 import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import { IFormInputs } from "./type"
+import useAuth from "../../hooks/useAuth";
+import { notificationShow } from "../Notification";
 
 const LoginForm: React.FC<{ onMethodChange: () => void }> = (props) => {
     const theme = useMantineTheme();
 
-    const { control, handleSubmit } = useForm({
+    const { control, handleSubmit, formState: { errors }, setError } = useForm({
         defaultValues: {
             username: "",
             password: "",
         }
     })
+    const { onSubmitAccountForm, loading } = useAuth();
     const onSubmit: SubmitHandler<IFormInputs> = (data) => {
-
+        onSubmitAccountForm(data,
+            (error) => {
+                if (error.code === 'ERR_NETWORK') {
+                    notificationShow('error', 'Error!', error.message)
+                }
+                else if (error.response.status === 500) {
+                    notificationShow('error', 'Error!', error.response.data.error)
+                }
+                else {
+                    setError("username", {
+                        type: "manual",
+                        message: (error.response.status === 404) ? true : error.response.data.username,
+                    })
+                    setError("password", {
+                        type: "manual",
+                        message: (error.response.status === 404) ? error.response.data.error : error.response.data.password,
+                    })
+                }
+            },
+        )
     }
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -21,27 +43,29 @@ const LoginForm: React.FC<{ onMethodChange: () => void }> = (props) => {
                 <Controller
                     name="username"
                     control={control}
-                    rules={{ required: true }}
+                    rules={{ required: false }}
                     render={({ field }) => <TextInput
                         {...field}
                         required
                         label="Tên đăng nhập"
                         radius="md"
-                        error=""
+                        error={errors.username ? (errors.username.type === 'minLength' ? "Tên tài khoản có độ dài ít nhất 6 kí tự" : errors.username.message) : false}
                     />}
                 ></Controller>
                 <Controller
                     name="password"
                     control={control}
-                    rules={{ required: true }}
+                    rules={{ required: true, minLength: 8 }}
                     render={({ field }) => <PasswordInput
                         {...field}
                         required
                         label="Mật khẩu"
                         radius="md"
+                        error={errors.password ? (errors.password.type === 'minLength' ? "Mật khẩu có độ dài ít nhất 8 kí tự" : errors.password.message) : false}
                     />}
                 ></Controller>
                 <Button
+                    loading={loading}
                     styles={(theme) => ({
                         root: {
                             backgroundColor: theme.colors.munsellBlue[0],
@@ -50,11 +74,10 @@ const LoginForm: React.FC<{ onMethodChange: () => void }> = (props) => {
                             }),
                         }
                     })}
-                    type="submit">
-                    ĐĂNG NHẬP</Button>
-                <Flex justify="space-between">
-                    <span>Quên mật khẩu</span>
-                    <span onClick={props.onMethodChange}>Đăng nhập bằng OTP</span>
+                    type="submit"> ĐĂNG NHẬP</Button>
+                <Flex justify="space-between" >
+                    <Text color={theme.colors.munsellBlue[0]} >Quên mật khẩu</Text>
+                    <Text color={theme.colors.munsellBlue[0]} onClick={props.onMethodChange}>Đăng nhập bằng OTP</Text>
                 </Flex>
             </Flex>
         </form>

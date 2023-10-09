@@ -1,9 +1,10 @@
+import { REQUEST_AUTH_LOGIN_PASSWORD } from './../constants/apis';
 import { useMutation } from "@tanstack/react-query"
 import axios from "../settings/axios"
-import { REQUEST_AUTH_LOGIN_OTP, REQUEST_GENERATE_OTP } from "../constants/apis"
 import useAuthStore from "../store/AuthStore"
 import isEmpty from "lodash/isEmpty"
 import { useNavigate } from "react-router-dom"
+import { notificationShow } from '../components/Notification';
 
 
 
@@ -17,6 +18,17 @@ function useAuth() {
           return axios.post(REQUEST_AUTH_LOGIN_OTP, data)
         }
     })
+    const onSubmitAccountForm = (data: { username: string,password: string },onError: (error:object) => void) => {
+        handleLogin.mutate(data,
+            {
+                onSuccess: (data) => {
+                    login(data.data.accessToken,data.data.userProfile)
+                    navigate("/")
+                    notificationShow('success', 'Success!',"Đăng nhập thành công!")
+                },
+                onError: (error) => onError(error),
+            })
+    }
 
     const onSubmitOTPForm = (data: { otp: string,phone: string }, onError: (error: object) => void) => {
         handleLogin.mutate(data,
@@ -49,12 +61,14 @@ function useAuth() {
     }
 
     return {
-        login: handleLogin,
         userProfile,
         isAuthenticated,
         handleGenerateOTP,
         onSubmitPhoneNumberForm,
-        onSubmitOTPForm
+        onSubmitOTPForm,
+        
+        onSubmitAccountForm,
+        loading: handleLogin.isLoading
     }
 }
 export default useAuth

@@ -1,4 +1,4 @@
-import { Center, Flex, Paper } from "@mantine/core";
+import { Center, Paper } from "@mantine/core";
 import LoginPasswordForm from "../components/LoginForm";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
