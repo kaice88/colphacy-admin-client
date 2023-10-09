@@ -2,11 +2,12 @@ import { Button, Flex, useMantineTheme, Text, PinInput, Group, Input } from "@ma
 import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import { IOTPFormInputs } from "./type"
 import useAuth from "../../hooks/useAuth";
+import { notificationShow } from "../Notification";
 
 
 const OTPForm: React.FC<{ phoneNumber: string }> = (props) => {
     const theme = useMantineTheme();
-    const { onSubmitOTPForm } = useAuth();
+    const { onSubmitOTPForm, handleLoginOTP } = useAuth();
     const { control, handleSubmit, formState: { errors }, setError } = useForm({
         defaultValues: {
             otp: "",
@@ -16,15 +17,15 @@ const OTPForm: React.FC<{ phoneNumber: string }> = (props) => {
         onSubmitOTPForm({ ...data, phone: props.phoneNumber },
             (error) => {
                 if (error.code === 'ERR_NETWORK') {
-                    setError("otp", {
-                        type: "manual",
-                        message: error.message,
-                    })
+                    notificationShow('error', 'Error!', error.message)
+                }
+                else if (error.response.status === 500) {
+                    notificationShow('error', 'Error!', error.response.data.error)
                 }
                 else {
                     setError("otp", {
                         type: "manual",
-                        message: (error.response.status === 404 || error.response.status === 500) ? error.response.data.error : error.response.data.OTP,
+                        message: (error.response.status === 404) ? error.response.data.error : error.response.data.OTP,
                     })
                 }
             },
@@ -46,15 +47,21 @@ const OTPForm: React.FC<{ phoneNumber: string }> = (props) => {
                         </Input.Wrapper>
                     </Group>}
                 ></Controller>
-                <Button styles={(theme) => ({
-                    root: {
-                        backgroundColor: theme.colors.munsellBlue[0],
-                        ...theme.fn.hover({
-                            backgroundColor: theme.fn.darken(theme.colors.munsellBlue[0], 0.1),
-                        }),
-                    }
-                })} type="submit">
+                <Button
+                    loading={handleLoginOTP.isLoading}
+                    styles={(theme) => ({
+                        root: {
+                            backgroundColor: theme.colors.munsellBlue[0],
+                            ...theme.fn.hover({
+                                backgroundColor: theme.fn.darken(theme.colors.munsellBlue[0], 0.1),
+                            }),
+                        }
+                    })} type="submit">
                     XÁC NHẬN</Button>
+                <Flex justify="space-between">
+                    <Text className="option" color={theme.colors.munsellBlue[0]} >Gởi lại mã cho tôi</Text>
+                    <Text className="option" color={theme.colors.munsellBlue[0]} onClick={props.onMethodChange}>Đăng nhập bằng OTP</Text>
+                </Flex>
             </Flex>
         </form>);
 }

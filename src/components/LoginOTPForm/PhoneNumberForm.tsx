@@ -2,6 +2,7 @@ import { Button, Flex, useMantineTheme, Text, TextInput, Center } from "@mantine
 import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import { IPhoneNumberFormInputs } from "./type"
 import useAuth from "../../hooks/useAuth";
+import { notificationShow } from "../Notification";
 
 
 const PhoneNumberForm: React.FC<{ onMethodChange: () => void, onFormChange: (phoneNumber: string) => void }> = (props) => {
@@ -11,7 +12,7 @@ const PhoneNumberForm: React.FC<{ onMethodChange: () => void, onFormChange: (pho
             phoneNumber: "",
         }
     })
-    const { onSubmitPhoneNumberForm } = useAuth();
+    const { onSubmitPhoneNumberForm, handleGenerateOTP } = useAuth();
 
     const onSubmit: SubmitHandler<IPhoneNumberFormInputs> = (data) => {
         onSubmitPhoneNumberForm(data,
@@ -20,10 +21,10 @@ const PhoneNumberForm: React.FC<{ onMethodChange: () => void, onFormChange: (pho
             },
             (error) => {
                 if (error.code === 'ERR_NETWORK') {
-                    setError("phoneNumber", {
-                        type: "manual",
-                        message: error.message,
-                    })
+                    notificationShow('error', 'Error!', error.message)
+                }
+                else if (error.response.status === 500) {
+                    notificationShow('error', 'Error!', error.response.data.error)
                 }
                 else {
                     setError("phoneNumber", {
@@ -51,16 +52,18 @@ const PhoneNumberForm: React.FC<{ onMethodChange: () => void, onFormChange: (pho
                         error={errors.phoneNumber ? (errors.phoneNumber.type === 'pattern' ? "Đồ dài của số điện thoại phải là 10 chữ số" : errors.phoneNumber.message) : false}
                     />}
                 ></Controller>
-                <Button styles={(theme) => ({
-                    root: {
-                        backgroundColor: theme.colors.munsellBlue[0],
-                        ...theme.fn.hover({
-                            backgroundColor: theme.fn.darken(theme.colors.munsellBlue[0], 0.1),
-                        }),
-                    }
-                })} type="submit">
+                <Button
+                    loading={handleGenerateOTP.isLoading}
+                    styles={(theme) => ({
+                        root: {
+                            backgroundColor: theme.colors.munsellBlue[0],
+                            ...theme.fn.hover({
+                                backgroundColor: theme.fn.darken(theme.colors.munsellBlue[0], 0.1),
+                            }),
+                        }
+                    })} type="submit">
                     ĐĂNG NHẬP</Button>
-                <Center><span onClick={props.onMethodChange} >Đăng nhập bằng mật khẩu</span></Center>
+                <Center><Text className="option" color={theme.colors.munsellBlue[0]} onClick={props.onMethodChange} >Đăng nhập bằng mật khẩu</Text></Center>
             </Flex>
         </form>);
 }

@@ -1,6 +1,7 @@
-.login-container span {
+.login-container .option {
     &:hover {
-        color: $munsellBlue;
+        text-decoration: underline;
         cursor: pointer;
     }
+
 }

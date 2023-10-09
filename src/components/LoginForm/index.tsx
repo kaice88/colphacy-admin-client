@@ -13,7 +13,7 @@ const LoginForm: React.FC<{ onMethodChange: () => void }> = (props) => {
             password: "",
         }
     })
-    const { onSubmitAccountForm, loading } = useAuth();
+    const { onSubmitAccountForm, handleLoginPassword } = useAuth();
     const onSubmit: SubmitHandler<IFormInputs> = (data) => {
         onSubmitAccountForm(data,
             (error) => {
@@ -65,7 +65,7 @@ const LoginForm: React.FC<{ onMethodChange: () => void }> = (props) => {
                     />}
                 ></Controller>
                 <Button
-                    loading={loading}
+                    loading={handleLoginPassword.isLoading}
                     styles={(theme) => ({
                         root: {
                             backgroundColor: theme.colors.munsellBlue[0],
@@ -75,9 +75,9 @@ const LoginForm: React.FC<{ onMethodChange: () => void }> = (props) => {
                         }
                     })}
                     type="submit"> ĐĂNG NHẬP</Button>
-                <Flex justify="space-between" >
-                    <Text color={theme.colors.munsellBlue[0]} >Quên mật khẩu</Text>
-                    <Text color={theme.colors.munsellBlue[0]} onClick={props.onMethodChange}>Đăng nhập bằng OTP</Text>
+                <Flex justify="space-between">
+                    <Text className="option" color={theme.colors.munsellBlue[0]} >Quên mật khẩu</Text>
+                    <Text className="option" color={theme.colors.munsellBlue[0]} onClick={props.onMethodChange}>Đăng nhập bằng OTP</Text>
                 </Flex>
             </Flex>
         </form>

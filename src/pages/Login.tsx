@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import LoginOTPForm from "../components/LoginOTPForm";
-import OTPForm from "../components/LoginOTPForm/OTPForm";
 
 const Login: React.FC = () => {
     const { isAuthenticated } = useAuth();
