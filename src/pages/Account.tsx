@@ -10,8 +10,7 @@ import {
   MantineTheme,
 } from "@mantine/core";
 import { IconChevronLeft } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
-import { http } from "../settings/https";
+import { useState } from "react";
 interface Account {
   id: string;
   image: string;
@@ -30,13 +29,6 @@ export default function Account() {
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0QwbkMyUN3Ln8ZBOhSUKsxM4rtVWyG_231g&usqp=CAU",
   });
   const [file, setFile] = useState<File | null>(null);
-
-  useEffect(() => {
-    http.get(`accounts/1`).then((res) => {
-      setUser(res.data);
-      // console.log(res.data);
-    });
-  }, []);
 
   const form = useForm({
     initialValues: { name: "", username: "", gender: "Nam" },
@@ -83,12 +75,7 @@ export default function Account() {
           <FileButton onChange={setFile} accept="image/png,image/jpeg">
             {(props) => (
               <button className="imageBtn" {...props}>
-                <Avatar
-                  w="179px"
-                  h="149px"
-                  radius="100%"
-                  src={user?.image}
-                />
+                <Avatar w="179px" h="149px" radius="100%" src={user?.image} />
               </button>
             )}
           </FileButton>
