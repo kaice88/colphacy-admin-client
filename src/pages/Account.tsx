@@ -1,131 +1,270 @@
-import { useForm } from "@mantine/form";
+import React, { useEffect, useState } from "react";
+import useEmployeeProfile from "../hooks/useEmployeeProfile";
 import {
-  TextInput,
-  Button,
-  Box,
-  Select,
   Avatar,
+  BackgroundImage,
+  Button,
+  Flex,
+  Select,
   Text,
-  FileButton,
-  MantineTheme,
+  TextInput,
+  useMantineTheme,
 } from "@mantine/core";
-import { IconChevronLeft } from "@tabler/icons-react";
-import { useState } from "react";
-interface Account {
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { IconPencil } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
+export interface Account {
   id: string;
-  image: string;
-  name: string;
+  fullName: string;
   username: string;
+  phone: string;
   gender: string;
+  role: string;
+  branch: string;
+  active: boolean;
 }
 
 export default function Account() {
-  const [user, setUser] = useState<Account | null>({
-    id: "1",
-    name: "Alice",
-    username: "Phuong",
-    gender: "Nữ",
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0QwbkMyUN3Ln8ZBOhSUKsxM4rtVWyG_231g&usqp=CAU",
-  });
-  const [file, setFile] = useState<File | null>(null);
+  const [account, setAccount] = useState<Account | null>(null);
+  const { fetchEmployeeProfile, onSubmitProfileForm } = useEmployeeProfile();
 
-  const form = useForm({
-    initialValues: { name: "", username: "", gender: "Nam" },
-
-    validate: {
-      name: (value) => (value.length < 0 ? "Vui lòng nhập đủ thông tin" : null),
-      username: (value) =>
-        value.length < 0 ? "Vui lòng nhập đủ thông tin" : null,
+  useEffect(() => {
+    async function fetchData() {
+      const data = await fetchEmployeeProfile.refetch();
+      if (data.isSuccess) {
+        setAccount(data.data.data);
+      } else if (data.isError) {
+        const error = data.error.response;
+        if (error.status === 403) {
+        }
+      }
+    }
+    fetchData();
+  }, []);
+  console.log(account);
+  const theme = useMantineTheme();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    setError,
+  } = useForm({
+    defaultValues: {
+      id: "",
+      fullName: "",
+      username: "",
+      phone: "",
+      gender: "",
+      role: "",
+      branch: "",
+      active: true,
     },
   });
-  const styleButton = (theme: MantineTheme) => ({
-    root: {
-      backgroundColor: theme.colors.munsellBlue[0],
-      ...theme.fn.hover({
-        backgroundColor: theme.fn.darken(theme.colors.munsellBlue[0], 0.1),
-      }),
-    },
-  });
-  //handle event
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    console.log("submited");
-  };
+  const changePassword = () => {};
+  const onSubmit = () => {};
+  // const onSubmit: SubmitHandler<Account> = (data) => {
+  //   onSubmitProfileForm(data, (error) => {
+  //     if (error.code === "ERR_NETWORK") {
+  //       notificationShow("error", "Error!", error.message);
+  //     } else if (error.response.status === 500) {
+  //       notificationShow("error", "Error!", error.response.data.error);
+  //     } else {
+  //       setError("username", {
+  //         type: "manual",
+  //         message:
+  //           error.response.status === 404 ? true : error.response.data.username,
+  //       });
+  //       setError("password", {
+  //         type: "manual",
+  //         message:
+  //           error.response.status === 404
+  //             ? error.response.data.error
+  //             : error.response.data.password,
+  //       });
+  //     }
+  //   });
+  // };
   return (
-    <>
-      <Text size="20px">
-        <Button
-          variant="default"
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Flex
+        direction="column"
+        gap="md"
+        style={{ width: "50vw", margin: "auto" }}
+      >
+        <Avatar
           styles={() => ({
-            root: {
-              border: 0,
+            placeholderIcon: {
+              backgroundColor: "white",
             },
           })}
-          onClick={() => {
-            history.back();
+          sx={{
+            width: 100,
+            height: 100,
+            borderRadius: "50%",
+            alignSelf: "center",
           }}
-        >
-          <IconChevronLeft />
-        </Button>
-        Thông tin cá nhân
-      </Text>
-      <Box maw={340} mx="auto">
-        <form className="form" onSubmit={handleSubmit}>
-          <FileButton onChange={setFile} accept="image/png,image/jpeg">
-            {(props) => (
-              <button className="imageBtn" {...props}>
-                <Avatar w="179px" h="149px" radius="100%" src={user?.image} />
-              </button>
-            )}
-          </FileButton>
-
-          <TextInput
-            label="Họ tên"
-            placeholder={user?.name}
-            {...form.getInputProps("name")}
-          />
-          <TextInput
-            label="Tên người dùng"
-            placeholder={user?.username}
-            {...form.getInputProps("username")}
-          />
-          <Select
-            label="Giới tính"
-            placeholder={user?.gender}
-            data={["Nam", "Nữ", "Khác"]}
-            styles={(theme) => ({
-              item: {
-                "&[data-selected]": {
-                  "&": {
+        />
+        {/* <Button variant="text" onClick={onUpload}>
+          {uploadButtonLabel}
+        </Button> */}
+        <Controller
+          name="fullName"
+          control={control}
+          rules={{ required: false, minLength: 6 }}
+          render={({ field }) => (
+            <TextInput
+              {...field}
+              label="Họ tên"
+              radius="md"
+              value={account?.fullName}
+              error={
+                errors.username
+                  ? errors.username.type === "minLength"
+                    ? "Tên tài khoản có độ dài ít nhất 6 kí tự"
+                    : errors.username.message
+                  : false
+              }
+            />
+          )}
+        ></Controller>
+        <Controller
+          name="username"
+          control={control}
+          rules={{ required: false, minLength: 6 }}
+          render={({ field }) => (
+            <TextInput
+              {...field}
+              label="Tên đăng nhập"
+              radius="md"
+              value={account?.username}
+              error={
+                errors.username
+                  ? errors.username.type === "minLength"
+                    ? "Tên tài khoản có độ dài ít nhất 6 kí tự"
+                    : errors.username.message
+                  : false
+              }
+            />
+          )}
+        ></Controller>
+        <Controller
+          name="phone"
+          control={control}
+          rules={{ required: false, minLength: 6 }}
+          render={({ field }) => (
+            <Flex align="center">
+              <TextInput
+                {...field}
+                disabled={true}
+                label="SĐT"
+                radius="md"
+                value={account?.phone}
+                error={
+                  errors.username
+                    ? errors.username.type === "minLength"
+                      ? "Tên tài khoản có độ dài ít nhất 6 kí tự"
+                      : errors.username.message
+                    : false
+                }
+              />
+              <Button
+                styles={(theme) => ({
+                  root: {
                     backgroundColor: theme.white,
-
                     color: theme.black,
+                    ...theme.fn.hover({
+                      color: theme.colors.munsellBlue[0],
+                      backgroundColor: theme.white,
+                    }),
+                    marginTop: "20px",
+                    paddingLeft: "5px",
                   },
-                  "&:hover": {
-                    backgroundColor: theme.fn.darken(
-                      theme.colors.munsellBlue[0],
-                      0.1
-                    ),
-                    color: theme.white,
-                  },
-                },
+                })}
+                onClick={changePassword}
+              >
+                <IconPencil />
+              </Button>
+            </Flex>
+          )}
+        ></Controller>
+        <Controller
+          name="gender"
+          control={control}
+          render={({ field }) => (
+            <Select
+              {...field}
+              label="Giới tính"
+              placeholder={account?.gender}
+              data={["MALE", "FEMALE", "OTHERS"]}
+            />
+          )}
+        ></Controller>
 
-                "&[data-hovered]": {
-                  backgroundColor: theme.fn.darken(
-                    theme.colors.munsellBlue[0],
-                    0.1
-                  ),
-                  color: theme.white,
-                },
-              },
-            })}
-          />
-          <Button type="submit" mt="sm" ml="33.33%" styles={styleButton}>
-            Lưu thông tin
-          </Button>
-        </form>
-      </Box>
-    </>
+        <Controller
+          name="role"
+          control={control}
+          rules={{ required: false, minLength: 6 }}
+          render={({ field }) => (
+            <TextInput
+              {...field}
+              disabled={true}
+              label="Vai trò"
+              value={account?.role}
+              radius="md"
+              // value={account?.role}
+              error={
+                errors.username
+                  ? errors.username.type === "minLength"
+                    ? "Tên tài khoản có độ dài ít nhất 6 kí tự"
+                    : errors.username.message
+                  : false
+              }
+            />
+          )}
+        ></Controller>
+        <Controller
+          name="branch"
+          control={control}
+          disabled={true}
+          render={({ field }) => (
+            <TextInput
+              {...field}
+              label="Chi nhánh"
+              radius="md"
+              value={account?.branch}
+              error={
+                errors.username
+                  ? errors.username.type === "minLength"
+                    ? "Tên tài khoản có độ dài ít nhất 6 kí tự"
+                    : errors.username.message
+                  : false
+              }
+            />
+          )}
+        ></Controller>
+        <Button
+          // loading={handleLoginPassword.isLoading}
+          styles={(theme) => ({
+            root: {
+              backgroundColor: theme.colors.munsellBlue[0],
+              ...theme.fn.hover({
+                backgroundColor: theme.fn.darken(
+                  theme.colors.munsellBlue[0],
+                  0.1
+                ),
+              }),
+            },
+          })}
+          type="submit"
+        >
+          Lưu thông tin
+        </Button>
+        <a href="/editPassword">
+          <Text color={theme.colors.munsellBlue[0]} align="center">
+            Quên mật khẩu
+          </Text>
+        </a>
+      </Flex>
+    </form>
   );
 }
