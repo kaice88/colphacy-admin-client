@@ -36,11 +36,10 @@ function useEmployeeProfile() {
         ) {
           notificationShow("error", "Error!", error.response.data.error);
         } else if (error.response.status === 400) {
-          notificationShow(
-            "error",
-            "Error!",
-            "Hãy nhập thông tin dưới dạng chuỗi ký tự"
-          );
+          const data = error.response.data;
+          Object.keys(data).forEach((key) => {
+            notificationShow("error", "Error!", data[key]);
+          });
         }
       },
     });

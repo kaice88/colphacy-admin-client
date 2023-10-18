@@ -10,8 +10,9 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { IconPencil } from "@tabler/icons-react";
+import { IconArrowLeft, IconPencil } from "@tabler/icons-react";
 import { notificationShow } from "../components/Notification";
+import { useNavigate } from "react-router-dom";
 export interface Account {
   id: number;
   fullName: string;
@@ -24,8 +25,10 @@ export interface Account {
 }
 
 export default function Account() {
-  const { fetchEmployeeProfile, onSubmitProfileForm, handleUpdateProfile } = useEmployeeProfile();
-
+  const { fetchEmployeeProfile, onSubmitProfileForm, handleUpdateProfile } =
+    useEmployeeProfile();
+  const [branch, setBrach] = useState(null);
+  const navigate = useNavigate();
   useEffect(() => {
     async function fetchData() {
       const data = await fetchEmployeeProfile.refetch();
@@ -34,6 +37,7 @@ export default function Account() {
         Object.keys(a).forEach((key) => {
           setValue(key, a[key]);
         });
+        setBrach(a["branch"]);
       } else if (data.isError) {
         const error = data.error.response;
         if (error.code === "ERR_NETWORK") {
@@ -44,7 +48,7 @@ export default function Account() {
       }
     }
     fetchData();
-  }, []);
+  }, [setBrach]);
   const theme = useMantineTheme();
   const {
     control,
@@ -52,6 +56,7 @@ export default function Account() {
     formState: { errors },
     setError,
     setValue,
+    getValues,
   } = useForm({
     defaultValues: {
       fullName: "",
@@ -67,146 +72,175 @@ export default function Account() {
   const onSubmit: SubmitHandler<Account> = (data) => {
     onSubmitProfileForm(data);
   };
+  const handleBack = () => {
+    navigate(-1);
+  };
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Flex
-        direction="column"
-        gap="md"
-        style={{ width: "50vw", margin: "auto" }}
+    <>
+      <Button
+        styles={(theme) => ({
+          root: {
+            backgroundColor: theme.white,
+            color: theme.black,
+            ...theme.fn.hover({
+              color: theme.colors.munsellBlue[0],
+              backgroundColor: theme.white,
+            }),
+            marginTop: "20px",
+            paddingLeft: "5px",
+          },
+        })}
+        onClick={handleBack}
       >
-        <Avatar
-          styles={() => ({
-            placeholderIcon: {
-              backgroundColor: "white",
-            },
-          })}
-          sx={{
-            width: 100,
-            height: 100,
-            borderRadius: "50%",
-            alignSelf: "center",
-          }}
-        />
-        <Controller
-          name="fullName"
-          control={control}
-          render={({ field }) => (
-            <TextInput
-              {...field}
-              label="Họ tên"
-              radius="md"
-              required
-              onChange={(value) => {
-                field.onChange(value);
-              }}
-            />
-          )}
-        ></Controller>
-        <Controller
-          name="username"
-          control={control}
-          rules={{ required: true, minLength: 6 }}
-          render={({ field }) => (
-            <TextInput
-              {...field}
-              label="Tên đăng nhập"
-              radius="md"
-              required
-              onChange={(value) => {
-                field.onChange(value);
-              }}
-              error={
-                errors.username
-                  ? errors.username.type === "minLength"
-                    ? "Tên tài khoản có độ dài ít nhất 6 kí tự"
-                    : errors.username.message
-                  : false
-              }
-            />
-          )}
-        ></Controller>
-        <Controller
-          name="phone"
-          control={control}
-          rules={{
-            required: false,
-          }}
-          render={({ field }) => (
-            <Flex align="center">
-              <TextInput {...field} disabled={true} label="SĐT" radius="md" />
-              <Button
-                styles={(theme) => ({
-                  root: {
-                    backgroundColor: theme.white,
-                    color: theme.black,
-                    ...theme.fn.hover({
-                      color: theme.colors.munsellBlue[0],
-                      backgroundColor: theme.white,
-                    }),
-                    marginTop: "20px",
-                    paddingLeft: "5px",
-                  },
-                })}
-                onClick={changePassword}
-              >
-                <IconPencil />
-              </Button>
-            </Flex>
-          )}
-        ></Controller>
-        <Controller
-          name="gender"
-          control={control}
-          render={({ field }) => (
-            <Select
-              {...field}
-              label="Giới tính"
-              data={["MALE", "FEMALE", "OTHER"]}
-              onChange={(value) => {
-                field.onChange(value);
-              }}
-            />
-          )}
-        ></Controller>
-
-        <Controller
-          name="role"
-          control={control}
-          render={({ field }) => (
-            <TextInput {...field} disabled={true} label="Vai trò" radius="md" />
-          )}
-        ></Controller>
-        <Controller
-          name="branch"
-          control={control}
-          disabled={true}
-          render={({ field }) => (
-            <TextInput {...field} label="Chi nhánh" radius="md" />
-          )}
-        ></Controller>
-        <Button
-          loading={handleUpdateProfile.isLoading}
-          styles={(theme) => ({
-            root: {
-              backgroundColor: theme.colors.munsellBlue[0],
-              ...theme.fn.hover({
-                backgroundColor: theme.fn.darken(
-                  theme.colors.munsellBlue[0],
-                  0.1
-                ),
-              }),
-            },
-          })}
-          type="submit"
+        <IconArrowLeft />
+      </Button>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Flex
+          direction="column"
+          gap="md"
+          style={{ width: "50vw", margin: "auto" }}
         >
-          Lưu thông tin
-        </Button>
-        <a href="/editPassword">
-          <Text color={theme.colors.munsellBlue[0]} align="center">
-            Đổi mật khẩu
-          </Text>
-        </a>
-      </Flex>
-    </form>
+          <Avatar
+            styles={() => ({
+              placeholderIcon: {
+                backgroundColor: "white",
+              },
+            })}
+            sx={{
+              width: 100,
+              height: 100,
+              borderRadius: "50%",
+              alignSelf: "center",
+            }}
+          />
+          <Controller
+            name="fullName"
+            control={control}
+            render={({ field }) => (
+              <TextInput
+                {...field}
+                label="Họ tên"
+                radius="md"
+                required
+                onChange={(value) => {
+                  field.onChange(value);
+                }}
+              />
+            )}
+          ></Controller>
+          <Controller
+            name="username"
+            control={control}
+            rules={{ required: true, minLength: 6 }}
+            render={({ field }) => (
+              <TextInput
+                {...field}
+                label="Tên đăng nhập"
+                radius="md"
+                required
+                onChange={(value) => {
+                  field.onChange(value);
+                }}
+                error={
+                  errors.username
+                    ? errors.username.type === "minLength"
+                      ? "Tên tài khoản có độ dài ít nhất 6 kí tự"
+                      : errors.username.message
+                    : false
+                }
+              />
+            )}
+          ></Controller>
+          <Controller
+            name="phone"
+            control={control}
+            rules={{
+              required: false,
+            }}
+            render={({ field }) => (
+              <Flex align="center">
+                <TextInput {...field} disabled={true} label="SĐT" radius="md" />
+                <Button
+                  styles={(theme) => ({
+                    root: {
+                      backgroundColor: theme.white,
+                      color: theme.black,
+                      ...theme.fn.hover({
+                        color: theme.colors.munsellBlue[0],
+                        backgroundColor: theme.white,
+                      }),
+                      marginTop: "20px",
+                      paddingLeft: "5px",
+                    },
+                  })}
+                  onClick={changePassword}
+                >
+                  <IconPencil />
+                </Button>
+              </Flex>
+            )}
+          ></Controller>
+          <Controller
+            name="gender"
+            control={control}
+            render={({ field }) => (
+              <Select
+                {...field}
+                label="Giới tính"
+                data={["MALE", "FEMALE", "OTHER"]}
+                onChange={(value) => {
+                  field.onChange(value);
+                }}
+              />
+            )}
+          ></Controller>
+
+          <Controller
+            name="role"
+            control={control}
+            render={({ field }) => (
+              <TextInput
+                {...field}
+                disabled={true}
+                label="Vai trò"
+                radius="md"
+              />
+            )}
+          ></Controller>
+          {getValues("branch") && (
+            <Controller
+              name="branch"
+              control={control}
+              disabled={true}
+              render={({ field }) => (
+                <TextInput {...field} label="Chi nhánh" radius="md" />
+              )}
+            ></Controller>
+          )}
+          <Button
+            loading={handleUpdateProfile.isLoading}
+            styles={(theme) => ({
+              root: {
+                backgroundColor: theme.colors.munsellBlue[0],
+                ...theme.fn.hover({
+                  backgroundColor: theme.fn.darken(
+                    theme.colors.munsellBlue[0],
+                    0.1
+                  ),
+                }),
+              },
+            })}
+            type="submit"
+          >
+            Lưu thông tin
+          </Button>
+          <a href="/editPassword">
+            <Text color={theme.colors.munsellBlue[0]} align="center">
+              Đổi mật khẩu
+            </Text>
+          </a>
+        </Flex>
+      </form>
+    </>
   );
 }
