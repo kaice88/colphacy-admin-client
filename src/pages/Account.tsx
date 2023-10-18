@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import useEmployeeProfile from "../hooks/useEmployeeProfile";
 import {
   Avatar,
-  BackgroundImage,
   Button,
   Flex,
   Select,
@@ -12,9 +11,9 @@ import {
 } from "@mantine/core";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { IconPencil } from "@tabler/icons-react";
-import { notifications } from "@mantine/notifications";
+import { notificationShow } from "../components/Notification";
 export interface Account {
-  id: string;
+  id: number;
   fullName: string;
   username: string;
   phone: string;
@@ -25,65 +24,49 @@ export interface Account {
 }
 
 export default function Account() {
-  const [account, setAccount] = useState<Account | null>(null);
-  const { fetchEmployeeProfile, onSubmitProfileForm } = useEmployeeProfile();
+  const { fetchEmployeeProfile, onSubmitProfileForm, handleUpdateProfile } = useEmployeeProfile();
 
   useEffect(() => {
     async function fetchData() {
       const data = await fetchEmployeeProfile.refetch();
       if (data.isSuccess) {
-        setAccount(data.data.data);
+        const a = data.data.data;
+        Object.keys(a).forEach((key) => {
+          setValue(key, a[key]);
+        });
       } else if (data.isError) {
         const error = data.error.response;
-        if (error.status === 403) {
+        if (error.code === "ERR_NETWORK") {
+          notificationShow("error", "Error!", error.message);
+        } else if (error.response.status === 500) {
+          notificationShow("error", "Error!", error.response.data.error);
         }
       }
     }
     fetchData();
   }, []);
-  console.log(account);
   const theme = useMantineTheme();
   const {
     control,
     handleSubmit,
     formState: { errors },
     setError,
+    setValue,
   } = useForm({
     defaultValues: {
-      id: "",
       fullName: "",
       username: "",
       phone: "",
       gender: "",
       role: "",
       branch: "",
-      active: true,
+      active: false,
     },
   });
   const changePassword = () => {};
-  const onSubmit = () => {};
-  // const onSubmit: SubmitHandler<Account> = (data) => {
-  //   onSubmitProfileForm(data, (error) => {
-  //     if (error.code === "ERR_NETWORK") {
-  //       notificationShow("error", "Error!", error.message);
-  //     } else if (error.response.status === 500) {
-  //       notificationShow("error", "Error!", error.response.data.error);
-  //     } else {
-  //       setError("username", {
-  //         type: "manual",
-  //         message:
-  //           error.response.status === 404 ? true : error.response.data.username,
-  //       });
-  //       setError("password", {
-  //         type: "manual",
-  //         message:
-  //           error.response.status === 404
-  //             ? error.response.data.error
-  //             : error.response.data.password,
-  //       });
-  //     }
-  //   });
-  // };
+  const onSubmit: SubmitHandler<Account> = (data) => {
+    onSubmitProfileForm(data);
+  };
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Flex
@@ -104,39 +87,34 @@ export default function Account() {
             alignSelf: "center",
           }}
         />
-        {/* <Button variant="text" onClick={onUpload}>
-          {uploadButtonLabel}
-        </Button> */}
         <Controller
           name="fullName"
           control={control}
-          rules={{ required: false, minLength: 6 }}
           render={({ field }) => (
             <TextInput
               {...field}
               label="Họ tên"
               radius="md"
-              value={account?.fullName}
-              error={
-                errors.username
-                  ? errors.username.type === "minLength"
-                    ? "Tên tài khoản có độ dài ít nhất 6 kí tự"
-                    : errors.username.message
-                  : false
-              }
+              required
+              onChange={(value) => {
+                field.onChange(value);
+              }}
             />
           )}
         ></Controller>
         <Controller
           name="username"
           control={control}
-          rules={{ required: false, minLength: 6 }}
+          rules={{ required: true, minLength: 6 }}
           render={({ field }) => (
             <TextInput
               {...field}
               label="Tên đăng nhập"
               radius="md"
-              value={account?.username}
+              required
+              onChange={(value) => {
+                field.onChange(value);
+              }}
               error={
                 errors.username
                   ? errors.username.type === "minLength"
@@ -150,23 +128,12 @@ export default function Account() {
         <Controller
           name="phone"
           control={control}
-          rules={{ required: false, minLength: 6 }}
+          rules={{
+            required: false,
+          }}
           render={({ field }) => (
             <Flex align="center">
-              <TextInput
-                {...field}
-                disabled={true}
-                label="SĐT"
-                radius="md"
-                value={account?.phone}
-                error={
-                  errors.username
-                    ? errors.username.type === "minLength"
-                      ? "Tên tài khoản có độ dài ít nhất 6 kí tự"
-                      : errors.username.message
-                    : false
-                }
-              />
+              <TextInput {...field} disabled={true} label="SĐT" radius="md" />
               <Button
                 styles={(theme) => ({
                   root: {
@@ -194,8 +161,10 @@ export default function Account() {
             <Select
               {...field}
               label="Giới tính"
-              placeholder={account?.gender}
-              data={["MALE", "FEMALE", "OTHERS"]}
+              data={["MALE", "FEMALE", "OTHER"]}
+              onChange={(value) => {
+                field.onChange(value);
+              }}
             />
           )}
         ></Controller>
@@ -203,23 +172,8 @@ export default function Account() {
         <Controller
           name="role"
           control={control}
-          rules={{ required: false, minLength: 6 }}
           render={({ field }) => (
-            <TextInput
-              {...field}
-              disabled={true}
-              label="Vai trò"
-              value={account?.role}
-              radius="md"
-              // value={account?.role}
-              error={
-                errors.username
-                  ? errors.username.type === "minLength"
-                    ? "Tên tài khoản có độ dài ít nhất 6 kí tự"
-                    : errors.username.message
-                  : false
-              }
-            />
+            <TextInput {...field} disabled={true} label="Vai trò" radius="md" />
           )}
         ></Controller>
         <Controller
@@ -227,23 +181,11 @@ export default function Account() {
           control={control}
           disabled={true}
           render={({ field }) => (
-            <TextInput
-              {...field}
-              label="Chi nhánh"
-              radius="md"
-              value={account?.branch}
-              error={
-                errors.username
-                  ? errors.username.type === "minLength"
-                    ? "Tên tài khoản có độ dài ít nhất 6 kí tự"
-                    : errors.username.message
-                  : false
-              }
-            />
+            <TextInput {...field} label="Chi nhánh" radius="md" />
           )}
         ></Controller>
         <Button
-          // loading={handleLoginPassword.isLoading}
+          loading={handleUpdateProfile.isLoading}
           styles={(theme) => ({
             root: {
               backgroundColor: theme.colors.munsellBlue[0],
@@ -261,7 +203,7 @@ export default function Account() {
         </Button>
         <a href="/editPassword">
           <Text color={theme.colors.munsellBlue[0]} align="center">
-            Quên mật khẩu
+            Đổi mật khẩu
           </Text>
         </a>
       </Flex>
