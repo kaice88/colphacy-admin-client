@@ -1,15 +1,15 @@
-import { REQUEST_AUTH_LOGIN_PASSWORD } from './../constants/apis';
+import { REQUEST_AUTH_LOGIN_PASSWORD,REQUEST_AUTH_LOGOUT_PASSWORD } from './../constants/apis';
 import { useMutation } from "@tanstack/react-query"
 import axios from "../settings/axios"
 import useAuthStore from "../store/AuthStore"
 import isEmpty from "lodash/isEmpty"
 import { useNavigate } from "react-router-dom"
 import { notificationShow } from '../components/Notification'
-import { HOME } from '../constants/routes';
+import { HOME,LOGIN } from '../constants/routes';
 
 
 function useAuth() {
-    const { login, userProfile } = useAuthStore()
+    const { login, userProfile,logout } = useAuthStore()
     const isAuthenticated =  !isEmpty(userProfile);
     const navigate = useNavigate()
     const handleLoginPassword = useMutation({
@@ -30,13 +30,27 @@ function useAuth() {
                 onError: (error) => onError(error),
             })
     }
+    const handleLogout = useMutation({
+        mutationKey: ['logout'],
+        mutationFn: () => {
+          return axios.post(REQUEST_AUTH_LOGOUT_PASSWORD)
+        },
+        onSuccess: () => {
+            logout()
+            navigate(LOGIN)
+        },
+        onError: (error) => {
+            notificationShow('error', 'Error!',error.message)
+        }
+    })
 
    
     return {
         userProfile,
         isAuthenticated,
         onSubmitAccountForm,
-        handleLoginPassword
+        handleLoginPassword,
+        logout : handleLogout
     }
 }
 export default useAuth
