@@ -3,6 +3,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import { IFormInputs } from "./type"
 import useAuth from "../../hooks/useAuth";
 import { notificationShow } from "../Notification";
+import { handleGlobalException } from "../../utils/error";
 
 const LoginForm: React.FC<{ onMethodChange: () => void }> = (props) => {
     const theme = useMantineTheme();
@@ -17,22 +18,32 @@ const LoginForm: React.FC<{ onMethodChange: () => void }> = (props) => {
     const onSubmit: SubmitHandler<IFormInputs> = (data) => {
         onSubmitAccountForm(data,
             (error) => {
-                if (error.code === 'ERR_NETWORK') {
-                    notificationShow('error', 'Error!', error.message)
-                }
-                else if (error.response.status === 500) {
-                    notificationShow('error', 'Error!', error.response.data.error)
-                }
-                else {
+                handleGlobalException(error, () => {
                     setError("username", {
                         type: "manual",
-                        message: (error.response.status === 404) ? true : error.response.data.username,
+                        message: error.response.data.username,
                     })
                     setError("password", {
                         type: "manual",
-                        message: (error.response.status === 404) ? error.response.data.error : error.response.data.password,
+                        message: error.response.data.password,
                     })
-                }
+                });
+                // if (error.code === 'ERR_NETWORK') {
+                //     notificationShow('error', 'Error!', error.message)
+                // }
+                // else if (error.response.status === 500) {
+                //     notificationShow('error', 'Error!', error.response.data.error)
+                // }
+                // else {
+                //     setError("username", {
+                //         type: "manual",
+                //         message: (error.response.status === 404) ? true : error.response.data.username,
+                //     })
+                //     setError("password", {
+                //         type: "manual",
+                //         message: (error.response.status === 404) ? error.response.data.error : error.response.data.password,
+                //     })
+                // }
             },
         )
     }
