@@ -43,7 +43,7 @@ export default function HomeHeader() {
         <Menu.Dropdown>
           <Menu.Item
             component="a"
-            href="/Profile"
+            href="/profile"
             icon={<IconUserCircle size={20} />}
           >
             Tài khoản
