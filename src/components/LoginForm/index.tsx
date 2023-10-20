@@ -28,22 +28,6 @@ const LoginForm: React.FC<{ onMethodChange: () => void }> = (props) => {
                         message: error.response.data.password,
                     })
                 });
-                // if (error.code === 'ERR_NETWORK') {
-                //     notificationShow('error', 'Error!', error.message)
-                // }
-                // else if (error.response.status === 500) {
-                //     notificationShow('error', 'Error!', error.response.data.error)
-                // }
-                // else {
-                //     setError("username", {
-                //         type: "manual",
-                //         message: (error.response.status === 404) ? true : error.response.data.username,
-                //     })
-                //     setError("password", {
-                //         type: "manual",
-                //         message: (error.response.status === 404) ? error.response.data.error : error.response.data.password,
-                //     })
-                // }
             },
         )
     }
