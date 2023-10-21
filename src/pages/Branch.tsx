@@ -1,10 +1,12 @@
-import { Button, Pagination, Select } from "@mantine/core";
+import { Button, Pagination, Select, Modal, Group } from "@mantine/core";
 import BranchTable from "../components/Branch/BranchTable";
 import { IconPlus, IconSearch } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 import useBranchProvinces from "../hooks/useBranch";
 import { handleGlobalException } from "../utils/error";
 import { useForm } from "react-hook-form";
+import { useDisclosure } from "@mantine/hooks";
+import BranchForm from "../components/BranchForm";
 interface AllBranchesProps {
   items: ItemsProps[];
   numPages: number;
@@ -78,6 +80,8 @@ function Branch() {
       limit: "",
     },
   });
+
+  const [opened, { open, close }] = useDisclosure(false);
 
   //fetch provinces
   useEffect(() => {
@@ -232,17 +236,23 @@ function Branch() {
           onChange={handleDistrictsChange}
           value={districtSlug}
         />
-        <Button
-          className="button"
-          leftIcon={<IconPlus size="15px" />}
-          styles={(theme) => ({
-            root: {
-              backgroundColor: theme.colors.munsellBlue[0],
-            },
-          })}
-        >
-          Thêm chi nhánh
-        </Button>
+        <Modal opened={opened} onClose={close} centered>
+          <BranchForm />
+        </Modal>
+        <Group position="center">
+          <Button
+            className="button"
+            leftIcon={<IconPlus size="15px" />}
+            styles={(theme) => ({
+              root: {
+                backgroundColor: theme.colors.munsellBlue[0],
+              },
+            })}
+            onClick={open}
+          >
+            Thêm chi nhánh
+          </Button>
+        </Group>
       </div>
       <div className="branch-table">
         <BranchTable
