@@ -3,6 +3,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "../settings/axios";
 import { Account } from "../pages/Account";
 import { notificationShow } from "../components/Notification";
+import { handleGlobalException } from "../utils/error";
 
 function useEmployeeProfile() {
   const storedAccount = localStorage.getItem("userProfile");
@@ -29,18 +30,14 @@ function useEmployeeProfile() {
         );
       },
       onError: (error) => {
-        if (error.code === "ERR_NETWORK") {
-          notificationShow("error", "Error!", error.message);
-        } else if (
-          (error.response.status === 500, error.response.status === 403)
-        ) {
-          notificationShow("error", "Error!", error.response.data.error);
-        } else if (error.response.status === 400) {
-          const data = error.response.data;
-          Object.keys(data).forEach((key) => {
-            notificationShow("error", "Error!", data[key]);
-          });
-        }
+        handleGlobalException(error, ()=>{
+          if (error.response.status === 400) {
+              const data = error.response.data;
+              Object.keys(data).forEach((key) => {
+                notificationShow("error", "Error!", data[key]);
+              });
+          }
+        })
       },
     });
   };
