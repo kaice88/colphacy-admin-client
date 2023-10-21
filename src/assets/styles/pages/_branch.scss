@@ -1,0 +1,80 @@
+.branch-ctn {
+  padding: 1rem 2rem;
+  .branch-title {
+    font-size: 18px;
+  }
+  .search-field {
+    padding: 2rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .button:hover {
+      background-color: $munsellBlue;
+    }
+  }
+  .branch-table {
+    height: 35rem;
+    .mantine-12tbqdc {
+      line-height: 2;
+    }
+    Table tr th,
+    td {
+      padding-left: 4rem;
+    }
+    .delete-edit {
+      margin: 0 0.5rem;
+
+      &:hover {
+        color: $munsellBlue;
+        cursor: pointer;
+      }
+    }
+  }
+  .pagination-ctn {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .mantine-cjw5zx[data-active]:not([data-disabled]):hover {
+      background-color: $munsellBlue;
+    }
+  }
+}
+
+.search {
+  border: 1px solid #f0f0f0;
+  padding: 0.4rem 0.6rem;
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  width: 400px;
+  button {
+    outline: none;
+    border: none;
+    background-color: #fff;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  input {
+    width: 21rem;
+    color: #657384;
+    font-size: 14px;
+    font-family: Be Vietnam Pro, sans-serif;
+    outline: none;
+    border: none;
+    &:focus-visible {
+      outline-offset: 0px;
+    }
+    &:focus {
+      cursor: pointer;
+    }
+  }
+  .search-btn {
+    background-color: #ebf2f2;
+    color: #0093af;
+    border-radius: 10px;
+    padding: 0.5rem;
+    margin-left: 0.4rem;
+    border: none;
+  }
+}
