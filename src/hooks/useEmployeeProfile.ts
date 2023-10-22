@@ -20,15 +20,9 @@ function useEmployeeProfile() {
       return axios.put(REQUEST_EMPLOYEE_PROFILE(id), data);
     },
   });
-  const onSubmitProfileForm = (data: Account) => {
+  const onSubmitProfileForm = (data: Account, onSuccess) => {
     handleUpdateProfile.mutate(data, {
-      onSuccess: () => {
-        notificationShow(
-          "success",
-          "Success!",
-          "Cập nhật thông tin thành công!"
-        );
-      },
+      onSuccess:onSuccess ,
       onError: (error) => {
         handleGlobalException(error, ()=>{
           if (error.response.status === 400) {
@@ -41,6 +35,7 @@ function useEmployeeProfile() {
       },
     });
   };
+  
   return {
     fetchEmployeeProfile,
     handleUpdateProfile,

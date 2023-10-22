@@ -13,6 +13,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { IconArrowLeft, IconPencil } from "@tabler/icons-react";
 import { notificationShow } from "../components/Notification";
 import { useNavigate } from "react-router-dom";
+import { isEmpty } from "lodash";
 export interface Account {
   id: number;
   fullName: string;
@@ -27,36 +28,35 @@ export interface Account {
 export default function Account() {
   const { fetchEmployeeProfile, onSubmitProfileForm, handleUpdateProfile } =
     useEmployeeProfile();
-  const [branch, setBrach] = useState(null);
   const navigate = useNavigate();
-  useEffect(() => {
-    async function fetchData() {
-      const data = await fetchEmployeeProfile.refetch();
-      if (data.isSuccess) {
-        const a = data.data.data;
-        Object.keys(a).forEach((key) => {
-          setValue(key, a[key]);
-        });
-        setBrach(a["branch"]);
-      } else if (data.isError) {
-        const error = data.error.response;
-        if (error.code === "ERR_NETWORK") {
-          notificationShow("error", "Error!", error.message);
-        } else if (error.response.status === 500) {
-          notificationShow("error", "Error!", error.response.data.error);
-        }
+  const [data, setData] = useState<Account>();
+  async function fetchData() {
+    const data = await fetchEmployeeProfile.refetch();
+    if (data.isSuccess) {
+      const a = data.data.data;
+      setData(a)
+      Object.keys(a).forEach((key) => {
+        setValue(key, a[key]);
+      });
+    }
+     else if (data.isError) {
+      const error = data.error.response;
+      if (error.code === "ERR_NETWORK") {
+        notificationShow("error", "Error!", error.message);
+      } else if (error.response.status === 500) {
+        notificationShow("error", "Error!", error.response.data.error);
       }
     }
+  }
+  useEffect(() => {
     fetchData();
-  }, [setBrach]);
+  }, []);
   const theme = useMantineTheme();
   const {
     control,
     handleSubmit,
     formState: { errors },
-    setError,
     setValue,
-    getValues,
   } = useForm({
     defaultValues: {
       fullName: "",
@@ -70,7 +70,14 @@ export default function Account() {
   });
   const changePassword = () => {};
   const onSubmit: SubmitHandler<Account> = (data) => {
-    onSubmitProfileForm(data);
+    onSubmitProfileForm(data, () => {
+      fetchData();
+      notificationShow(
+        "success",
+        "Success!",
+        "Cập nhật thông tin thành công!"
+      );
+    });
   };
   const handleBack = () => {
     navigate(-1);
@@ -94,7 +101,7 @@ export default function Account() {
       >
         <IconArrowLeft />
       </Button>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      {!isEmpty(data) && <form onSubmit={handleSubmit(onSubmit)}>
         <Flex
           direction="column"
           gap="md"
@@ -194,7 +201,6 @@ export default function Account() {
               />
             )}
           ></Controller>
-
           <Controller
             name="role"
             control={control}
@@ -207,7 +213,7 @@ export default function Account() {
               />
             )}
           ></Controller>
-          {getValues("branch") && (
+          {data?.branch !== null && (
             <Controller
               name="branch"
               control={control}
@@ -240,7 +246,8 @@ export default function Account() {
             </Text>
           </a>
         </Flex>
-      </form>
+      </form> }
+     
     </>
   );
 }
