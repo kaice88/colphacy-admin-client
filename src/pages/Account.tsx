@@ -41,7 +41,7 @@ export default function Account() {
       });
     }
      else if (data.isError) {
-      const error = data.errcdor.response;
+      const error = data.error.response;
       handleGlobalException(error, ()=>{
         if (error.response.status === 400) {
             const data = error.response.data;
@@ -111,19 +111,6 @@ export default function Account() {
           gap="md"
           style={{ width: "50vw", margin: "auto" }}
         >
-          <Avatar
-            styles={() => ({
-              placeholderIcon: {
-                backgroundColor: "white",
-              },
-            })}
-            sx={{
-              width: 100,
-              height: 100,
-              borderRadius: "50%",
-              alignSelf: "center",
-            }}
-          />
           <Controller
             name="fullName"
             control={control}
