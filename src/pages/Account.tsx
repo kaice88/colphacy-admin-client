@@ -40,7 +40,11 @@ export default function Account() {
       });
     }
      else if (data.isError) {
+<<<<<<< HEAD
       const error = data.error.response;
+=======
+      const error = data.errcdor.response;
+>>>>>>> 6442725 (refactor: :recycle: add error fetching)
       handleGlobalException(error, ()=>{
         if (error.response.status === 400) {
             const data = error.response.data;
