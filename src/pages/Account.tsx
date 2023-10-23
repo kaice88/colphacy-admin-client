@@ -14,6 +14,7 @@ import { IconArrowLeft, IconPencil } from "@tabler/icons-react";
 import { notificationShow } from "../components/Notification";
 import { useNavigate } from "react-router-dom";
 import { isEmpty } from "lodash";
+import { handleGlobalException } from "../utils/error";
 export interface Account {
   id: number;
   fullName: string;
@@ -33,19 +34,22 @@ export default function Account() {
   async function fetchData() {
     const data = await fetchEmployeeProfile.refetch();
     if (data.isSuccess) {
-      const a = data.data.data;
-      setData(a)
-      Object.keys(a).forEach((key) => {
-        setValue(key, a[key]);
+      const result = data.data.data;
+      setData(result)
+      Object.keys(result).forEach((key) => {
+        setValue(key, result[key]);
       });
     }
      else if (data.isError) {
-      const error = data.error.response;
-      if (error.code === "ERR_NETWORK") {
-        notificationShow("error", "Error!", error.message);
-      } else if (error.response.status === 500) {
-        notificationShow("error", "Error!", error.response.data.error);
-      }
+      const error = data.errcdor.response;
+      handleGlobalException(error, ()=>{
+        if (error.response.status === 400) {
+            const data = error.response.data;
+            Object.keys(data).forEach((key) => {
+              notificationShow("error", "Error!", data[key]);
+            });
+        }
+      })
     }
   }
   useEffect(() => {
