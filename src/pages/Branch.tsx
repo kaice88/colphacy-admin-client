@@ -41,36 +41,25 @@ function Branch() {
   const [searchValue, setSearchValue] = useState("");
 
   const [branchesDistricts, setBranchesDistricts] = useState([]);
-
-  // Function to handle page change
-  const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-  };
-  const handleProvincesChange = (value: string) => {
-    setProvinceSlug(value);
-    setDistrictSlug("");
-    setSearchValue("");
-  };
-  const handleDistrictsChange = (value: string) => {
-    setDistrictSlug(value);
-    setSearchValue("");
-  };
   const offset = (currentPage - 1) * limitInit;
+  const filter = {
+    offset: offset,
+    limit: 10,
+    province: provinceSlug,
+    district: districtSlug,
+  };
+  const search = {
+    offset: offset,
+    limit: 10,
+    keyword: searchValue,
+  };
 
   const {
     fetchBranchProvinces,
-    fetchAllBranch,
     fetchBranchDistricts,
-    fetchBranchSearchDistricts,
+    fetchBranch,
     fetchBranchSearchKeywork,
-    fetchBranchSearchProvinces,
-  } = useBranchProvinces(
-    offset,
-    limitInit,
-    provinceSlug,
-    districtSlug,
-    searchValue
-  );
+  } = useBranchProvinces(search, filter, provinceSlug);
 
   const { setError } = useForm({
     defaultValues: {
@@ -79,25 +68,44 @@ function Branch() {
     },
   });
 
-  //fetch provinces
-  useEffect(() => {
-    async function fetchData() {
-      const data = await fetchBranchProvinces.refetch();
-      if (data.isSuccess) {
-        setBranchesProvinces(data.data.data);
-      } else if (data.isError) {
-        const error = data.error.response;
-        handleGlobalException(error, () => {});
-      }
-    }
-    fetchData();
-  }, []);
-  const formattedProvinces = formatProvincesDistricts(branchesProvinces);
+  const [filterArr, setFilterArr] = useState(filter);
+  const [searchArr, setSearchArr] = useState(search);
 
-  //fetch all branch
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
+  const handleProvincesChange = (value: string) => {
+    setProvinceSlug(value);
+    setDistrictSlug("");
+    setSearchValue("");
+    setCurrentPage(1);
+  };
+  const handleDistrictsChange = (value: string) => {
+    setDistrictSlug(value);
+    setSearchValue("");
+    setCurrentPage(1);
+  };
+
   useEffect(() => {
-    async function fetchData() {
-      const data = await fetchAllBranch.refetch();
+    setFilterArr({
+      offset: offset,
+      limit: 10,
+      province: provinceSlug,
+      district: districtSlug,
+    });
+  }, [districtSlug, provinceSlug, offset]);
+  useEffect(() => {
+    setSearchArr({
+      offset: offset,
+      limit: 10,
+      keyword: searchValue,
+    });
+  }, [searchValue, offset]);
+
+  useEffect(() => {
+    async function fetchBranchData() {
+      const data = await fetchBranch.refetch();
+
       if (data.isSuccess) {
         setAllBranches(data.data.data);
       } else if (data.isError) {
@@ -105,66 +113,10 @@ function Branch() {
         handleGlobalException(error, () => {});
       }
     }
-    fetchData();
-  }, [currentPage]);
-  const itemsPerPage = allBranches.limit;
-  const startIndex = allBranches.offset;
-  const endIndex = startIndex + itemsPerPage;
-  const totalBranches = allBranches.totalItems;
-  const totalPages = allBranches.numPages;
+    fetchBranchData();
 
-  //fetch districts
-  useEffect(() => {
-    if (provinceSlug) {
-      async function fetchData() {
-        const data = await fetchBranchDistricts.refetch();
-        if (data.isSuccess) {
-          setBranchesDistricts(data.data.data);
-        } else if (data.isError) {
-          const error = data.error.response;
-          handleGlobalException(error, () => {});
-        }
-      }
-      fetchData();
-    }
-  }, [provinceSlug]);
-
-  //search by province and district
-  useEffect(() => {
-    if (provinceSlug && districtSlug) {
-      async function fetchData() {
-        const data = await fetchBranchSearchDistricts.refetch();
-        if (data.isSuccess) {
-          setAllBranches(data.data.data);
-        } else if (data.isError) {
-          const error = data.error.response;
-          handleGlobalException(error, () => {});
-        }
-      }
-      fetchData();
-    }
-  }, [provinceSlug, districtSlug]);
-
-  //search by province
-  useEffect(() => {
-    if (provinceSlug) {
-      async function fetchData() {
-        const data = await fetchBranchSearchProvinces.refetch();
-        if (data.isSuccess) {
-          setAllBranches(data.data.data);
-        } else if (data.isError) {
-          const error = data.error.response;
-          handleGlobalException(error, () => {});
-        }
-      }
-      fetchData();
-    }
-  }, [provinceSlug]);
-
-  // search by keyword
-  useEffect(() => {
-    if (searchValue) {
-      async function fetchData() {
+    if (searchArr.keyword) {
+      async function fetchKeyworkData() {
         const data = await fetchBranchSearchKeywork.refetch();
         if (data.isSuccess) {
           setAllBranches(data.data.data);
@@ -182,13 +134,46 @@ function Branch() {
           });
         }
       }
-      fetchData();
+      fetchKeyworkData();
     }
-  }, [searchValue]);
+  }, [filterArr, searchArr]);
+  useEffect(() => {
+    if (provinceSlug === null) {
+      setBranchesDistricts([]);
+    }
+    async function fetchProvincesData() {
+      const data = await fetchBranchProvinces.refetch();
+      if (data.isSuccess) {
+        setBranchesProvinces(data.data.data);
+      } else if (data.isError) {
+        const error = data.error.response;
+        handleGlobalException(error, () => {});
+      }
+    }
+    fetchProvincesData();
+    if (provinceSlug) {
+      async function fetchDistrictsData() {
+        const data = await fetchBranchDistricts.refetch();
+        if (data.isSuccess) {
+          setBranchesDistricts(data.data.data);
+        } else if (data.isError) {
+          const error = data.error.response;
+          handleGlobalException(error, () => {});
+        }
+      }
+      fetchDistrictsData();
+    }
+  }, [provinceSlug]);
+
+  const formattedProvinces = formatProvincesDistricts(branchesProvinces);
+  const itemsPerPage = allBranches.limit;
+  const startIndex = allBranches.offset;
+  const endIndex = startIndex + itemsPerPage;
+  const totalBranches = allBranches.totalItems;
+  const totalPages = allBranches.numPages;
 
   const formattedDistricts = formatProvincesDistricts(branchesDistricts);
 
-  //Search
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -198,6 +183,7 @@ function Branch() {
       setProvinceSlug("");
       setDistrictSlug("");
       setBranchesDistricts([]);
+      setCurrentPage(1);
     }
   };
 
@@ -220,20 +206,23 @@ function Branch() {
             <IconSearch size="1.3rem"></IconSearch>
           </button>
         </div>
+        <div className="label">hoặc</div>
         <Select
           placeholder="Chọn Tỉnh/ Thành"
           data={formattedProvinces}
           onChange={handleProvincesChange}
           value={provinceSlug}
+          clearable
         />
         <Select
           placeholder="Chọn Quận/ Huyện"
           data={formattedDistricts}
           onChange={handleDistrictsChange}
           value={districtSlug}
+          clearable
         />
         <Button
-          className="button"
+          className="button add-button"
           leftIcon={<IconPlus size="15px" />}
           styles={(theme) => ({
             root: {
@@ -268,6 +257,7 @@ function Branch() {
           </div>
         )}
         <Pagination
+          value={currentPage}
           total={totalPages}
           onChange={handlePageChange}
           position="center"
