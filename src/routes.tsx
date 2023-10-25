@@ -6,6 +6,7 @@ import * as ROUTES from "./constants/routes";
 import Login from "./pages/Login";
 import Account from "./pages/Account";
 import EditPassword from "./pages/EditPassword";
+import Branch from "./pages/Branch";
 
 export const router = createBrowserRouter([
   {
@@ -29,6 +30,11 @@ export const router = createBrowserRouter([
       {
         path: "/editPassword",
         element: <EditPassword />,
+      },
+      {
+        index: true,
+        element: <Branch />,
+        path: "/branch-management",
       },
     ],
   },
