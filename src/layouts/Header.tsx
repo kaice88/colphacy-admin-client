@@ -29,7 +29,6 @@ export default function HomeHeader() {
             styles={(theme) => ({
               root: {
                 backgroundColor: "white",
-                color: theme.colors.munsellBlue[0],
                 border: 0,
                 fontSize: "16px",
                 color: theme.fn.lighten(theme.colors.munsellBlue[0], 0.5),

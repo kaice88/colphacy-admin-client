@@ -105,11 +105,11 @@ export default function Account() {
       >
         <IconArrowLeft />
       </Button>
-      {!isEmpty(data) && <form onSubmit={handleSubmit(onSubmit)}>
+      {!isEmpty(data) && <form className="employee-account-form" onSubmit={handleSubmit(onSubmit)}>
         <Flex
           direction="column"
           gap="md"
-          style={{ width: "50vw", margin: "auto" }}
+          style={{ width: "50vw", margin: "auto", marginTop: "8%" }}
         >
           <Controller
             name="fullName"
