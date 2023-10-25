@@ -1,26 +1,43 @@
+import axios from "../settings/axios";
 import {
-  REQUEST_ALL_BRANCHES,
+  REQUEST_BRANCHES,
   REQUEST_BRANCHES_PROVINCES,
   REQUEST_BRANCHES_DISTRICTS,
-  REQUEST_BRANCHES_SEARCH_DISTRICTS,
-  REQUEST_BRANCHES_SEARCH_PROVINCES,
   REQUEST_BRANCHES_SEARCH_KEY,
 } from "./../constants/apis";
 import { useQuery } from "@tanstack/react-query";
-import axios from "../settings/axios";
 
 function useBranchProvinces(
-  offset: number,
-  limit: number,
-  provinceSlug: string,
-  districtSlug: string,
-  keyword: string
+  search: { offset: number; limit: number; keyword: string },
+  filter: {
+    offset: number;
+    limit: number;
+    province?: string;
+    district?: string;
+  },
+  provinceSlug: string
 ) {
-  const fetchAllBranch = useQuery({
-    queryKey: ["all_branch"],
-    queryFn: () => axios.get(REQUEST_ALL_BRANCHES(offset, limit)),
-    enabled: false,
-  });
+  const buildParams = () => {
+    const params: Record<string, any> = {};
+
+    if (filter.province) {
+      params.province = filter.province;
+    }
+
+    if (filter.district) {
+      params.district = filter.district;
+    }
+
+    if (filter.offset) {
+      params.offset = filter.offset;
+    }
+
+    if (filter.limit) {
+      params.limit = filter.limit;
+    }
+
+    return params;
+  };
   const fetchBranchProvinces = useQuery({
     queryKey: ["branch_provinces"],
     queryFn: () => axios.get(REQUEST_BRANCHES_PROVINCES),
@@ -31,38 +48,30 @@ function useBranchProvinces(
     queryFn: () => axios.get(REQUEST_BRANCHES_DISTRICTS(provinceSlug)),
     enabled: false,
   });
-  const fetchBranchSearchDistricts = useQuery({
-    queryKey: ["branch_search_districts"],
-    queryFn: () =>
-      axios.get(
-        REQUEST_BRANCHES_SEARCH_DISTRICTS(
-          provinceSlug,
-          districtSlug,
-          offset,
-          limit
-        )
-      ),
-    enabled: false,
-  });
-  const fetchBranchSearchProvinces = useQuery({
-    queryKey: ["branch_search_provinces"],
-    queryFn: () =>
-      axios.get(REQUEST_BRANCHES_SEARCH_PROVINCES(provinceSlug, offset, limit)),
+  const fetchBranch = useQuery({
+    queryKey: ["all_branch"],
+    queryFn: () => {
+      const params = buildParams();
+
+      return axios.get(REQUEST_BRANCHES, {
+        params: params,
+      });
+    },
     enabled: false,
   });
   const fetchBranchSearchKeywork = useQuery({
     queryKey: ["branch_search_keywork"],
     queryFn: () =>
-      axios.get(REQUEST_BRANCHES_SEARCH_KEY(keyword, offset, limit)),
+      axios.get(
+        REQUEST_BRANCHES_SEARCH_KEY(search.keyword, search.offset, search.limit)
+      ),
     enabled: false,
   });
 
   return {
     fetchBranchProvinces,
-    fetchAllBranch,
     fetchBranchDistricts,
-    fetchBranchSearchDistricts,
-    fetchBranchSearchProvinces,
+    fetchBranch,
     fetchBranchSearchKeywork,
   };
 }
