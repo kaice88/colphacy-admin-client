@@ -1,7 +1,19 @@
-import { Button, Flex, TextInput, Text, useMantineTheme } from "@mantine/core";
+import {
+  Button,
+  Flex,
+  TextInput,
+  Text,
+  useMantineTheme,
+  Select,
+} from "@mantine/core";
+import { useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import Map from "../Map/Map";
 
 const BranchForm: React.FC<{}> = (props) => {
+  const [provinceSlug, setProvinceSlug] = useState("");
+  const [districtSlug, setDistrictSlug] = useState("");
+  const [wardSlug, setWardSlug] = useState("");
   const {
     control,
     handleSubmit,
@@ -18,6 +30,19 @@ const BranchForm: React.FC<{}> = (props) => {
   const theme = useMantineTheme();
 
   const onSubmit = () => {};
+  const handleProvincesChange = (value: string) => {
+    setProvinceSlug(value);
+    setDistrictSlug("");
+  };
+  const handleDistrictsChange = (value: string) => {
+    setDistrictSlug(value);
+  };
+  const handleWardsChange = (value: string) => {
+    setWardSlug(value);
+  };
+  const [branchesProvinces, setBranchesProvinces] = useState([]);
+  const [branchesDistricts, setBranchesDistricts] = useState([]);
+  const [branchesWards, setBranchesWards] = useState([]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -31,7 +56,33 @@ const BranchForm: React.FC<{}> = (props) => {
         Thêm chi nhánh
       </Text>
       <Flex direction="column" gap="md">
-        <div>
+        <Flex direction="row">
+          <Select
+            placeholder="Chọn Tỉnh/ Thành"
+            data={branchesProvinces}
+            onChange={handleProvincesChange}
+            value={provinceSlug}
+            clearable
+          />
+          <Select
+            placeholder="Chọn Quận/ Huyện"
+            data={branchesDistricts}
+            onChange={handleDistrictsChange}
+            value={districtSlug}
+            clearable
+          />
+          <Select
+            placeholder="Chọn Phường/ Xã"
+            data={branchesWards}
+            onChange={handleWardsChange}
+            value={wardSlug}
+            clearable
+          />
+        </Flex>
+        <Flex direction="row">
+          <Map />
+        </Flex>
+        <Flex direction="row">
           <Controller
             name="openTime"
             control={control}
@@ -48,27 +99,29 @@ const BranchForm: React.FC<{}> = (props) => {
               <TextInput {...field} required label="Giờ đóng cửa" radius="md" />
             )}
           ></Controller>
-        </div>
-        <Controller
-          name="phoneNumber"
-          control={control}
-          rules={{ required: false, minLength: 6 }}
-          render={({ field }) => (
-            <TextInput
-              {...field}
-              required
-              label="Số điện thoại"
-              radius="md"
-              //   error={
-              //     errors.username
-              //       ? errors.username.type === "minLength"
-              //         ? "Tên tài khoản có độ dài ít nhất 6 kí tự"
-              //         : errors.username.message
-              //       : false
-              //   }
-            />
-          )}
-        ></Controller>
+        </Flex>
+        <Flex direction="row">
+          <Controller
+            name="phoneNumber"
+            control={control}
+            rules={{ required: false, minLength: 6 }}
+            render={({ field }) => (
+              <TextInput
+                {...field}
+                required
+                label="Số điện thoại"
+                radius="md"
+                //   error={
+                //     errors.username
+                //       ? errors.username.type === "minLength"
+                //         ? "Tên tài khoản có độ dài ít nhất 6 kí tự"
+                //         : errors.username.message
+                //       : false
+                //   }
+              />
+            )}
+          ></Controller>
+        </Flex>
         <Flex justify="center">
           <Button
             // loading={handleCancel.isLoading}

@@ -225,7 +225,7 @@ function Branch() {
           value={districtSlug}
           clearable
         />
-        <Modal opened={opened} onClose={close} centered>
+        <Modal opened={opened} onClose={close} size="60" centered>
           <BranchForm />
         </Modal>
         <Group position="center">
