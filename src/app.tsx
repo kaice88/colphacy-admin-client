@@ -6,10 +6,12 @@ import { Notifications } from '@mantine/notifications'
 
 export default function App() {
   // Create a client
-  const queryClient = new QueryClient()
+  const queryClient = new QueryClient();
   return (
     <QueryClientProvider client={queryClient}>
-      <MantineProvider withGlobalStyles withNormalizeCSS
+      <MantineProvider
+        withGlobalStyles
+        withNormalizeCSS
         theme={{
           colors: {
             flashWhite: ['#F0F0F0'],
@@ -20,9 +22,9 @@ export default function App() {
           fontFamily: 'Be Vietnam Pro, sans-serif',
         }}
       >
-        <Notifications position="top-right" zIndex={2077} />
+        <Notifications position='top-right' zIndex={2077} />
         <RouterProvider router={router} />
       </MantineProvider>
     </QueryClientProvider>
-  )
+  );
 }

@@ -21,4 +21,3 @@ export const handleGlobalException = (error: ErrorObject, callback: () => void) 
       callback();
     }
   };
-  
