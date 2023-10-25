@@ -4,6 +4,7 @@ import ErrorPage from "./pages/Error";
 import Home from "./pages/Home";
 import * as ROUTES from "./constants/routes";
 import Login from "./pages/Login";
+import Account from "./pages/Account";
 
 export const router = createBrowserRouter([
   {
@@ -22,7 +23,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "profile",
-        element: <Home />,
+        element: <Account />,
       },
       {
         path: "forgotPassword",
