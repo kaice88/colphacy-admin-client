@@ -1,12 +1,12 @@
 import { Avatar, Button, Header, Image, Menu } from "@mantine/core";
 import images from "../assets/images/logo.jpg";
 import { IconLogout, IconPassword, IconUserCircle } from "@tabler/icons-react";
-import { Account } from "../pages/Account";
+import useAuthStore from "../store/AuthStore";
+import useAuth from "../hooks/useAuth";
+import { useEffect, useState } from "react";
 
 export default function HomeHeader() {
-  const storedAccount = localStorage.getItem("userProfile");
-  const account = storedAccount ? JSON.parse(storedAccount) as Account : null;
-  
+  const { userProfile } = useAuth();
   return (
     <Header height={{ base: 50, md: 70 }} p="xs" m={5} mx="3%" display={"flex"}>
       <Image maw={165} radius="md" src={images} alt="Random image" />
@@ -40,7 +40,7 @@ export default function HomeHeader() {
               },
             })}
           >
-            {account && account.username}
+            {userProfile && userProfile.username}
           </Button>
         </Menu.Target>
         <Menu.Dropdown>
@@ -51,7 +51,11 @@ export default function HomeHeader() {
           >
             Tài khoản
           </Menu.Item>
-          <Menu.Item component="a" href="/editPassword" icon={<IconPassword size={20} />}>
+          <Menu.Item
+            component="a"
+            href="/editPassword"
+            icon={<IconPassword size={20} />}
+          >
             Cập nhật mật khẩu
           </Menu.Item>
           <Menu.Item component="a" href="/" icon={<IconLogout size={20} />}>

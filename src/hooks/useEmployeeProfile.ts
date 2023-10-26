@@ -4,9 +4,14 @@ import axios from "../settings/axios";
 import { Account } from "../pages/Account";
 import { notificationShow } from "../components/Notification";
 import { handleGlobalException } from "../utils/error";
+import useAuthStore from "../store/AuthStore";
 
 function useEmployeeProfile() {
   const storedAccount = localStorage.getItem("userProfile");
+  const { update } = useAuthStore();
+  const updateUserProfile = (userProfile) => {
+    update(userProfile);
+  };
   const account = storedAccount ? (JSON.parse(storedAccount) as Account) : null;
   const id = Number(account?.id);
   const fetchEmployeeProfile = useQuery({
@@ -22,24 +27,25 @@ function useEmployeeProfile() {
   });
   const onSubmitProfileForm = (data: Account, onSuccess) => {
     handleUpdateProfile.mutate(data, {
-      onSuccess:onSuccess ,
+      onSuccess: onSuccess,
       onError: (error) => {
-        handleGlobalException(error, ()=>{
+        handleGlobalException(error, () => {
           if (error.response.status === 400) {
-              const data = error.response.data;
-              Object.keys(data).forEach((key) => {
-                notificationShow("error", "Error!", data[key]);
-              });
+            const data = error.response.data;
+            Object.keys(data).forEach((key) => {
+              notificationShow("error", "Error!", data[key]);
+            });
           }
-        })
+        });
       },
     });
   };
-  
+
   return {
     fetchEmployeeProfile,
     handleUpdateProfile,
     onSubmitProfileForm,
+    updateUserProfile,
   };
 }
 export default useEmployeeProfile;
