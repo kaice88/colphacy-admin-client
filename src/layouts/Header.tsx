@@ -1,12 +1,14 @@
-import { Avatar, Button, Header, Image, Menu } from "@mantine/core";
+import { Button, Avatar, Header, Image, Menu } from "@mantine/core";
 import images from "../assets/images/logo.jpg";
 import { IconLogout, IconPassword, IconUserCircle } from "@tabler/icons-react";
-import useAuthStore from "../store/AuthStore";
 import useAuth from "../hooks/useAuth";
-import { useEffect, useState } from "react";
 
 export default function HomeHeader() {
   const { userProfile } = useAuth();
+  const { logout } = useAuth();
+  const handleLogout = () => {
+    logout.mutate();
+  };
   return (
     <Header height={{ base: 50, md: 70 }} p="xs" m={5} mx="3%" display={"flex"}>
       <Image maw={165} radius="md" src={images} alt="Random image" />
@@ -58,7 +60,7 @@ export default function HomeHeader() {
           >
             Cập nhật mật khẩu
           </Menu.Item>
-          <Menu.Item component="a" href="/" icon={<IconLogout size={20} />}>
+          <Menu.Item icon={<IconLogout size={20} />} onClick={handleLogout}>
             Đăng xuất
           </Menu.Item>
         </Menu.Dropdown>
