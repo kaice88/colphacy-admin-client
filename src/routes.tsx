@@ -5,8 +5,8 @@ import Home from "./pages/Home";
 import * as ROUTES from "./constants/routes";
 import Login from "./pages/Login";
 import Account from "./pages/Account";
-import EditPassword from "./pages/EditPassword";
 import Branch from "./pages/Branch";
+import ChangePassword from "./pages/ChangePassword";
 
 export const router = createBrowserRouter([
   {
@@ -29,7 +29,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "/editPassword",
-        element: <EditPassword />,
+        element: <ChangePassword />,
       },
       {
         index: true,
