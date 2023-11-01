@@ -86,6 +86,15 @@ export default function Account() {
   const onSubmit: SubmitHandler<Account> = (data) => {
     onSubmitProfileForm(
       data,
+      () => {
+        fetchData();
+        notificationShow(
+          "success",
+          "Success!",
+          "Cập nhật thông tin thành công!"
+        );
+        navigate("/", { state: { from: location.pathname } });
+      },
       (error) => {
         handleGlobalException(error, () => {
           Object.keys(error.response.data).forEach((key) => {

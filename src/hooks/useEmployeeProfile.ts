@@ -36,18 +36,9 @@ function useEmployeeProfile() {
       return axios.put(REQUEST_EMPLOYEE_CHANGE_PASSWORD, data);
     },
   });
-  const onSubmitProfileForm = (
-    data: Account,
-    onError: (error: object) => void
-  ) => {
+  const onSubmitProfileForm = (data: Account, onSuccess: () => void, onError: (error: object) => void) => {
     handleUpdateProfile.mutate(data, {
-      onSuccess: () => {
-        notificationShow(
-          "success",
-          "Success!",
-          "Cập nhật thông tin thành công!"
-        );
-      },
+      onSuccess: onSuccess,
       onError: (error) => onError(error),
     });
   };
