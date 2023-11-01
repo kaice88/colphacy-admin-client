@@ -6,12 +6,16 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "../settings/axios";
 import { Account } from "../pages/Account";
 import { notificationShow } from "../components/Notification";
-import { handleGlobalException } from "../utils/error";
 import { IChangePassword } from "../pages/ChangePassword";
 import { useNavigate } from "react-router-dom";
+import useAuthStore from "../store/AuthStore";
 
 function useEmployeeProfile() {
   const storedAccount = localStorage.getItem("userProfile");
+  const { update } = useAuthStore();
+  const updateUserProfile = (userProfile) => {
+    update(userProfile);
+  };
   const account = storedAccount ? (JSON.parse(storedAccount) as Account) : null;
   const id = Number(account?.id);
   const navigate = useNavigate();
@@ -63,12 +67,14 @@ function useEmployeeProfile() {
       onError: (error) => onError(error),
     });
   };
+
   return {
     fetchEmployeeProfile,
     handleUpdateProfile,
     handleUpdatePassword,
     onSubmitProfileForm,
     onSubmitChangePasswordForm,
+    updateUserProfile,
   };
 }
 export default useEmployeeProfile;
