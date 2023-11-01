@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import Account from "./pages/Account";
 import EditPassword from "./pages/EditPassword";
 import Branch from "./pages/Branch";
+import UnitPage from "./pages/UnitPage";
 
 export const router = createBrowserRouter([
   {
@@ -35,6 +36,10 @@ export const router = createBrowserRouter([
         index: true,
         element: <Branch />,
         path: "/branch-management",
+      },
+      {
+        element: <UnitPage />,
+        path: "/unit-management",
       },
     ],
   },
