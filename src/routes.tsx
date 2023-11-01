@@ -7,6 +7,8 @@ import Login from "./pages/Login";
 import Account from "./pages/Account";
 import Branch from "./pages/Branch";
 import ChangePassword from "./pages/ChangePassword";
+import Product from "./pages/Product";
+import ExampleA from "./pages/ExampleA";
 
 export const router = createBrowserRouter([
   {
@@ -24,7 +26,7 @@ export const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "/profile",
+        path: '/profile',
         element: <Account />,
       },
       {
@@ -32,9 +34,16 @@ export const router = createBrowserRouter([
         element: <ChangePassword />,
       },
       {
-        index: true,
         element: <Branch />,
-        path: "/branch-management",
+        path: '/branch-management',
+      },
+      {
+        path: 'product-management',
+        element: <Product />,
+      },
+      {
+        path: 'unit-management',
+        element: <ExampleA />,
       },
     ],
   },

@@ -12,3 +12,11 @@ export const REQUEST_BRANCHES_SEARCH_KEY = (
   offset: number,
   limit: number
 ) => `/branches/search?keyword=${keyword}&offset=${offset}&limit=${limit}`;
+
+// Add Branch
+export const REQUEST_ADD_BRANCHES_PROVINCES = "/location/provinces";
+export const REQUEST_ADD_BRANCHES_DISTRICTS = (provinceId: number) =>
+  `/location/districts?provinceId=${provinceId}`;
+export const REQUEST_ADD_BRANCHES_WARDS = (districtId: number) =>
+  `/location/wards?districtId=${districtId}`;
+  
