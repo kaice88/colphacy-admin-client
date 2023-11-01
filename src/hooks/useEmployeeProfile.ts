@@ -2,8 +2,6 @@ import { REQUEST_EMPLOYEE_PROFILE } from "./../constants/apis";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "../settings/axios";
 import { Account } from "../pages/Account";
-import { notificationShow } from "../components/Notification";
-import { handleGlobalException } from "../utils/error";
 import useAuthStore from "../store/AuthStore";
 
 function useEmployeeProfile() {
@@ -25,19 +23,10 @@ function useEmployeeProfile() {
       return axios.put(REQUEST_EMPLOYEE_PROFILE(id), data);
     },
   });
-  const onSubmitProfileForm = (data: Account, onSuccess) => {
+  const onSubmitProfileForm = (data: Account, onSuccess: () => void, onError: (error: object) => void) => {
     handleUpdateProfile.mutate(data, {
       onSuccess: onSuccess,
-      onError: (error) => {
-        handleGlobalException(error, () => {
-          if (error.response.status === 400) {
-            const data = error.response.data;
-            Object.keys(data).forEach((key) => {
-              notificationShow("error", "Error!", data[key]);
-            });
-          }
-        });
-      },
+      onError: (error) => onError(error),
     });
   };
 
