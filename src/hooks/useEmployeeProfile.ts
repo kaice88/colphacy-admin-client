@@ -8,11 +8,13 @@ import { Account } from "../pages/Account";
 import { notificationShow } from "../components/Notification";
 import { handleGlobalException } from "../utils/error";
 import { IChangePassword } from "../pages/ChangePassword";
+import { useNavigate } from "react-router-dom";
 
 function useEmployeeProfile() {
   const storedAccount = localStorage.getItem("userProfile");
   const account = storedAccount ? (JSON.parse(storedAccount) as Account) : null;
   const id = Number(account?.id);
+  const navigate = useNavigate();
   const fetchEmployeeProfile = useQuery({
     queryKey: ["employee_profile"],
     queryFn: () => axios.get(REQUEST_EMPLOYEE_PROFILE(id)),
@@ -30,32 +32,35 @@ function useEmployeeProfile() {
       return axios.put(REQUEST_EMPLOYEE_CHANGE_PASSWORD, data);
     },
   });
-  const onSubmitProfileForm = (data: Account, onSuccess) => {
+  const onSubmitProfileForm = (
+    data: Account,
+    onError: (error: object) => void
+  ) => {
     handleUpdateProfile.mutate(data, {
-      onSuccess: onSuccess,
-      onError: (error) => {
-        handleGlobalException(error, () => {
-          if (error.response.status === 400) {
-            const data = error.response.data;
-            Object.keys(data).forEach((key) => {
-              notificationShow("error", "Error!", data[key]);
-            });
-          }
-        });
+      onSuccess: () => {
+        notificationShow(
+          "success",
+          "Success!",
+          "Cập nhật thông tin thành công!"
+        );
       },
+      onError: (error) => onError(error),
     });
   };
-  const onSubmitChangePasswordForm = (data: IChangePassword, onSuccess) => {
+  const onSubmitChangePasswordForm = (
+    data: IChangePassword,
+    onError: (error: object) => void
+  ) => {
     handleUpdatePassword.mutate(data, {
-      onSuccess: onSuccess,
-      onError: (error) => {
-        handleGlobalException(error, () => {
-          if (error.response.status === 400) {
-            const data = error.response.data;
-            notificationShow("error", "Error!", data[Object.keys(data)[0]]);
-          }
-        });
+      onSuccess: () => {
+        notificationShow(
+          "success",
+          "Success!",
+          "Cập nhật thông tin thành công!"
+        );
+        navigate("/profile");
       },
+      onError: (error) => onError(error),
     });
   };
   return {

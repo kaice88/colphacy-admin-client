@@ -2,8 +2,8 @@ import useEmployeeProfile from "../hooks/useEmployeeProfile";
 import { Button, Flex, PasswordInput } from "@mantine/core";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { IconArrowLeft } from "@tabler/icons-react";
-import { notificationShow } from "../components/Notification";
 import { useNavigate } from "react-router-dom";
+import { handleGlobalException } from "../utils/error";
 export interface IChangePassword {
   oldPassword: string;
   newPassword: string;
@@ -17,6 +17,7 @@ export default function ChangePassword() {
   const {
     control,
     handleSubmit,
+    setError,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -26,11 +27,15 @@ export default function ChangePassword() {
     },
   });
   const onSubmit: SubmitHandler<IChangePassword> = (data) => {
-    onSubmitChangePasswordForm(data, () => {
-      notificationShow("success", "Success!", "Cập nhật thông tin thành công!");
-      setTimeout(() => {
-        navigate(-1);
-      }, 1500);
+    onSubmitChangePasswordForm(data, (error) => {
+      handleGlobalException(error, () => {
+        Object.keys(error.response.data).forEach((key) => {
+          setError(key, {
+            type: "manual",
+            message: error.response.data[key],
+          });
+        });
+      });
     });
   };
   const handleBack = () => {
