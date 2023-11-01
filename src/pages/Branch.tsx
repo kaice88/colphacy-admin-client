@@ -2,7 +2,7 @@ import { Button, Pagination, Select, Modal, Group } from "@mantine/core";
 import BranchTable from "../components/Branch/BranchTable";
 import { IconPlus, IconSearch } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
-import useBranchProvinces from "../hooks/useBranch";
+import { useBranch } from "../hooks/useBranch";
 import { handleGlobalException } from "../utils/error";
 import { useForm } from "react-hook-form";
 import { useDisclosure } from "@mantine/hooks";
@@ -41,6 +41,7 @@ function Branch() {
   const [provinceSlug, setProvinceSlug] = useState("");
   const [districtSlug, setDistrictSlug] = useState("");
   const [searchValue, setSearchValue] = useState("");
+  const [isReloadata, setIsReloadata] = useState(false);
 
   const [branchesDistricts, setBranchesDistricts] = useState([]);
   const offset = (currentPage - 1) * limitInit;
@@ -61,7 +62,7 @@ function Branch() {
     fetchBranchDistricts,
     fetchBranch,
     fetchBranchSearchKeywork,
-  } = useBranchProvinces(search, filter, provinceSlug);
+  } = useBranch(search, filter, provinceSlug);
 
   const { setError } = useForm({
     defaultValues: {
@@ -113,7 +114,7 @@ function Branch() {
       if (data.isSuccess) {
         setAllBranches(data.data.data);
       } else if (data.isError) {
-        const error = data.error.response;
+        const error = data.error;
         handleGlobalException(error, () => {});
       }
     }
@@ -125,7 +126,7 @@ function Branch() {
         if (data.isSuccess) {
           setAllBranches(data.data.data);
         } else if (data.isError) {
-          const error = data.error.response;
+          const error = data.error;
           handleGlobalException(error, () => {
             setError("offset", {
               type: "manual",
@@ -140,7 +141,7 @@ function Branch() {
       }
       fetchKeyworkData();
     }
-  }, [filterArr, searchArr]);
+  }, [filterArr, searchArr, isReloadata]);
   useEffect(() => {
     if (provinceSlug === null) {
       setBranchesDistricts([]);
@@ -150,7 +151,7 @@ function Branch() {
       if (data.isSuccess) {
         setBranchesProvinces(data.data.data);
       } else if (data.isError) {
-        const error = data.error.response;
+        const error = data.error;
         handleGlobalException(error, () => {});
       }
     }
@@ -161,7 +162,7 @@ function Branch() {
         if (data.isSuccess) {
           setBranchesDistricts(data.data.data);
         } else if (data.isError) {
-          const error = data.error.response;
+          const error = data.error;
           handleGlobalException(error, () => {});
         }
       }
@@ -189,6 +190,16 @@ function Branch() {
       setBranchesDistricts([]);
       setCurrentPage(1);
     }
+  };
+
+  const handleSuccessSubmit = () => {
+    close();
+    setIsReloadata(!isReloadata);
+    setCurrentPage(totalPages);
+  };
+
+  const handleCloseModal = () => {
+    close();
   };
 
   return (
@@ -225,8 +236,11 @@ function Branch() {
           value={districtSlug}
           clearable
         />
-        <Modal opened={opened} onClose={close} size="60" centered>
-          <BranchForm />
+        <Modal opened={opened} onClose={close} size="60" centered m={20}>
+          <BranchForm
+            onSuccesSubmit={handleSuccessSubmit}
+            onCancel={handleCloseModal}
+          />
         </Modal>
         <Group position="center">
           <Button

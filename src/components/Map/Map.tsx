@@ -1,6 +1,5 @@
-import { Input } from "@mantine/core";
+import { Flex, Input } from "@mantine/core";
 import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
 
 declare global {
   interface Window {
@@ -9,12 +8,15 @@ declare global {
   }
 }
 
-const Map: React.FC = () => {
+const Map: React.FC<{
+  onDrag: (lat: number, lng: number) => void;
+  onStreetAddressChange: (streetAddress: string) => void;
+}> = ({ onDrag, onStreetAddressChange }) => {
   useEffect(() => {
     window.initMap = initMap;
     const script = document.createElement("script");
     script.src =
-      "https://maps.googleapis.com/maps/api/js?key=AIzaSyDZzKSucg3yB9xvr-k1Ji8SBWBoNuIc4M4&libraries=places&callback=initMap";
+      "https://maps.googleapis.com/maps/api/js?key=AIzaSyB-uJD60yVMePHQ_4c_pmh6De9giTBr9rE&libraries=places&callback=initMap";
     script.async = true;
     script.defer = true;
     document.body.appendChild(script);
@@ -47,6 +49,9 @@ const Map: React.FC = () => {
         marker.setPosition(place.geometry.location);
         map.setCenter(place.geometry.location);
         map.setZoom(14);
+        const latLng = marker.getPosition();
+        onDrag(latLng.lat(), latLng.lng());
+
         autocompleteInput.value = place.name;
       }, 500)
     );
@@ -63,19 +68,30 @@ const Map: React.FC = () => {
 
     marker.addListener("dragend", function () {
       const latLng = marker.getPosition();
-      console.log("Marker was dragged to:", latLng.lat(), latLng.lng());
+      onDrag(latLng.lat(), latLng.lng());
       localStorage.setItem("defaultLat", latLng.lat().toString());
       localStorage.setItem("defaultLng", latLng.lng().toString());
     });
   };
 
   return (
-    <div>
-      <Input type="text" id="autocomplete-input" placeholder="Địa chỉ cụ thể" />
+    <Flex direction="column" p={10}>
+      <Input
+        name="streetAddress"
+        pb={20}
+        required
+        type="text"
+        id="autocomplete-input"
+        placeholder="Địa chỉ cụ thể"
+        onChange={(event) => {
+          const address = event.target.value;
+          if (onStreetAddressChange) {
+            onStreetAddressChange(address);
+          }
+        }}
+      />
       <div id="map"></div>
-      {/* <a href="saved.html">Saved location</a> */}
-      <Link to="/saved">Saved Location</Link>
-    </div>
+    </Flex>
   );
 };
 
