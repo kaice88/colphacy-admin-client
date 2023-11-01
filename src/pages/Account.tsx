@@ -69,6 +69,7 @@ export default function Account() {
     handleSubmit,
     formState: { errors },
     setValue,
+    setError,
   } = useForm({
     defaultValues: {
       id: -1,
@@ -83,11 +84,28 @@ export default function Account() {
   });
   const changePassword = () => {};
   const onSubmit: SubmitHandler<Account> = (data) => {
-    onSubmitProfileForm(data, () => {
-      fetchData();
-      notificationShow("success", "Success!", "Cập nhật thông tin thành công!");
-      navigate("/", { state: { from: location.pathname } });
-    });
+    onSubmitProfileForm(
+      data,
+      () => {
+        fetchData();
+        notificationShow(
+          "success",
+          "Success!",
+          "Cập nhật thông tin thành công!"
+        );
+        navigate("/", { state: { from: location.pathname } });
+      },
+      (error) => {
+        handleGlobalException(error, () => {
+          Object.keys(error.response.data).forEach((key) => {
+            setError(key, {
+              type: "manual",
+              message: error.response.data[key],
+            });
+          });
+        });
+      }
+    );
   };
 
   return (
