@@ -1,14 +1,14 @@
-import { createBrowserRouter } from "react-router-dom";
-import Layout from "./layouts/Layout";
-import ErrorPage from "./pages/Error";
-import Home from "./pages/Home";
-import * as ROUTES from "./constants/routes";
-import Login from "./pages/Login";
-import Account from "./pages/Account";
-import Branch from "./pages/Branch";
-import ChangePassword from "./pages/ChangePassword";
-import Product from "./pages/Product";
-import ExampleA from "./pages/ExampleA";
+import { createBrowserRouter } from 'react-router-dom';
+import Layout from './layouts/Layout';
+import ErrorPage from './pages/Error';
+import Home from './pages/Home';
+import * as ROUTES from './constants/routes';
+import Login from './pages/Login';
+import Account from './pages/Account';
+import Branch from './pages/Branch';
+import Product from './pages/Product';
+import UnitPage from './pages/UnitPage';
+import ChangePassword from './pages/ChangePassword';
 
 export const router = createBrowserRouter([
   {
@@ -30,7 +30,7 @@ export const router = createBrowserRouter([
         element: <Account />,
       },
       {
-        path: "/editPassword",
+        path: '/editPassword',
         element: <ChangePassword />,
       },
       {
@@ -43,7 +43,7 @@ export const router = createBrowserRouter([
       },
       {
         path: 'unit-management',
-        element: <ExampleA />,
+        element: <UnitPage />,
       },
     ],
   },
