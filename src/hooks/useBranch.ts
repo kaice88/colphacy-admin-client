@@ -1,13 +1,17 @@
+import { Branch } from "../components/BranchForm";
 import axios from "../settings/axios";
 import {
   REQUEST_BRANCHES,
   REQUEST_BRANCHES_PROVINCES,
   REQUEST_BRANCHES_DISTRICTS,
   REQUEST_BRANCHES_SEARCH_KEY,
+  REQUEST_ADD_BRANCHES_PROVINCES,
+  REQUEST_ADD_BRANCHES_DISTRICTS,
+  REQUEST_ADD_BRANCHES_WARDS,
 } from "./../constants/apis";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
-function useBranchProvinces(
+export function useBranch(
   search: { offset: number; limit: number; keyword: string },
   filter: {
     offset: number;
@@ -75,4 +79,47 @@ function useBranchProvinces(
     fetchBranchSearchKeywork,
   };
 }
-export default useBranchProvinces;
+export function useAddBranch(provinceId: number, districtId: number) {
+  const fetchAddBranchProvinces = useQuery({
+    queryKey: ["add_branch_provinces"],
+    queryFn: () => axios.get(REQUEST_ADD_BRANCHES_PROVINCES),
+    enabled: false,
+  });
+  const fetchAddBranchDistricts = useQuery({
+    queryKey: ["add_branch_districts"],
+    queryFn: () => axios.get(REQUEST_ADD_BRANCHES_DISTRICTS(provinceId)),
+    enabled: false,
+  });
+  const fetchAddBranchWards = useQuery({
+    queryKey: ["add_branch_wards"],
+    queryFn: () => axios.get(REQUEST_ADD_BRANCHES_WARDS(districtId)),
+    enabled: false,
+  });
+
+  const handleAddBranch = useMutation({
+    mutationKey: ["add_new_branch"],
+    mutationFn: (data: Branch) => {
+      return axios.post(REQUEST_BRANCHES, data);
+    },
+  });
+
+  const onSubmitAddBranchForm = (
+    data: Branch,
+    onSuccess: () => void,
+    onError: (error: object) => void
+  ) => {
+    handleAddBranch.mutate(data, {
+      onSuccess: onSuccess,
+      onError: (error) => onError(error),
+    });
+  };
+
+  return {
+    fetchAddBranchProvinces,
+    fetchAddBranchDistricts,
+    fetchAddBranchWards,
+    handleAddBranch,
+    onSubmitAddBranchForm,
+  };
+}
+// export default { useBranchProvinces, useAddBranchProvinces };

@@ -1,14 +1,14 @@
 import { Button, Flex, Group, Modal, Pagination } from "@mantine/core";
 import { IconPlus, IconSearch } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
-import useUnit from "../hooks/useUnit";
-import { handleGlobalException } from "../utils/error";
+import { useDisclosure } from "@mantine/hooks";
 import UnitTable from "../components/Unit/UnitTable";
-import UnitFrom, { Unit } from "../components/Unit/UnitFrom";
+import UnitForm from "../components/Unit/UnitForm";
+import useUnit, { useUnitExceptAdd } from "../hooks/useUnit";
+import { handleGlobalException } from "../utils/error";
 import { notificationShow } from "../components/Notification";
-import { useNavigate } from "react-router-dom";
-
-interface AllUnitProps {
+import { useForm } from "react-hook-form";
+interface AllUnitsProps {
   items: ItemsProps[];
   numPages: number;
   offset: number;
@@ -17,34 +17,49 @@ interface AllUnitProps {
 }
 interface ItemsProps {
   id: number;
-  address: string;
-  phone: string;
+  name: string;
 }
 export default function UnitPage() {
-  const limitInit = 10;
-  const [currentPage, setCurrentPage] = useState(1);
-  const offset = (currentPage - 1) * limitInit;
+  const [action, setAction] = useState("add");
+  const [opened, { open, close }] = useDisclosure(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [searchValue, setSearchValue] = useState("");
-  const [allUnits, setAllUnits] = useState<AllUnitProps>({
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isReloadata, setIsReloadata] = useState(false);
+
+  const [allUnits, setAllUnits] = useState<AllUnitsProps>({
     items: [],
     numPages: 0,
     offset: 0,
     limit: 0,
     totalItems: 0,
   });
+  const itemsPerPage = allUnits.limit;
+  const startIndex = allUnits.offset;
+  const endIndex = startIndex + itemsPerPage;
+  const totalUnits = allUnits.totalItems;
+  const totalPages = allUnits.numPages;
+  const limitInit = 10;
+  const offset = (currentPage - 1);
   const search = {
     offset: offset,
-    limit: 10,
+    limit: 10 ,
     keyword: searchValue,
   };
+  const filter = {
+    offset: offset,
+    limit: 10,
+  };
   const [searchArr, setSearchArr] = useState(search);
-  const [unit, setUnit] = useState<Unit>();
-  const [addFormOpened, setAddFormOpened] = useState(false);
-  const [editFormOpened, setEditFormOpened] = useState(false);
-  const [deleteFormOpened, setDeleteFormOpened] = useState(false);
-  const navigater = useNavigate();
-  const { fetchUnit } = useUnit();
+
+  const { fetchUnit, fetchUnitSearchKeywork } = useUnitExceptAdd(search, filter);
+  const { setError } = useForm({
+    defaultValues: {
+      offset: "",
+      limit: "",
+    },
+  });
+
   useEffect(() => {
     setSearchArr({
       offset: offset,
@@ -52,7 +67,6 @@ export default function UnitPage() {
       keyword: searchValue,
     });
   }, [searchValue, offset]);
-
   async function fetchUnitData() {
     const data = await fetchUnit.refetch();
     if (data.isSuccess) {
@@ -69,30 +83,30 @@ export default function UnitPage() {
       });
     }
   }
+  async function fetchKeyworkData() {
+    const data = await fetchUnitSearchKeywork.refetch();
+    if (data.isSuccess) {
+      setAllUnits(data.data.data);
+    } else if (data.isError) {
+      const error = data.error;
+      handleGlobalException(error, () => {
+        setError("offset", {
+          type: "manual",
+          message: error.response.data.offset,
+        });
+        setError("limit", {
+          type: "manual",
+          message: error.response.data.limit,
+        });
+      });
+    }
+  }
   useEffect(() => {
     fetchUnitData();
-  }, []);
-  const itemsPerPage = allUnits.limit;
-  const startIndex = allUnits.offset;
-  const endIndex = startIndex + itemsPerPage;
-  const totalUnits = allUnits.totalItems;
-  const totalPages = allUnits.numPages;
-  const handleSuccessSubmit = () => {
-    close();
-    fetchUnitData();
-    navigater(0);
-  };
-  const handleCancelForm = () => {
-    close();
-  };
-  const handleEdit = (unit: Unit) => {
-    setUnit(unit);
-    setEditFormOpened(true);
-  };
-  const handleDelete = (unit: Unit) => {
-    setDeleteFormOpened(true);
-    setUnit(unit);
-  };
+    if (searchArr.keyword) {
+      fetchKeyworkData();
+    }
+  }, [searchArr]);
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
   };
@@ -125,50 +139,22 @@ export default function UnitPage() {
           </div>
         </div>
         <Modal
-          opened={addFormOpened}
-          onClose={() => setAddFormOpened(false)}
+          opened={opened}
+          onClose={close}
           size="60"
           centered
           m={20}
+          title={action === "add" ? "Thêm đơn vị tính" : ""}
+          styles={() => ({
+            title: {
+              fontWeight: "bold",
+            },
+          })}
         >
-          <UnitFrom
-            title="add"
-            unit={unit}
-            onSuccesSubmit={handleSuccessSubmit}
-            onCancelForm={handleCancelForm}
-          />
-        </Modal>
-        <Modal
-          opened={editFormOpened}
-          onClose={() => setEditFormOpened(false)}
-          size="60"
-          centered
-          m={20}
-        >
-          <UnitFrom
-            onSuccesSubmit={handleSuccessSubmit}
-            onCancelForm={handleCancelForm}
-            title="edit"
-            unit={unit}
-          />
-        </Modal>
-        <Modal
-          opened={deleteFormOpened}
-          onClose={() => setDeleteFormOpened(false)}
-          size="60"
-          centered
-          m={20}
-        >
-          <UnitFrom
-            onSuccesSubmit={handleSuccessSubmit}
-            onCancelForm={handleCancelForm}
-            title="delete"
-            unit={unit}
-          />
+          <UnitForm title={action} onClose={close} />
         </Modal>
         <Group ml="auto">
           <Button
-            className="button unit-add-button"
             leftIcon={<IconPlus size="15px" />}
             styles={(theme) => ({
               root: {
@@ -182,25 +168,25 @@ export default function UnitPage() {
               },
             })}
             onClick={() => {
-              setAddFormOpened(true);
+              setAction("add");
+              open();
             }}
           >
             Thêm đơn vị tính
           </Button>
         </Group>
       </Flex>
-      <div className="unit-table">
+      <div className="branch-table">
         <UnitTable
-          startIndex={startIndex}
+          startIndex={startIndex*limitInit}
           endIndex={endIndex}
           allUnites={allUnits}
-          handleDelete={handleDelete}
-          handleEdit={handleEdit}
         />
       </div>
+      <br />
       <div className="pagination-ctn">
         {totalUnits === 0 ? (
-          <div>Không tìm thấy kết quả nào.</div>
+          <div> Không tìm thấy kết quả nào.</div>
         ) : totalUnits === 1 ? (
           <div>Tìm thấy 1 kết quả.</div>
         ) : (

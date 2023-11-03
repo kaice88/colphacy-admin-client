@@ -6,8 +6,6 @@ interface UnitTableProps {
   startIndex: number;
   endIndex: number;
   allUnites: AllUnitesProps;
-  handleEdit: (unit: Unit) => void;
-  handleDelete: (unit: Unit) => void;
 }
 interface AllUnitesProps {
   items: Unit[];
@@ -16,7 +14,7 @@ interface AllUnitesProps {
   limit: number;
   totalItems: number;
 }
-const UnitTable: FC<UnitTableProps> = ({ startIndex, allUnites, handleEdit,  handleDelete}) => {
+const UnitTable: FC<UnitTableProps> = ({ startIndex,endIndex, allUnites}) => {
   const rows = allUnites.items.map((element, index) => (
     <tr key={element.id}>
       <td>{startIndex + index + 1}</td>
@@ -26,9 +24,9 @@ const UnitTable: FC<UnitTableProps> = ({ startIndex, allUnites, handleEdit,  han
           className="delete-edit"
           strokeWidth="1.8"
           size="22px"
-          onClick={()=>handleEdit(element)}
+          onClick={()=>{}}
         />
-        <IconTrashX className="delete-edit" strokeWidth="1.8" size="22px" onClick={()=>handleDelete(element)}/>
+        <IconTrashX className="delete-edit" strokeWidth="1.8" size="22px" onClick={()=>{}}/>
       </td>
     </tr>
   ));
