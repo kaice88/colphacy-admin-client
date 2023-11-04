@@ -1,7 +1,8 @@
 import { FC } from "react";
-import { Table } from "@mantine/core";
+import { Table, useMantineTheme } from "@mantine/core";
 import { IconEdit, IconTrashX } from "@tabler/icons-react";
-import { Unit } from "./UnitFrom";
+import { Unit } from "./UnitForm";
+import { deleteModal } from "../../utils/deleteModal";
 interface UnitTableProps {
   startIndex: number;
   endIndex: number;
@@ -14,7 +15,8 @@ interface AllUnitesProps {
   limit: number;
   totalItems: number;
 }
-const UnitTable: FC<UnitTableProps> = ({ startIndex,endIndex, allUnites}) => {
+const UnitTable: FC<UnitTableProps> = ({ startIndex, endIndex, allUnites }) => {
+  const theme = useMantineTheme();
   const rows = allUnites.items.map((element, index) => (
     <tr key={element.id}>
       <td>{startIndex + index + 1}</td>
@@ -24,9 +26,20 @@ const UnitTable: FC<UnitTableProps> = ({ startIndex,endIndex, allUnites}) => {
           className="delete-edit"
           strokeWidth="1.8"
           size="22px"
-          onClick={()=>{}}
+          onClick={() => {}}
+          color={theme.colors.cobaltBlue[0]}
         />
-        <IconTrashX className="delete-edit" strokeWidth="1.8" size="22px" onClick={()=>{}}/>
+        <IconTrashX
+          className="delete-edit"
+          strokeWidth="1.8"
+          size="22px"
+          color="red"
+          onClick={() => {
+            deleteModal("đơn vị tinh", element.name, () => {
+              console.log("xóa");
+            });
+          }}
+        />
       </td>
     </tr>
   ));
