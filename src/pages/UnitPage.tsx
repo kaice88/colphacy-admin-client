@@ -1,4 +1,4 @@
-import { Button, Flex, Group, Modal } from "@mantine/core";
+import { Button, Flex, Modal } from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
 import { useState } from "react";
 import UnitForm from "../components/unit/UnitForm";
@@ -27,9 +27,7 @@ export default function UnitPage() {
         >
           <UnitForm title={action} onClose={close} />
         </Modal>
-        {/* <Group ml="auto"> */}
         <Button
-          // className="button unit-add-button"
           leftIcon={<IconPlus size="15px" />}
           styles={(theme) => ({
             root: {
@@ -49,7 +47,6 @@ export default function UnitPage() {
         >
           Thêm đơn vị tính
         </Button>
-        {/* </Group> */}
       </Flex>
     </div>
   );

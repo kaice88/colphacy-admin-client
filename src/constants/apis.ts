@@ -1,6 +1,8 @@
-export const REQUEST_AUTH_LOGIN_PASSWORD  = "/auth/employee/login"
-export const REQUEST_AUTH_LOGOUT  = "/auth/employee/logout"
-export const REQUEST_EMPLOYEE_PROFILE  = (id:number) => `employees/profile/${id}`
+export const REQUEST_AUTH_LOGIN_PASSWORD = "/auth/employee/login";
+export const REQUEST_AUTH_LOGOUT = "/auth/employee/logout";
+export const REQUEST_EMPLOYEE_CHANGE_PASSWORD = "/employees/change-password";
+export const REQUEST_EMPLOYEE_PROFILE = (id: number) =>
+  `employees/profile/${id}`;
 export const REQUEST_BRANCHES_PROVINCES = "/branches/provinces";
 export const REQUEST_BRANCHES = `/branches`;
 export const REQUEST_UNITS = `/units`;
