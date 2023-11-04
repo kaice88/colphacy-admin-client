@@ -3,15 +3,18 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import useUnit from "../../hooks/useUnit";
 import { handleGlobalException } from "../../utils/error";
 import { notificationShow } from "../Notification";
+import { useNavigate } from "react-router-dom";
 
 export interface Unit {
   id: number | undefined;
-  name: string | undefined;
+  name: string | "";
 }
 const UnitForm: React.FC<{
   onClose: () => void;
   title: string;
-}> = ({ title, onClose }) => {
+  unit: Unit | undefined;
+}> = ({ title, onClose, unit }) => {
+  const navigate = useNavigate();
   const {
     handleSubmit,
     control,
@@ -19,13 +22,37 @@ const UnitForm: React.FC<{
     setError,
   } = useForm({
     defaultValues: {
-      name: "",
+      id: unit ? unit.id : "",
+      name: unit ? unit.name : "",
     },
   });
-  const { handleAddUnit, onSubmitAddUnitForm } = useUnit();
-  const onSubmit: SubmitHandler<{ name: string }> = (data) => {
+  const {
+    handleAddUnit,
+    onSubmitAddUnitForm,
+    handleUpdateUnit,
+    onSubmitUpdateUnitForm,
+  } = useUnit();
+  const onSubmit: SubmitHandler<Unit> = (data) => {
     if (title === "add") {
       onSubmitAddUnitForm(
+        { name: data.name },
+        (error) => {
+          handleGlobalException(error, () => {
+            Object.keys(error.response.data).forEach((key) => {
+              setError(key, {
+                type: "manual",
+                message: error.response.data[key],
+              });
+            });
+          });
+        },
+        () => {
+          onClose();
+          notificationShow("success", "Success!", "Thêm đơn vị thành công!");
+        }
+      );
+    } else {
+      onSubmitUpdateUnitForm(
         data,
         (error) => {
           handleGlobalException(error, () => {
@@ -39,6 +66,7 @@ const UnitForm: React.FC<{
         },
         () => {
           onClose();
+          navigate("/unit-management");
           notificationShow("success", "Success!", "Thêm đơn vị thành công!");
         }
       );
@@ -63,10 +91,9 @@ const UnitForm: React.FC<{
           )}
         ></Controller>
       )}
-
       <Flex justify="space-around" align="center" my="xs">
         <Button
-          loading={handleAddUnit.isLoading}
+          loading={handleAddUnit.isLoading || handleUpdateUnit.isLoading}
           className="button"
           styles={(theme) => ({
             root: {
