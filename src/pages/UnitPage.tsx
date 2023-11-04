@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
 import UnitTable from "../components/Unit/UnitTable";
 import UnitForm from "../components/Unit/UnitForm";
-import useUnit, { useUnitExceptAdd } from "../hooks/useUnit";
+import { useUnitExceptAdd } from "../hooks/useUnit";
 import { handleGlobalException } from "../utils/error";
 import { notificationShow } from "../components/Notification";
 import { useForm } from "react-hook-form";
@@ -25,7 +25,6 @@ export default function UnitPage() {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [searchValue, setSearchValue] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [isReloadata, setIsReloadata] = useState(false);
 
   const [allUnits, setAllUnits] = useState<AllUnitsProps>({
     items: [],
@@ -40,10 +39,10 @@ export default function UnitPage() {
   const totalUnits = allUnits.totalItems;
   const totalPages = allUnits.numPages;
   const limitInit = 10;
-  const offset = (currentPage - 1);
+  const offset = currentPage - 1;
   const search = {
     offset: offset,
-    limit: 10 ,
+    limit: 10,
     keyword: searchValue,
   };
   const filter = {
@@ -52,21 +51,16 @@ export default function UnitPage() {
   };
   const [searchArr, setSearchArr] = useState(search);
 
-  const { fetchUnit, fetchUnitSearchKeywork } = useUnitExceptAdd(search, filter);
+  const { fetchUnit, fetchUnitSearchKeywork } = useUnitExceptAdd(
+    search,
+    filter
+  );
   const { setError } = useForm({
     defaultValues: {
       offset: "",
       limit: "",
     },
   });
-
-  useEffect(() => {
-    setSearchArr({
-      offset: offset,
-      limit: 10,
-      keyword: searchValue,
-    });
-  }, [searchValue, offset]);
   async function fetchUnitData() {
     const data = await fetchUnit.refetch();
     if (data.isSuccess) {
@@ -102,11 +96,21 @@ export default function UnitPage() {
     }
   }
   useEffect(() => {
-    fetchUnitData();
     if (searchArr.keyword) {
       fetchKeyworkData();
+    } else {
+      fetchUnitData();
     }
   }, [searchArr]);
+  useEffect(() => {
+    setSearchArr((prev) => {
+      return {
+        ...prev,
+        offset: offset,
+        keyword: searchValue,
+      };
+    });
+  }, [searchValue, offset]);
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
   };
@@ -178,7 +182,7 @@ export default function UnitPage() {
       </Flex>
       <div className="branch-table">
         <UnitTable
-          startIndex={startIndex*limitInit}
+          startIndex={startIndex * limitInit}
           endIndex={endIndex}
           allUnites={allUnits}
         />
