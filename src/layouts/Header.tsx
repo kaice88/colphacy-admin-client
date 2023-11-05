@@ -1,4 +1,4 @@
-gitimport { Button, Avatar, Header, Image, Menu } from "@mantine/core";
+import { Button, Avatar, Image, Menu, Header } from "@mantine/core";
 import images from "../assets/images/logo.jpg";
 import { IconLogout, IconPassword, IconUserCircle } from "@tabler/icons-react";
 import useAuth from "../hooks/useAuth";
