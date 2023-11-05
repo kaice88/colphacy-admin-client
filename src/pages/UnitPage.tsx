@@ -8,7 +8,7 @@ import { useUnitExceptAdd } from "../hooks/useUnit";
 import { handleGlobalException } from "../utils/error";
 import { notificationShow } from "../components/Notification";
 import { useForm } from "react-hook-form";
-interface AllUnitsProps {
+export interface AllUnitsProps {
   items: ItemsProps[];
   numPages: number;
   offset: number;
@@ -155,7 +155,7 @@ export default function UnitPage() {
             },
           })}
         >
-          <UnitForm title={action} onClose={close} />
+          <UnitForm title={action} onClose={close}/>
         </Modal>
         <Group ml="auto">
           <Button

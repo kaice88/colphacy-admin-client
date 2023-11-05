@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { Table } from "@mantine/core";
 import { IconEdit, IconTrashX } from "@tabler/icons-react";
-import { Unit } from "./UnitFrom";
+import { Unit } from "./UnitForm";
 interface UnitTableProps {
   startIndex: number;
   endIndex: number;
