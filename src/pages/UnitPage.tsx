@@ -8,6 +8,7 @@ import { useUnitExceptAdd } from "../hooks/useUnit";
 import { handleGlobalException } from "../utils/error";
 import { notificationShow } from "../components/Notification";
 import { useForm } from "react-hook-form";
+import Title from "../components/Title/Title";
 export interface AllUnitsProps {
   items: ItemsProps[];
   numPages: number;
@@ -123,7 +124,7 @@ export default function UnitPage() {
   };
   return (
     <div className="unit-ctn">
-      <h1 className="unit-title">Danh sách đơn vị tính</h1>
+      <Title title ="Danh sách đơn vị tính" ></Title>
       <Flex>
         <div className="search-field">
           <div className="search">
