@@ -3,7 +3,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import useUnit from "../../hooks/useUnit";
 import { handleGlobalException } from "../../utils/error";
 import { notificationShow } from "../Notification";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export interface Unit {
   id: number | undefined;
@@ -14,6 +14,7 @@ const UnitForm: React.FC<{
   title: string;
   unit: Unit | undefined;
 }> = ({ title, onClose, unit }) => {
+  const location = useLocation();
   const navigate = useNavigate();
   const {
     handleSubmit,
@@ -32,6 +33,7 @@ const UnitForm: React.FC<{
     handleUpdateUnit,
     onSubmitUpdateUnitForm,
   } = useUnit();
+  
   const onSubmit: SubmitHandler<Unit> = (data) => {
     if (title === "add") {
       onSubmitAddUnitForm(
@@ -66,8 +68,8 @@ const UnitForm: React.FC<{
         },
         () => {
           onClose();
-          navigate("/unit-management");
-          notificationShow("success", "Success!", "Thêm đơn vị thành công!");
+          notificationShow("success", "Success!", "Sửa đơn vị thành công!");
+          navigate("/", { state: { from: location.pathname } });
         }
       );
     }
