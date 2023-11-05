@@ -1,12 +1,19 @@
-import { REQUEST_UNITS, REQUEST_UNITS_SEARCH_KEY } from "./../constants/apis";
+import {
+  REQUEST_UNITS,
+  REQUEST_UNITS_DELETE,
+  REQUEST_UNITS_SEARCH_KEY,
+} from "./../constants/apis";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "../settings/axios";
+import { notificationShow } from "../components/Notification";
+import { useLocation, useNavigate } from "react-router-dom";
+import { handleGlobalException } from "../utils/error";
 export function useUnitExceptAdd(
   search: { offset: number; limit: number; keyword: string },
   filter: {
     offset: number;
     limit: number;
-  },
+  }
 ) {
   const buildParams = () => {
     const params: Record<string, any> = {};
@@ -42,15 +49,23 @@ export function useUnitExceptAdd(
   });
   return {
     fetchUnit,
-    fetchUnitSearchKeywork
+    fetchUnitSearchKeywork,
   };
 }
 
 function useUnit() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const handleAddUnit = useMutation({
     mutationKey: ["add-unit"],
     mutationFn: (data: { name: string }) => {
       return axios.post(REQUEST_UNITS, data);
+    },
+  });
+  const handleDeleteUnit = useMutation({
+    mutationKey: ["delete-unit"],
+    mutationFn: (data: { id: number }) => {
+      return axios.delete(REQUEST_UNITS_DELETE(data.id));
     },
   });
   const onSubmitAddUnitForm = (
@@ -63,9 +78,28 @@ function useUnit() {
       onError: (error) => onError(error),
     });
   };
+  const onSubmitDeleteUnitForm = (data: { id: number }) => {
+    handleDeleteUnit.mutate(data, {
+      onSuccess: () => {
+        notificationShow("success", "Success!", "Xóa đơn vị thành công!");
+        navigate("/", { state: { from: location.pathname } });
+      },
+      onError: (error) => {
+        handleGlobalException(error, () => {
+          if (error.response.status === 400) {
+            const data = error.response.data;
+            Object.keys(data).forEach((key) => {
+              notificationShow("error", "Error!", data[key]);
+            });
+          }
+        });
+      },
+    });
+  };
   return {
     onSubmitAddUnitForm,
     handleAddUnit,
+    onSubmitDeleteUnitForm,
   };
 }
 export default useUnit;

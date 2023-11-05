@@ -3,6 +3,7 @@ import { Table, useMantineTheme } from "@mantine/core";
 import { IconEdit, IconTrashX } from "@tabler/icons-react";
 import { Unit } from "./UnitForm";
 import { deleteModal } from "../../utils/deleteModal";
+import useUnit from "../../hooks/useUnit";
 interface UnitTableProps {
   startIndex: number;
   endIndex: number;
@@ -35,15 +36,16 @@ const UnitTable: FC<UnitTableProps> = ({ startIndex, endIndex, allUnites }) => {
           size="22px"
           color="red"
           onClick={() => {
-            deleteModal("đơn vị tinh", element.name, () => {
-              console.log("xóa");
-            });
+            deleteModal("đơn vị tinh", element.name, () => handleDeleteUnit({id: element.id as number}));
           }}
         />
       </td>
     </tr>
   ));
-
+  const {onSubmitDeleteUnitForm} = useUnit()
+  const handleDeleteUnit = (data: {id: number}) => {
+    onSubmitDeleteUnitForm(data)
+  }
   return (
     <Table horizontalSpacing="xl" striped highlightOnHover withBorder>
       <thead>
