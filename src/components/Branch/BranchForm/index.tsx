@@ -8,10 +8,11 @@ import {
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import Map from "../Map/Map";
-import { handleGlobalException } from "../../utils/error";
-import { useAddBranch } from "../../hooks/useBranch";
-import { notificationShow } from "../Notification";
+import Map from "../../Map/Map";
+import { handleGlobalException } from "../../../utils/error";
+import { useAddBranch, useViewDetailBranch } from "../../../hooks/useBranch";
+import { notificationShow } from "../../Notification";
+import { isEmpty } from "lodash";
 
 function findName(
   id: string,
@@ -25,6 +26,15 @@ function findName(
     }
   }
   return "ProvinceID not found";
+}
+function findId(
+  name: string,
+  data: Record<any, any>[],
+  idKey: string,
+  nameKey: string
+) {
+  const record = data.find((item) => item[nameKey] === name);
+  return record[idKey];
 }
 
 function formatData(
@@ -50,6 +60,20 @@ export interface Branch {
   longitude: number;
 }
 
+export interface DetailBranch {
+  closingHour: string;
+  district: string;
+  id: number;
+  latitude: number;
+  longitude: number;
+  openingHour: string;
+  phone: string;
+  province: string;
+  status: string;
+  streetAddress: string;
+  ward: string;
+}
+
 function formatDataWards(data: { WardName: string }[]) {
   return data.map((item) => ({
     value: item.WardName,
@@ -60,17 +84,22 @@ function formatDataWards(data: { WardName: string }[]) {
 const BranchForm: React.FC<{
   onSuccesSubmit: () => void;
   onCancel: () => void;
-}> = ({ onSuccesSubmit, onCancel }) => {
+  idBranch?: number;
+}> = ({ onSuccesSubmit, onCancel, idBranch }) => {
   const [provinceId, setProvinceId] = useState("");
   const [districtId, setDistrictId] = useState("");
   const [wardId, setWardId] = useState("");
   const [branchesProvinces, setBranchesProvinces] = useState([]);
   const [branchesDistricts, setBranchesDistricts] = useState([]);
   const [branchesWards, setBranchesWards] = useState([]);
+  const [detailBranch, setDetailBranch] = useState<DetailBranch>();
+  const [isDragging, setIsDragging] = useState(false);
+
   const {
     control,
     handleSubmit,
     setValue,
+    getValues,
     formState: { errors },
     setError,
   } = useForm({
@@ -94,7 +123,9 @@ const BranchForm: React.FC<{
     fetchAddBranchWards,
     handleAddBranch,
     onSubmitAddBranchForm,
-  } = useAddBranch(+provinceId, +districtId);
+  } = useAddBranch(provinceId, districtId);
+
+  const { fetchViewDetailBranch } = useViewDetailBranch(idBranch);
 
   const handleProvincesChange = (value: string) => {
     setValue(
@@ -104,6 +135,7 @@ const BranchForm: React.FC<{
     setProvinceId(value);
     setDistrictId("");
     setWardId("");
+    setValue("ward", "");
     setBranchesDistricts([]);
     setBranchesWards([]);
   };
@@ -114,6 +146,7 @@ const BranchForm: React.FC<{
     );
     setDistrictId(value);
     setWardId("");
+    setValue("ward", "");
     setBranchesWards([]);
   };
   const handleWardsChange = (value: string) => {
@@ -173,6 +206,68 @@ const BranchForm: React.FC<{
     }
   }, [provinceId, districtId]);
 
+  useEffect(() => {
+    if (idBranch && !isEmpty(branchesProvinces)) {
+      async function fetchDetailBranch() {
+        const data = await fetchViewDetailBranch.refetch();
+        if (data.isSuccess) {
+          setIsDragging(false);
+          const result = data.data.data;
+          setDetailBranch(result);
+          Object.keys(result).forEach((key) => {
+            if (key === "province") {
+              const Id = findId(
+                result[key],
+                branchesProvinces,
+                "ProvinceID",
+                "ProvinceName"
+              );
+              setValue(key, Number(Id));
+              setProvinceId(Number(Id));
+            } else {
+              setValue(key, result[key]);
+            }
+          });
+        } else if (data.isError) {
+          const error = data.error;
+          handleGlobalException(error, () => {});
+        }
+      }
+      fetchDetailBranch();
+    }
+  }, [idBranch, branchesProvinces]);
+
+  useEffect(() => {
+    if (detailBranch && !isEmpty(branchesDistricts)) {
+      Object.keys(detailBranch).forEach((key) => {
+        if (key === "district") {
+          const Id = branchesDistricts.every((branch) =>
+            branch.hasOwnProperty("DistrictID")
+          )
+            ? findId(
+                detailBranch[key],
+                branchesDistricts,
+                "DistrictID",
+                "DistrictName"
+              )
+            : null;
+          setValue(key, Number(Id));
+          setDistrictId(Number(Id));
+        }
+      });
+    }
+  }, [detailBranch, branchesDistricts]);
+
+  useEffect(() => {
+    if (detailBranch && !isEmpty(branchesWards)) {
+      Object.keys(detailBranch).forEach((key) => {
+        if (key === "ward") {
+          setValue(key, detailBranch[key]);
+        }
+      });
+    }
+  }, [detailBranch, branchesWards]);
+
   const formattedProvinces = formatData(
     branchesProvinces,
     "ProvinceID",
@@ -188,6 +283,7 @@ const BranchForm: React.FC<{
   const handleDrag = (lat: number, lng: number) => {
     setValue("latitude", lat);
     setValue("longitude", lng);
+    setIsDragging(true);
   };
   const handleCancel = () => {
     onCancel();
@@ -227,42 +323,74 @@ const BranchForm: React.FC<{
         align="center"
         pb="lg"
       >
-        Thêm chi nhánh
+        {idBranch ? "Xem chi nhánh" : "Thêm chi nhánh"}
       </Text>
       <Flex direction="column" gap="md" pb="lg">
         <Flex direction="row">
-          <Select
-            p={10}
+          <Controller
             name="province"
-            required
-            placeholder="Chọn Tỉnh/ Thành"
-            data={formattedProvinces}
-            onChange={handleProvincesChange}
-            value={provinceId}
-          />
-          <Select
-            p={10}
+            control={control}
+            rules={{ required: false }}
+            render={({ field }) => {
+              return (
+                <Select
+                  disabled={idBranch ? true : false}
+                  p={10}
+                  {...field}
+                  name="province"
+                  required
+                  placeholder="Chọn Tỉnh/ Thành"
+                  data={formattedProvinces}
+                  onChange={handleProvincesChange}
+                  value={provinceId}
+                />
+              );
+            }}
+          ></Controller>
+          <Controller
             name="district"
-            required
-            placeholder="Chọn Quận/ Huyện"
-            data={formattedDistricts}
-            onChange={handleDistrictsChange}
-            value={districtId}
-          />
-          <Select
-            p={10}
+            control={control}
+            rules={{ required: false }}
+            render={({ field }) => (
+              <Select
+                disabled={idBranch ? true : false}
+                p={10}
+                {...field}
+                name="district"
+                required
+                placeholder="Chọn Quận/ Huyện"
+                data={formattedDistricts}
+                onChange={handleDistrictsChange}
+                value={districtId}
+              />
+            )}
+          ></Controller>
+          <Controller
             name="ward"
-            required
-            placeholder="Chọn Phường/ Xã"
-            data={formattedWards}
-            onChange={handleWardsChange}
-            value={wardId}
-          />
+            control={control}
+            rules={{ required: false }}
+            render={({ field }) => (
+              <Select
+                disabled={idBranch ? true : false}
+                p={10}
+                {...field}
+                name="ward"
+                required
+                placeholder="Chọn Phường/ Xã"
+                data={formattedWards}
+                onChange={handleWardsChange}
+              />
+            )}
+          ></Controller>
         </Flex>
         <div>
           <Map
+            isView={idBranch ? true : false}
             onDrag={handleDrag}
             onStreetAddressChange={handleStreetAddressChange}
+            control={control}
+            initialLat={isDragging ? null : getValues("latitude")}
+            initialLng={isDragging ? null : getValues("longitude")}
           />
         </div>
         <Flex direction="row">
@@ -272,6 +400,7 @@ const BranchForm: React.FC<{
             rules={{ required: false, minLength: 4, maxLength: 5 }}
             render={({ field }) => (
               <TextInput
+                disabled={idBranch ? true : false}
                 p={10}
                 {...field}
                 required
@@ -294,6 +423,7 @@ const BranchForm: React.FC<{
             rules={{ required: false, minLength: 4, maxLength: 5 }}
             render={({ field }) => (
               <TextInput
+                disabled={idBranch ? true : false}
                 p={10}
                 {...field}
                 required
@@ -318,6 +448,7 @@ const BranchForm: React.FC<{
             rules={{ required: false, minLength: 10, maxLength: 10 }}
             render={({ field }) => (
               <TextInput
+                disabled={idBranch ? true : false}
                 {...field}
                 px={10}
                 required
@@ -335,47 +466,50 @@ const BranchForm: React.FC<{
             )}
           ></Controller>
         </Flex>
-        <Flex justify="center">
-          <Button
-            loading={handleAddBranch.isLoading}
-            className="button"
-            m={10}
-            styles={(theme) => ({
-              root: {
-                backgroundColor: theme.colors.munsellBlue[0],
-                ...theme.fn.hover({
-                  backgroundColor: theme.fn.darken(
-                    theme.colors.munsellBlue[0],
-                    0.1
-                  ),
-                }),
-              },
-            })}
-            type="submit"
-          >
-            {" "}
-            Lưu
-          </Button>
-          <Button
-            className="button cancel"
-            m={10}
-            variant="outline"
-            styles={(theme) => ({
-              root: {
-                color: theme.colors.munsellBlue[0],
-                ...theme.fn.hover({
-                  color: theme.fn.darken(theme.colors.munsellBlue[0], 0.1),
-                }),
-              },
-            })}
-            onClick={handleCancel}
-          >
-            {" "}
-            Hủy
-          </Button>
-        </Flex>
+        {!idBranch && (
+          <Flex justify="center">
+            <Button
+              loading={handleAddBranch.isLoading}
+              className="button"
+              m={10}
+              styles={(theme) => ({
+                root: {
+                  backgroundColor: theme.colors.munsellBlue[0],
+                  ...theme.fn.hover({
+                    backgroundColor: theme.fn.darken(
+                      theme.colors.munsellBlue[0],
+                      0.1
+                    ),
+                  }),
+                },
+              })}
+              type="submit"
+            >
+              {" "}
+              Lưu
+            </Button>
+            <Button
+              className="button cancel"
+              m={10}
+              variant="outline"
+              styles={(theme) => ({
+                root: {
+                  color: theme.colors.munsellBlue[0],
+                  ...theme.fn.hover({
+                    color: theme.fn.darken(theme.colors.munsellBlue[0], 0.1),
+                  }),
+                },
+              })}
+              onClick={handleCancel}
+            >
+              {" "}
+              Hủy
+            </Button>
+          </Flex>
+        )}
       </Flex>
     </form>
+    // )
   );
 };
 

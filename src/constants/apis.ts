@@ -11,8 +11,10 @@ export const REQUEST_BRANCHES_SEARCH_KEY = (
 
 // Add Branch
 export const REQUEST_ADD_BRANCHES_PROVINCES = "/location/provinces";
-export const REQUEST_ADD_BRANCHES_DISTRICTS = (provinceId: number) =>
+export const REQUEST_ADD_BRANCHES_DISTRICTS = (provinceId: string) =>
   `/location/districts?provinceId=${provinceId}`;
-export const REQUEST_ADD_BRANCHES_WARDS = (districtId: number) =>
+export const REQUEST_ADD_BRANCHES_WARDS = (districtId: string) =>
   `/location/wards?districtId=${districtId}`;
-  
+
+//View Detail Branch
+export const REQUEST_VIEW_DETAIL_BRANCHES = (id: number) => `/branches/${id}`;

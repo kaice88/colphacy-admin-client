@@ -1,8 +1,9 @@
-import { FC } from "react";
-import { Button, Group, Modal, Table } from "@mantine/core";
+import { FC, useState } from "react";
+import { Modal, Table } from "@mantine/core";
 import { IconEdit, IconTrashX } from "@tabler/icons-react";
-import BranchForm from "../BranchForm";
+import BranchForm from "./BranchForm";
 import { useDisclosure } from "@mantine/hooks";
+import React from "react";
 interface BranchTableProps {
   startIndex: number;
   endIndex: number;
@@ -29,29 +30,38 @@ const BranchTable: FC<BranchTableProps> = ({ startIndex, allBranches }) => {
   const handleCloseModal = () => {
     close();
   };
+  const [openedRowId, setOpenedRowId] = useState<number>(0);
+  const openModal = (rowId: number) => {
+    open();
+    setOpenedRowId(rowId);
+  };
+
   const rows = allBranches.items.map((element, index) => (
-    <tr key={element.id}>
-      <td>{startIndex + index + 1}</td>
-      <td>{element.address}</td>
-      <td>{element.phone}</td>
-      <td className="button-row">
+    <React.Fragment key={element.id}>
+      {openedRowId === element.id && (
         <Modal opened={opened} onClose={close} size="60" centered m={20}>
           <BranchForm
             onSuccesSubmit={handleSuccessSubmit}
             onCancel={handleCloseModal}
+            idBranch={element.id}
           />
         </Modal>
-        <Group position="center">
+      )}
+      <tr key={element.id} onClick={() => openModal(element.id)}>
+        <td>{startIndex + index + 1}</td>
+        <td>{element.address}</td>
+        <td>{element.phone}</td>
+        <td className="button-row">
           <IconEdit
             className="delete-edit"
             strokeWidth="1.8"
             size="22px"
-            onClick={open}
+            onClick={() => openModal(element.id)}
           />
-        </Group>
-        <IconTrashX className="delete-edit" strokeWidth="1.8" size="22px" />
-      </td>
-    </tr>
+          <IconTrashX className="delete-edit" strokeWidth="1.8" size="22px" />
+        </td>
+      </tr>
+    </React.Fragment>
   ));
 
   return (

@@ -1,4 +1,4 @@
-import { Branch } from "../components/BranchForm";
+import { Branch } from "../components/Branch/BranchForm";
 import axios from "../settings/axios";
 import {
   REQUEST_BRANCHES,
@@ -8,6 +8,7 @@ import {
   REQUEST_ADD_BRANCHES_PROVINCES,
   REQUEST_ADD_BRANCHES_DISTRICTS,
   REQUEST_ADD_BRANCHES_WARDS,
+  REQUEST_VIEW_DETAIL_BRANCHES,
 } from "./../constants/apis";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
@@ -79,12 +80,16 @@ export function useBranch(
     fetchBranchSearchKeywork,
   };
 }
-export function useAddBranch(provinceId: number, districtId: number) {
+export function useAddBranch(provinceId: string, districtId: string) {
+
   const fetchAddBranchProvinces = useQuery({
     queryKey: ["add_branch_provinces"],
-    queryFn: () => axios.get(REQUEST_ADD_BRANCHES_PROVINCES),
+    queryFn: () => {
+      return axios.get(REQUEST_ADD_BRANCHES_PROVINCES);
+    },
     enabled: false,
   });
+
   const fetchAddBranchDistricts = useQuery({
     queryKey: ["add_branch_districts"],
     queryFn: () => axios.get(REQUEST_ADD_BRANCHES_DISTRICTS(provinceId)),
@@ -122,4 +127,14 @@ export function useAddBranch(provinceId: number, districtId: number) {
     onSubmitAddBranchForm,
   };
 }
-// export default { useBranchProvinces, useAddBranchProvinces };
+export function useViewDetailBranch(id: number) {
+  const fetchViewDetailBranch = useQuery({
+    queryKey: ["view_detail_branch"],
+    queryFn: () => axios.get(REQUEST_VIEW_DETAIL_BRANCHES(id)),
+    enabled: false,
+  });
+
+  return {
+    fetchViewDetailBranch,
+  };
+}

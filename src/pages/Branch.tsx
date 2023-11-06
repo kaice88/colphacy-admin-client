@@ -6,7 +6,7 @@ import { useBranch } from "../hooks/useBranch";
 import { handleGlobalException } from "../utils/error";
 import { useForm } from "react-hook-form";
 import { useDisclosure } from "@mantine/hooks";
-import BranchForm from "../components/BranchForm";
+import BranchForm from "../components/Branch/BranchForm";
 interface AllBranchesProps {
   items: ItemsProps[];
   numPages: number;
