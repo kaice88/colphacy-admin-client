@@ -8,7 +8,7 @@ import { useUnitExceptAdd } from "../hooks/useUnit";
 import { handleGlobalException } from "../utils/error";
 import { notificationShow } from "../components/Notification";
 import { useForm } from "react-hook-form";
-interface AllUnitsProps {
+export interface AllUnitsProps {
   items: ItemsProps[];
   numPages: number;
   offset: number;
@@ -153,7 +153,7 @@ export default function UnitPage() {
           size="60"
           centered
           m={20}
-          title={action === "add" ? "Thêm đơn vị tính" : ""}
+          title={action === "add" ? "Thêm đơn vị tính" : "Sửa đơn vị tính"}
           styles={() => ({
             title: {
               fontWeight: "bold",

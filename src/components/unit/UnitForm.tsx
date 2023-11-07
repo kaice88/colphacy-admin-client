@@ -51,6 +51,7 @@ const UnitForm: React.FC<{
         () => {
           onClose();
           notificationShow("success", "Success!", "Thêm đơn vị thành công!");
+          navigate("/", { state: { from: location.pathname } });
         }
       );
     } else {

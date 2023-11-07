@@ -1,14 +1,14 @@
-import { createBrowserRouter } from "react-router-dom";
-import Layout from "./layouts/Layout";
-import ErrorPage from "./pages/Error";
-import Home from "./pages/Home";
-import * as ROUTES from "./constants/routes";
-import Login from "./pages/Login";
-import Account from "./pages/Account";
-import EditPassword from "./pages/EditPassword";
-import Branch from "./pages/Branch";
-import Product from "./pages/Product";
-import UnitPage from "./pages/UnitPage";
+import { createBrowserRouter } from 'react-router-dom';
+import Layout from './layouts/Layout';
+import ErrorPage from './pages/Error';
+import Home from './pages/Home';
+import * as ROUTES from './constants/routes';
+import Login from './pages/Login';
+import Account from './pages/Account';
+import Branch from './pages/Branch';
+import Product from './pages/Product';
+import UnitPage from './pages/UnitPage';
+import ChangePassword from './pages/ChangePassword';
 
 export const router = createBrowserRouter([
   {
@@ -30,8 +30,8 @@ export const router = createBrowserRouter([
         element: <Account />,
       },
       {
-        path: "/editPassword",
-        element: <EditPassword />,
+        path: '/editPassword',
+        element: <ChangePassword />,
       },
       {
         element: <Branch />,
