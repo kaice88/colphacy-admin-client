@@ -259,6 +259,7 @@ function Branch() {
       </div>
       <div className="branch-table">
         <BranchTable
+          handleSuccessEditSubmit={handleSuccessSubmit}
           startIndex={startIndex}
           endIndex={endIndex}
           allBranches={allBranches}

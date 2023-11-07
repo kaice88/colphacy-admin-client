@@ -8,6 +8,7 @@ interface BranchTableProps {
   startIndex: number;
   endIndex: number;
   allBranches: AllBranchesProps;
+  handleSuccessEditSubmit: () => void;
 }
 interface AllBranchesProps {
   items: ItemsProps[];
@@ -21,19 +22,26 @@ interface ItemsProps {
   address: string;
   phone: string;
 }
-const BranchTable: FC<BranchTableProps> = ({ startIndex, allBranches }) => {
+const BranchTable: FC<BranchTableProps> = ({
+  startIndex,
+  allBranches,
+  handleSuccessEditSubmit,
+}) => {
   const [opened, { open, close }] = useDisclosure(false);
   const handleSuccessSubmit = () => {
     close();
+    handleSuccessEditSubmit();
   };
-
   const handleCloseModal = () => {
     close();
   };
   const [openedRowId, setOpenedRowId] = useState<number>(0);
-  const openModal = (rowId: number) => {
+  const [isEdit, setIsEdit] = useState<boolean>(false);
+
+  const openModal = (rowId: number, isEditing: boolean) => {
     open();
     setOpenedRowId(rowId);
+    setIsEdit(isEditing);
   };
 
   const rows = allBranches.items.map((element, index) => (
@@ -41,13 +49,14 @@ const BranchTable: FC<BranchTableProps> = ({ startIndex, allBranches }) => {
       {openedRowId === element.id && (
         <Modal opened={opened} onClose={close} size="60" centered m={20}>
           <BranchForm
+            isEdit={isEdit}
             onSuccesSubmit={handleSuccessSubmit}
             onCancel={handleCloseModal}
             idBranch={element.id}
           />
         </Modal>
       )}
-      <tr key={element.id} onClick={() => openModal(element.id)}>
+      <tr key={element.id} onClick={() => openModal(element.id, false)}>
         <td>{startIndex + index + 1}</td>
         <td>{element.address}</td>
         <td>{element.phone}</td>
@@ -56,7 +65,10 @@ const BranchTable: FC<BranchTableProps> = ({ startIndex, allBranches }) => {
             className="delete-edit"
             strokeWidth="1.8"
             size="22px"
-            onClick={() => openModal(element.id)}
+            onClick={(event) => {
+              event.stopPropagation();
+              openModal(element.id, true);
+            }}
           />
           <IconTrashX className="delete-edit" strokeWidth="1.8" size="22px" />
         </td>

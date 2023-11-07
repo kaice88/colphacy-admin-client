@@ -18,3 +18,5 @@ export const REQUEST_ADD_BRANCHES_WARDS = (districtId: string) =>
 
 //View Detail Branch
 export const REQUEST_VIEW_DETAIL_BRANCHES = (id: number) => `/branches/${id}`;
+
+export const REQUEST_BRANCHES_STATUSES = `/branches/statuses`;

@@ -10,9 +10,14 @@ import { useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import Map from "../../Map/Map";
 import { handleGlobalException } from "../../../utils/error";
-import { useAddBranch, useViewDetailBranch } from "../../../hooks/useBranch";
+import {
+  useAddBranch,
+  useEditBranch,
+  useViewDetailBranch,
+} from "../../../hooks/useBranch";
 import { notificationShow } from "../../Notification";
 import { isEmpty } from "lodash";
+import { Branch, DetailBranch } from "../type";
 
 function findName(
   id: string,
@@ -48,32 +53,6 @@ function formatData(
   }));
 }
 
-export interface Branch {
-  closingHour: string;
-  openingHour: string;
-  phone: string;
-  streetAddress: string;
-  ward: string;
-  district: string;
-  province: string;
-  latitude: number;
-  longitude: number;
-}
-
-export interface DetailBranch {
-  closingHour: string;
-  district: string;
-  id: number;
-  latitude: number;
-  longitude: number;
-  openingHour: string;
-  phone: string;
-  province: string;
-  status: string;
-  streetAddress: string;
-  ward: string;
-}
-
 function formatDataWards(data: { WardName: string }[]) {
   return data.map((item) => ({
     value: item.WardName,
@@ -85,15 +64,20 @@ const BranchForm: React.FC<{
   onSuccesSubmit: () => void;
   onCancel: () => void;
   idBranch?: number;
-}> = ({ onSuccesSubmit, onCancel, idBranch }) => {
+  isEdit?: boolean;
+}> = ({ onSuccesSubmit, onCancel, idBranch, isEdit }) => {
+  const theme = useMantineTheme();
+
   const [provinceId, setProvinceId] = useState("");
   const [districtId, setDistrictId] = useState("");
   const [wardId, setWardId] = useState("");
   const [branchesProvinces, setBranchesProvinces] = useState([]);
   const [branchesDistricts, setBranchesDistricts] = useState([]);
   const [branchesWards, setBranchesWards] = useState([]);
+  const [branchesStatus, setBranchesStatus] = useState([]);
   const [detailBranch, setDetailBranch] = useState<DetailBranch>();
   const [isDragging, setIsDragging] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   const {
     control,
@@ -104,6 +88,7 @@ const BranchForm: React.FC<{
     setError,
   } = useForm({
     defaultValues: {
+      status: "OPEN",
       closingHour: "",
       openingHour: "",
       phone: "",
@@ -115,7 +100,6 @@ const BranchForm: React.FC<{
       longitude: 0,
     },
   });
-  const theme = useMantineTheme();
 
   const {
     fetchAddBranchProvinces,
@@ -125,7 +109,10 @@ const BranchForm: React.FC<{
     onSubmitAddBranchForm,
   } = useAddBranch(provinceId, districtId);
 
-  const { fetchViewDetailBranch } = useViewDetailBranch(idBranch);
+  const { onSubmitEditBranchForm } = useEditBranch();
+
+  const { fetchViewDetailBranch, fetchBranchStatuses } =
+    useViewDetailBranch(idBranch);
 
   const handleProvincesChange = (value: string) => {
     setValue(
@@ -138,6 +125,11 @@ const BranchForm: React.FC<{
     setValue("ward", "");
     setBranchesDistricts([]);
     setBranchesWards([]);
+    if (isEdit) {
+      setIsEditing(true);
+    } else {
+      setIsEditing(false);
+    }
   };
   const handleDistrictsChange = (value: string) => {
     setValue(
@@ -158,6 +150,19 @@ const BranchForm: React.FC<{
   };
 
   useEffect(() => {
+    async function fetchStatusData() {
+      const data = await fetchBranchStatuses.refetch();
+      if (data.isSuccess) {
+        setBranchesStatus(data.data.data);
+      } else if (data.isError) {
+        const error = data.error;
+        handleGlobalException(error, () => {});
+      }
+    }
+    fetchStatusData();
+  }, []);
+
+  useEffect(() => {
     if (provinceId === null) {
       setBranchesDistricts([]);
     }
@@ -167,16 +172,7 @@ const BranchForm: React.FC<{
         setBranchesProvinces(data.data.data);
       } else if (data.isError) {
         const error = data.error;
-        handleGlobalException(error, () => {
-          setError("closingHour", {
-            type: "manual",
-            message: error.response.data.closingHour,
-          });
-          setError("phone", {
-            type: "manual",
-            message: error.response.data.phone,
-          });
-        });
+        handleGlobalException(error, () => {});
       }
     }
     fetchAddProvincesData();
@@ -238,7 +234,7 @@ const BranchForm: React.FC<{
   }, [idBranch, branchesProvinces]);
 
   useEffect(() => {
-    if (detailBranch && !isEmpty(branchesDistricts)) {
+    if (!isEditing && detailBranch && !isEmpty(branchesDistricts)) {
       Object.keys(detailBranch).forEach((key) => {
         if (key === "district") {
           const Id = branchesDistricts.every((branch) =>
@@ -289,29 +285,45 @@ const BranchForm: React.FC<{
     onCancel();
   };
   const onSubmit: SubmitHandler<Branch> = (data) => {
-    onSubmitAddBranchForm(
-      data,
-      () => {
-        onSuccesSubmit();
-        notificationShow("success", "Success!", "Thêm nhánh mới thành công!");
-      },
-      (error) => {
-        handleGlobalException(error, () => {
-          setError("openingHour", {
-            type: "manual",
-            message: error.response.data.openingHour,
-          });
-          setError("closingHour", {
-            type: "manual",
-            message: error.response.data.closingHour,
-          });
-          setError("phone", {
-            type: "manual",
-            message: error.response.data.phone,
-          });
+    const handleSuccess = (message: string) => {
+      onSuccesSubmit();
+      notificationShow("success", "Success!", message);
+    };
+
+    const handleError = (error) => {
+      handleGlobalException(error, () => {
+        setError("openingHour", {
+          type: "manual",
+          message: error.response.data.openingHour,
         });
-      }
-    );
+        setError("closingHour", {
+          type: "manual",
+          message: error.response.data.closingHour,
+        });
+        setError("phone", {
+          type: "manual",
+          message: error.response.data.phone,
+        });
+      });
+    };
+
+    if (!isEdit) {
+      onSubmitAddBranchForm(
+        data,
+        () => {
+          handleSuccess("Thêm nhánh mới thành công!");
+        },
+        handleError
+      );
+    } else {
+      onSubmitEditBranchForm(
+        data,
+        () => {
+          handleSuccess("Chỉnh sửa nhánh thành công!");
+        },
+        handleError
+      );
+    }
   };
 
   return (
@@ -323,7 +335,11 @@ const BranchForm: React.FC<{
         align="center"
         pb="lg"
       >
-        {idBranch ? "Xem chi nhánh" : "Thêm chi nhánh"}
+        {!idBranch
+          ? "Thêm chi nhánh"
+          : isEdit
+          ? "Sửa chi nhánh"
+          : "Xem chi nhánh"}
       </Text>
       <Flex direction="column" gap="md" pb="lg">
         <Flex direction="row">
@@ -334,7 +350,7 @@ const BranchForm: React.FC<{
             render={({ field }) => {
               return (
                 <Select
-                  disabled={idBranch ? true : false}
+                  disabled={idBranch && !isEdit}
                   p={10}
                   {...field}
                   name="province"
@@ -353,7 +369,7 @@ const BranchForm: React.FC<{
             rules={{ required: false }}
             render={({ field }) => (
               <Select
-                disabled={idBranch ? true : false}
+                disabled={idBranch && !isEdit}
                 p={10}
                 {...field}
                 name="district"
@@ -371,7 +387,7 @@ const BranchForm: React.FC<{
             rules={{ required: false }}
             render={({ field }) => (
               <Select
-                disabled={idBranch ? true : false}
+                disabled={idBranch && !isEdit}
                 p={10}
                 {...field}
                 name="ward"
@@ -385,7 +401,7 @@ const BranchForm: React.FC<{
         </Flex>
         <div>
           <Map
-            isView={idBranch ? true : false}
+            isView={idBranch && !isEdit}
             onDrag={handleDrag}
             onStreetAddressChange={handleStreetAddressChange}
             control={control}
@@ -400,7 +416,7 @@ const BranchForm: React.FC<{
             rules={{ required: false, minLength: 4, maxLength: 5 }}
             render={({ field }) => (
               <TextInput
-                disabled={idBranch ? true : false}
+                disabled={idBranch && !isEdit}
                 p={10}
                 {...field}
                 required
@@ -423,7 +439,7 @@ const BranchForm: React.FC<{
             rules={{ required: false, minLength: 4, maxLength: 5 }}
             render={({ field }) => (
               <TextInput
-                disabled={idBranch ? true : false}
+                disabled={idBranch && !isEdit}
                 p={10}
                 {...field}
                 required
@@ -448,7 +464,7 @@ const BranchForm: React.FC<{
             rules={{ required: false, minLength: 10, maxLength: 10 }}
             render={({ field }) => (
               <TextInput
-                disabled={idBranch ? true : false}
+                disabled={idBranch && !isEdit}
                 {...field}
                 px={10}
                 required
@@ -465,8 +481,26 @@ const BranchForm: React.FC<{
               />
             )}
           ></Controller>
+          {idBranch && (
+            <Controller
+              name="status"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  disabled={idBranch && !isEdit}
+                  px={10}
+                  {...field}
+                  label="Trạng thái"
+                  data={branchesStatus}
+                  onChange={(value) => {
+                    field.onChange(value);
+                  }}
+                />
+              )}
+            ></Controller>
+          )}
         </Flex>
-        {!idBranch && (
+        {(!idBranch || isEdit) && (
           <Flex justify="center">
             <Button
               loading={handleAddBranch.isLoading}
@@ -509,7 +543,6 @@ const BranchForm: React.FC<{
         )}
       </Flex>
     </form>
-    // )
   );
 };
 
