@@ -346,7 +346,7 @@ const BranchForm: React.FC<{
           <Controller
             name="province"
             control={control}
-            rules={{ required: false }}
+            rules={{ required: "Vui lòng chọn Tỉnh/ Thành" }}
             render={({ field }) => {
               return (
                 <Select
@@ -359,6 +359,7 @@ const BranchForm: React.FC<{
                   data={formattedProvinces}
                   onChange={handleProvincesChange}
                   value={provinceId}
+                  error={errors.province ? errors.province.message : false}
                 />
               );
             }}
@@ -366,7 +367,7 @@ const BranchForm: React.FC<{
           <Controller
             name="district"
             control={control}
-            rules={{ required: false }}
+            rules={{ required: "Vui lòng chọn Quận/ Huyện" }}
             render={({ field }) => (
               <Select
                 disabled={idBranch && !isEdit}
@@ -378,13 +379,14 @@ const BranchForm: React.FC<{
                 data={formattedDistricts}
                 onChange={handleDistrictsChange}
                 value={districtId}
+                error={errors.district ? errors.district.message : false}
               />
             )}
           ></Controller>
           <Controller
             name="ward"
             control={control}
-            rules={{ required: false }}
+            rules={{ required: "Vui lòng chọn Phường/ Xã" }}
             render={({ field }) => (
               <Select
                 disabled={idBranch && !isEdit}
@@ -395,6 +397,7 @@ const BranchForm: React.FC<{
                 placeholder="Chọn Phường/ Xã"
                 data={formattedWards}
                 onChange={handleWardsChange}
+                error={errors.ward ? errors.ward.message : false}
               />
             )}
           ></Controller>
