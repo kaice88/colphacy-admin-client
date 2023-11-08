@@ -1,4 +1,4 @@
-import { Button, Flex, Group, Modal, Pagination } from "@mantine/core";
+import { Button, Flex, Group, Modal, Pagination, useMantineTheme, Title } from "@mantine/core";
 import { IconPlus, IconSearch } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
@@ -8,7 +8,7 @@ import { useUnitExceptAdd } from "../hooks/useUnit";
 import { handleGlobalException } from "../utils/error";
 import { notificationShow } from "../components/Notification";
 import { useForm } from "react-hook-form";
-import Title from "../components/Title/Title";
+
 export interface AllUnitsProps {
   items: ItemsProps[];
   numPages: number;
@@ -21,6 +21,7 @@ interface ItemsProps {
   name: string;
 }
 export default function UnitPage() {
+  const theme = useMantineTheme()
   const [action, setAction] = useState("add");
   const [opened, { open, close }] = useDisclosure(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -129,6 +130,7 @@ export default function UnitPage() {
   };
   return (
     <div className="unit-ctn">
+      <Title size="h5" color={theme.colors.cobaltBlue[0]}>Danh sách đơn vị tính</Title>
       <Flex>
         <div className="search-field">
           <div className="search">

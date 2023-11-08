@@ -33,7 +33,7 @@ const UnitForm: React.FC<{
     handleUpdateUnit,
     onSubmitUpdateUnitForm,
   } = useUnit();
-  
+
   const onSubmit: SubmitHandler<Unit> = (data) => {
     if (title === "add") {
       onSubmitAddUnitForm(
