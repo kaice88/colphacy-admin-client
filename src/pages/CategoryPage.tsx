@@ -123,7 +123,7 @@ export default function CategoryPage() {
     }
   };
   return (
-    <div className="Category-ctn">
+    <div className="branch-ctn">
       <Title title="Danh sách danh mục "></Title>
       <Flex>
         <div className="search-field">

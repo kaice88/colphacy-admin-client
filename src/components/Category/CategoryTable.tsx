@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Table } from "@mantine/core";
+import { Table, useMantineTheme } from "@mantine/core";
 import { IconEdit, IconTrashX } from "@tabler/icons-react";
 export interface Category {
     id: number | undefined;
@@ -18,18 +18,20 @@ interface AllCategoryesProps {
   totalItems: number;
 }
 const CategoryTable: FC<CategoryTableProps> = ({ startIndex, allCategoryes}) => {
+  const theme = useMantineTheme();
   const rows = allCategoryes.items.map((element, index) => (
     <tr key={element.id}>
       <td>{startIndex + index + 1}</td>
       <td>{element.name}</td>
-      <td>
+      <td align="right">
         <IconEdit
           className="delete-edit"
           strokeWidth="1.8"
           size="22px"
           onClick={()=>{}}
+          color={theme.colors.cobaltBlue[0]}
         />
-        <IconTrashX className="delete-edit" strokeWidth="1.8" size="22px" onClick={()=>{}}/>
+        <IconTrashX className="delete-edit" strokeWidth="1.8" size="22px" onClick={()=>{}} color="red"/>
       </td>
     </tr>
   ));
