@@ -3,15 +3,19 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import useUnit from "../../hooks/useUnit";
 import { handleGlobalException } from "../../utils/error";
 import { notificationShow } from "../Notification";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export interface Unit {
   id: number | undefined;
-  name: string | undefined;
+  name: string | "";
 }
 const UnitForm: React.FC<{
   onClose: () => void;
   title: string;
-}> = ({ title, onClose }) => {
+  unit: Unit | undefined;
+}> = ({ title, onClose, unit }) => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const {
     handleSubmit,
     control,
@@ -19,14 +23,21 @@ const UnitForm: React.FC<{
     setError,
   } = useForm({
     defaultValues: {
-      name: "",
+      id: unit ? unit.id : "",
+      name: unit ? unit.name : "",
     },
   });
-  const { handleAddUnit, onSubmitAddUnitForm } = useUnit();
-  const onSubmit: SubmitHandler<{ name: string }> = (data) => {
+  const {
+    handleAddUnit,
+    onSubmitAddUnitForm,
+    handleUpdateUnit,
+    onSubmitUpdateUnitForm,
+  } = useUnit();
+
+  const onSubmit: SubmitHandler<Unit> = (data) => {
     if (title === "add") {
       onSubmitAddUnitForm(
-        data,
+        { name: data.name },
         (error) => {
           handleGlobalException(error, () => {
             Object.keys(error.response.data).forEach((key) => {
@@ -40,6 +51,26 @@ const UnitForm: React.FC<{
         () => {
           onClose();
           notificationShow("success", "Success!", "Thêm đơn vị thành công!");
+          navigate("/", { state: { from: location.pathname } });
+        }
+      );
+    } else {
+      onSubmitUpdateUnitForm(
+        data,
+        (error) => {
+          handleGlobalException(error, () => {
+            Object.keys(error.response.data).forEach((key) => {
+              setError(key, {
+                type: "manual",
+                message: error.response.data[key],
+              });
+            });
+          });
+        },
+        () => {
+          onClose();
+          notificationShow("success", "Success!", "Sửa đơn vị thành công!");
+          navigate("/", { state: { from: location.pathname } });
         }
       );
     }
@@ -63,10 +94,9 @@ const UnitForm: React.FC<{
           )}
         ></Controller>
       )}
-
       <Flex justify="space-around" align="center" my="xs">
         <Button
-          loading={handleAddUnit.isLoading}
+          loading={handleAddUnit.isLoading || handleUpdateUnit.isLoading}
           className="button"
           styles={(theme) => ({
             root: {
