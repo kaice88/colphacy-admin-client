@@ -1,5 +1,4 @@
 .branch-ctn {
-
   .branch-title {
     font-size: 18px;
   }
@@ -7,7 +6,19 @@
     padding: 2rem 0;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: start;
+    .search-ctn {
+      .label {
+        padding: 1rem 0;
+      }
+      .filter {
+        display: flex;
+        align-items: center;
+        div {
+          padding-right: 1rem;
+        }
+      }
+    }
     .button:hover {
       background-color: $munsellBlue;
     }
@@ -19,7 +30,6 @@
     }
   }
   .branch-table {
-
     .mantine-12tbqdc {
       line-height: 2;
     }
@@ -40,6 +50,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 2rem 0;
     .mantine-cjw5zx[data-active]:not([data-disabled]):hover {
       background-color: $munsellBlue;
     }
