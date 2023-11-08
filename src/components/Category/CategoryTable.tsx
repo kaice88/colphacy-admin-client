@@ -32,8 +32,6 @@ const CategoryTable: FC<CategoryTableProps> = ({ startIndex, allCategoryes}) => 
           color={theme.colors.cobaltBlue[0]}
         />
         <IconTrashX className="delete-edit" strokeWidth="1.8" size="22px" onClick={()=>{}} color="red"/>
-
-
       </td>
     </tr>
   ));
