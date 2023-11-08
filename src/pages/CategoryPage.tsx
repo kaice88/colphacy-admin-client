@@ -1,12 +1,13 @@
-import { Flex, Pagination } from "@mantine/core";
+import { Flex, Modal, Pagination } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 import { handleGlobalException } from "../utils/error";
 import { notificationShow } from "../components/Notification";
 import { useForm } from "react-hook-form";
-import Title from "../components/Title/Title";
 import useCategory from "../hooks/useCategory";
-import CategoryTable from "../components/Category/CategoryTable";
+import CategoryTable, { Category } from "../components/Category/CategoryTable";
+import { useDisclosure } from "@mantine/hooks";
+import CategoryForm from "../components/Category/CategoryForm";
 export interface AllCategoriesProps {
   items: ItemsProps[];
   numPages: number;
@@ -19,6 +20,9 @@ interface ItemsProps {
   name: string;
 }
 export default function CategoryPage() {
+  const [action, setAction] = useState("add");
+  const [category, setCategory] = useState<Category>();
+  const [opened, { open, close }] = useDisclosure(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [searchValue, setSearchValue] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -118,6 +122,11 @@ export default function CategoryPage() {
       setCurrentPage(1);
     }
   };
+  const handleEdit = (Category: Category) => {
+    setAction("update");
+    open();
+    setCategory(Category);  
+  };
   return (
     <div className="unit-ctn">
       <Flex>
@@ -138,12 +147,30 @@ export default function CategoryPage() {
             </button>
           </div>
         </div>
+        <Modal
+          opened={opened}
+          onClose={close}
+          size="60"
+          centered
+          m={20}
+          title={action === "add" ? "Thêm danh mục" : "Sửa danh mục"}
+          styles={() => ({
+            title: {
+              fontWeight: "bold",
+            },
+          })}
+        >
+
+          <CategoryForm title={action} onClose={close} category={category} />
+
+        </Modal>
       </Flex>
       <div className="unit-table">
         <CategoryTable
           startIndex={startIndex * limitInit}
           endIndex={endIndex}
           allCategoryes={allCategories}
+          handleEdit={handleEdit}
         />
       </div>
       <br />
