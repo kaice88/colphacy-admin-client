@@ -1,4 +1,4 @@
-import { Button, Pagination, Select, Modal, Group } from "@mantine/core";
+import { Button, Pagination, Select, Modal, Group, Title, useMantineTheme } from "@mantine/core";
 import BranchTable from "../components/Branch/BranchTable";
 import { IconPlus, IconSearch } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
@@ -7,6 +7,8 @@ import { handleGlobalException } from "../utils/error";
 import { useForm } from "react-hook-form";
 import { useDisclosure } from "@mantine/hooks";
 import BranchForm from "../components/BranchForm";
+import { useTheme } from "@emotion/react";
+
 interface AllBranchesProps {
   items: ItemsProps[];
   numPages: number;
@@ -29,6 +31,7 @@ function formatProvincesDistricts(
 }
 function Branch() {
   const limitInit = 10;
+  const theme = useMantineTheme()
   const [currentPage, setCurrentPage] = useState(1);
   const [branchesProvinces, setBranchesProvinces] = useState([]);
   const [allBranches, setAllBranches] = useState<AllBranchesProps>({
@@ -115,7 +118,7 @@ function Branch() {
         setAllBranches(data.data.data);
       } else if (data.isError) {
         const error = data.error;
-        handleGlobalException(error, () => {});
+        handleGlobalException(error, () => { });
       }
     }
     fetchBranchData();
@@ -152,7 +155,7 @@ function Branch() {
         setBranchesProvinces(data.data.data);
       } else if (data.isError) {
         const error = data.error;
-        handleGlobalException(error, () => {});
+        handleGlobalException(error, () => { });
       }
     }
     fetchProvincesData();
@@ -163,7 +166,7 @@ function Branch() {
           setBranchesDistricts(data.data.data);
         } else if (data.isError) {
           const error = data.error;
-          handleGlobalException(error, () => {});
+          handleGlobalException(error, () => { });
         }
       }
       fetchDistrictsData();
@@ -204,7 +207,7 @@ function Branch() {
 
   return (
     <div className="branch-ctn">
-      <h1 className="branch-title">Danh sách chi nhánh</h1>
+      <Title size="h5" color={theme.colors.cobaltBlue[0]}>Danh sách chi nhánh</Title>
       <div className="search-field">
         <div className="search">
           <input

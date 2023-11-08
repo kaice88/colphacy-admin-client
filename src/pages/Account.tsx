@@ -14,7 +14,6 @@ import { notificationShow } from "../components/Notification";
 import { useLocation, useNavigate } from "react-router-dom";
 import { isEmpty } from "lodash";
 import { handleGlobalException } from "../utils/error";
-import Title from "../components/Title/Title";
 export interface Account {
   id: number;
   fullName: string;
@@ -82,7 +81,7 @@ export default function Account() {
       active: false,
     },
   });
-  const changePassword = () => {};
+  const changePassword = () => { };
   const onSubmit: SubmitHandler<Account> = (data) => {
     onSubmitProfileForm(
       data,

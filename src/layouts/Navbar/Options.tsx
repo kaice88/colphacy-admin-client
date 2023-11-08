@@ -1,11 +1,11 @@
 import type { ReactElement } from 'react';
-import { IconListDetails, IconMapPins } from '@tabler/icons-react';
+import { IconBrandAppgallery, IconBuildingStore, IconListDetails, IconMapPins } from '@tabler/icons-react';
 
 export interface Option {
   icon: ReactElement;
   url: string;
   label: string;
-  links: { icon: ReactElement; url: string; label: string }[];
+  links: { url: string; label: string }[];
 }
 
 export const options: Option[] = [
@@ -16,23 +16,21 @@ export const options: Option[] = [
     links: [],
   },
   {
-    icon: <IconMapPins size="1rem"></IconMapPins>,
+    icon: <IconBuildingStore size="1rem"></IconBuildingStore>,
     url: 'branch-management',
     label: 'Quản lý chi nhánh',
     links: [],
   },
   {
-    icon: <IconMapPins size="1rem"></IconMapPins>,
+    icon: <IconBrandAppgallery size="1rem"></IconBrandAppgallery>,
     url: '',
     label: 'Quản lý sản phẩm',
     links: [
       {
-        icon: <IconMapPins size="1rem"></IconMapPins>,
         url: 'unit-management',
         label: 'Đơn vị',
       },
       {
-        icon: <IconMapPins size="1rem"></IconMapPins>,
         url: 'product-management',
         label: 'Sản phẩm',
       },
