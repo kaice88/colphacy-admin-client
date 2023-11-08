@@ -1,27 +1,31 @@
 import { FC } from "react";
-import { Table } from "@mantine/core";
+import { Table, useMantineTheme } from "@mantine/core";
 import { IconEdit, IconTrashX } from "@tabler/icons-react";
-export interface Category {
-  id: number | undefined;
-  name: string | undefined;
-}
-interface CategoryTableProps {
+import { Unit } from "./UnitForm";
+import { deleteModal } from "../../utils/deleteModal";
+import useUnit from "../../hooks/useUnit";
+interface UnitTableProps {
   startIndex: number;
   endIndex: number;
-  allCategoryes: AllCategoryesProps;
+  allUnites: AllUnitesProps;
+  handleEdit: (unit: Unit) => void;
 }
-interface AllCategoryesProps {
-  items: Category[];
+interface AllUnitesProps {
+  items: Unit[];
   numPages: number;
   offset: number;
   limit: number;
   totalItems: number;
 }
-const CategoryTable: FC<CategoryTableProps> = ({
+
+const UnitTable: FC<UnitTableProps> = ({
   startIndex,
-  allCategoryes,
+  endIndex,
+  allUnites,
+  handleEdit,
 }) => {
-  const rows = allCategoryes.items.map((element, index) => (
+
+  const rows = allUnites.items.map((element, index) => (
     <tr key={element.id}>
       <td>{startIndex + index + 1}</td>
       <td>{element.name}</td>
@@ -30,19 +34,30 @@ const CategoryTable: FC<CategoryTableProps> = ({
           className="delete-edit"
           strokeWidth="1.8"
           size="22px"
-          onClick={() => {}}
+
+          onClick={() => {
+            handleEdit(element);
+          }}
+
         />
         <IconTrashX
           className="delete-edit"
           strokeWidth="1.8"
           size="22px"
+
           color="red"
-          onClick={() => {}}
+          onClick={() => {
+            deleteModal("đơn vị tính", element.name, () => handleDeleteUnit({ id: element.id as number }));
+          }}
+
         />
       </td>
     </tr>
   ));
-
+  const { onSubmitDeleteUnitForm } = useUnit()
+  const handleDeleteUnit = (data: { id: number }) => {
+    onSubmitDeleteUnitForm(data)
+  }
   return (
     <Table horizontalSpacing="xl" striped highlightOnHover withBorder>
       <thead>
@@ -57,4 +72,4 @@ const CategoryTable: FC<CategoryTableProps> = ({
   );
 };
 
-export default CategoryTable;
+export default UnitTable;

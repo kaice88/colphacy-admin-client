@@ -27,7 +27,7 @@ export const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: '/profile',
+        path: "/profile",
         element: <Account />,
       },
       {
@@ -36,14 +36,14 @@ export const router = createBrowserRouter([
       },
       {
         element: <Branch />,
-        path: '/branch-management',
+        path: "/branch-management",
       },
       {
-        path: 'product-management',
+        path: "product-management",
         element: <Product />,
       },
       {
-        path: 'unit-management',
+        path: "unit-management",
         element: <UnitPage />,
       },
       {
