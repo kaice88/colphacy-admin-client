@@ -47,7 +47,7 @@ const UnitTable: FC<UnitTableProps> = ({
 
           color="red"
           onClick={() => {
-            deleteModal("đơn vị tinh", element.name, () => handleDeleteUnit({ id: element.id as number }));
+            deleteModal("đơn vị tính", element.name, () => handleDeleteUnit({ id: element.id as number }));
           }}
 
         />
