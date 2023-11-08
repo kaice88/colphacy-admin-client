@@ -8,7 +8,6 @@ import Account from './pages/Account';
 import EditPassword from './pages/EditPassword';
 import Branch from './pages/Branch';
 import Product from './pages/Product';
-import ExampleA from './pages/ExampleA';
 import UnitPage from './pages/UnitPage';
 
 export const router = createBrowserRouter([
