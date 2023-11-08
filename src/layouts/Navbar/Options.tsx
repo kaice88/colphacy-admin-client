@@ -36,6 +36,11 @@ export const options: Option[] = [
         url: 'product-management',
         label: 'Sản phẩm',
       },
+      {
+        icon: <IconMapPins size="1rem"></IconMapPins>,
+        url: 'category-management',
+        label: 'Danh mục',
+      },
     ],
   },
 ];

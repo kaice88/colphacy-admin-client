@@ -20,4 +20,7 @@ export const REQUEST_ADD_BRANCHES_DISTRICTS = (provinceId: number) =>
   `/location/districts?provinceId=${provinceId}`;
 export const REQUEST_ADD_BRANCHES_WARDS = (districtId: number) =>
   `/location/wards?districtId=${districtId}`;
-  
+export const REQUEST_CATEGORIES = `/categories`;
+export const REQUEST_CATEGORIES_SEARCH_KEY = (keyword: string,offset: number,
+  limit: number) =>
+  `/categories?keyword=${keyword}&offset=${offset}&limit=${limit}`;
