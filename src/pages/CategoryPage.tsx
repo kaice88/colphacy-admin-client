@@ -123,8 +123,7 @@ export default function CategoryPage() {
     }
   };
   return (
-    <div className="branch-ctn">
-      <Title title="Danh sách danh mục "></Title>
+    <div className="unit-ctn">
       <Flex>
         <div className="search-field">
           <div className="search">
@@ -181,7 +180,7 @@ export default function CategoryPage() {
           </Button>
         </Group>
       </Flex>
-      <div className="branch-table">
+      <div className="unit-table">
         <CategoryTable
           startIndex={startIndex * limitInit}
           endIndex={endIndex}
