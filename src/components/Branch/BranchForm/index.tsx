@@ -2,8 +2,6 @@ import {
   Button,
   Flex,
   TextInput,
-  Text,
-  useMantineTheme,
   Select,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
@@ -61,12 +59,18 @@ function formatDataWards(data: { WardName: string }[]) {
 }
 
 const BranchForm: React.FC<{
-  onSuccesSubmit: () => void;
+  onSuccesSubmitAdd?: () => void;
+  onSuccesSubmitEdit?: () => void;
   onCancel: () => void;
   idBranch?: number;
   isEdit?: boolean;
-}> = ({ onSuccesSubmit, onCancel, idBranch, isEdit }) => {
-  const theme = useMantineTheme();
+}> = ({
+  onSuccesSubmitAdd,
+  onSuccesSubmitEdit,
+  onCancel,
+  idBranch,
+  isEdit,
+}) => {
 
   const [provinceId, setProvinceId] = useState("");
   const [districtId, setDistrictId] = useState("");
@@ -78,6 +82,7 @@ const BranchForm: React.FC<{
   const [detailBranch, setDetailBranch] = useState<DetailBranch>();
   const [isDragging, setIsDragging] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [isEditProvince, setIsEditProvince] = useState(false);
 
   const {
     control,
@@ -115,6 +120,7 @@ const BranchForm: React.FC<{
     useViewDetailBranch(idBranch);
 
   const handleProvincesChange = (value: string) => {
+    setIsEditProvince(true);
     setValue(
       "province",
       findName(value, branchesProvinces, "ProvinceID", "ProvinceName")
@@ -132,6 +138,7 @@ const BranchForm: React.FC<{
     }
   };
   const handleDistrictsChange = (value: string) => {
+    setIsEditProvince(true);
     setValue(
       "district",
       findName(value, branchesDistricts, "DistrictID", "DistrictName")
@@ -286,7 +293,11 @@ const BranchForm: React.FC<{
   };
   const onSubmit: SubmitHandler<Branch> = (data) => {
     const handleSuccess = (message: string) => {
-      onSuccesSubmit();
+      if (isEdit) {
+        onSuccesSubmitEdit();
+      } else {
+        onSuccesSubmitAdd();
+      }
       notificationShow("success", "Success!", message);
     };
 
@@ -307,6 +318,21 @@ const BranchForm: React.FC<{
       });
     };
 
+    if (!isEditProvince) {
+      data.province = findName(
+        getValues("province"),
+        branchesProvinces,
+        "ProvinceID",
+        "ProvinceName"
+      );
+
+      data.district = findName(
+        getValues("district"),
+        branchesDistricts,
+        "DistrictID",
+        "DistrictName"
+      );
+    }
     if (!isEdit) {
       onSubmitAddBranchForm(
         data,
@@ -328,19 +354,6 @@ const BranchForm: React.FC<{
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Text
-        fw="600"
-        color={theme.colors.cobaltBlue[0]}
-        fz="18px"
-        align="center"
-        pb="lg"
-      >
-        {!idBranch
-          ? "Thêm chi nhánh"
-          : isEdit
-          ? "Sửa chi nhánh"
-          : "Xem chi nhánh"}
-      </Text>
       <Flex direction="column" gap="md" pb="lg">
         <Flex direction="row">
           <Controller

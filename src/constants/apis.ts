@@ -1,4 +1,8 @@
 export const REQUEST_AUTH_LOGIN_PASSWORD = "/auth/employee/login";
+export const REQUEST_AUTH_LOGOUT = "/auth/employee/logout";
+export const REQUEST_EMPLOYEE_CHANGE_PASSWORD = "/employees/change-password";
+export const REQUEST_EMPLOYEE_PROFILE = (id: number) =>
+  `employees/profile/${id}`;
 export const REQUEST_BRANCHES_PROVINCES = "/branches/provinces";
 export const REQUEST_BRANCHES = `/branches`;
 export const REQUEST_BRANCHES_DISTRICTS = (slug: string) =>
@@ -16,6 +20,12 @@ export const REQUEST_ADD_BRANCHES_DISTRICTS = (provinceId: string) =>
 export const REQUEST_ADD_BRANCHES_WARDS = (districtId: string) =>
   `/location/wards?districtId=${districtId}`;
 
+export const REQUEST_UNITS = `/units`;
+export const REQUEST_UNITS_SEARCH_KEY = (keyword: string,offset: number,
+  limit: number) =>
+  `/units?keyword=${keyword}&offset=${offset}&limit=${limit}`;
+  export const REQUEST_UNITS_DELETE = (id: number) =>
+  `/units/${id}`;
 //View Detail Branch
 export const REQUEST_VIEW_DETAIL_BRANCHES = (id: number) => `/branches/${id}`;
 

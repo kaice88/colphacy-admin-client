@@ -1,41 +1,36 @@
-.branch-ctn {
-  .branch-title {
+.unit-ctn {
+
+  .unit-title {
     font-size: 18px;
   }
   .search-field {
     padding: 2rem 0;
     display: flex;
     justify-content: space-between;
-    align-items: start;
-    .search-ctn {
-      .label {
-        padding: 1rem 0;
-      }
-      .filter {
-        display: flex;
-        align-items: center;
-        div {
-          padding-right: 1rem;
-        }
-      }
-    }
+    align-items: center;
     .button:hover {
       background-color: $munsellBlue;
     }
     .label {
       color: #666;
     }
-    .add-button {
-      margin-left: 8rem;
-    }
   }
-  .branch-table {
+  .unit-table {
+
     .mantine-12tbqdc {
       line-height: 2;
     }
     Table tr th,
     td {
       padding-left: 4rem;
+    }
+    td:first-child {
+      width: 3rem;
+
+    }
+    td:last-child {
+      width: 5rem;
+      padding: 0;
     }
     .delete-edit {
       margin: 0 0.5rem;
@@ -50,7 +45,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 2rem 0;
     .mantine-cjw5zx[data-active]:not([data-disabled]):hover {
       background-color: $munsellBlue;
     }

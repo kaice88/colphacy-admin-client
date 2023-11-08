@@ -47,10 +47,22 @@ const BranchTable: FC<BranchTableProps> = ({
   const rows = allBranches.items.map((element, index) => (
     <React.Fragment key={element.id}>
       {openedRowId === element.id && (
-        <Modal opened={opened} onClose={close} size="60" centered m={20}>
+        <Modal
+          title={isEdit ? "Sửa chi nhánh" : "Xem chi nhánh"}
+          opened={opened}
+          onClose={close}
+          size="60"
+          centered
+          m={20}
+          styles={() => ({
+            title: {
+              fontWeight: "bold",
+            },
+          })}
+        >
           <BranchForm
             isEdit={isEdit}
-            onSuccesSubmit={handleSuccessSubmit}
+            onSuccesSubmitEdit={handleSuccessSubmit}
             onCancel={handleCloseModal}
             idBranch={element.id}
           />
