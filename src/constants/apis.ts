@@ -23,7 +23,8 @@ export const REQUEST_CATEGORIES = `/categories`;
 export const REQUEST_CATEGORIES_SEARCH_KEY = (keyword: string,offset: number,
   limit: number) =>
   `/categories?keyword=${keyword}&offset=${offset}&limit=${limit}`;
-
+  export const REQUEST_CATEGORY_DELETE = (id: number) =>
+  `/categories/${id}`;
 export const REQUEST_UNITS = `/units`;
 export const REQUEST_UNITS_SEARCH_KEY = (keyword: string,offset: number,
   limit: number) =>
