@@ -47,15 +47,15 @@ const UnitTable: FC<UnitTableProps> = ({
 
           color="red"
           onClick={() => {
-            deleteModal("đơn vị tinh", element.name, () => handleDeleteUnit({id: element.id as number}));
+            deleteModal("đơn vị tinh", element.name, () => handleDeleteUnit({ id: element.id as number }));
           }}
 
         />
       </td>
     </tr>
   ));
-  const {onSubmitDeleteUnitForm} = useUnit()
-  const handleDeleteUnit = (data: {id: number}) => {
+  const { onSubmitDeleteUnitForm } = useUnit()
+  const handleDeleteUnit = (data: { id: number }) => {
     onSubmitDeleteUnitForm(data)
   }
   return (
