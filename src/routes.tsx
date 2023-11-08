@@ -5,10 +5,10 @@ import Home from './pages/Home';
 import * as ROUTES from './constants/routes';
 import Login from './pages/Login';
 import Account from './pages/Account';
-import EditPassword from './pages/EditPassword';
 import Branch from './pages/Branch';
 import Product from './pages/Product';
 import UnitPage from './pages/UnitPage';
+import ChangePassword from './pages/ChangePassword';
 
 export const router = createBrowserRouter([
   {
@@ -26,23 +26,23 @@ export const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: '/profile',
+        path: "/profile",
         element: <Account />,
       },
       {
         path: '/editPassword',
-        element: <EditPassword />,
+        element: <ChangePassword />,
       },
       {
         element: <Branch />,
-        path: '/branch-management',
+        path: "/branch-management",
       },
       {
-        path: 'product-management',
+        path: "product-management",
         element: <Product />,
       },
       {
-        path: 'unit-management',
+        path: "unit-management",
         element: <UnitPage />,
       },
     ],

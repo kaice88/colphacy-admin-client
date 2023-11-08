@@ -1,6 +1,6 @@
-.branch-ctn {
+.unit-ctn {
 
-  .branch-title {
+  .unit-title {
     font-size: 18px;
   }
   .search-field {
@@ -14,11 +14,8 @@
     .label {
       color: #666;
     }
-    .add-button {
-      margin-left: 8rem;
-    }
   }
-  .branch-table {
+  .unit-table {
 
     .mantine-12tbqdc {
       line-height: 2;
@@ -26,6 +23,14 @@
     Table tr th,
     td {
       padding-left: 4rem;
+    }
+    td:first-child {
+      width: 3rem;
+
+    }
+    td:last-child {
+      width: 5rem;
+      padding: 0;
     }
     .delete-edit {
       margin: 0 0.5rem;
