@@ -8,6 +8,7 @@ interface UnitTableProps {
   startIndex: number;
   endIndex: number;
   allUnites: AllUnitesProps;
+  handleEdit: (unit: Unit) => void;
 }
 interface AllUnitesProps {
   items: Unit[];
@@ -16,28 +17,39 @@ interface AllUnitesProps {
   limit: number;
   totalItems: number;
 }
-const UnitTable: FC<UnitTableProps> = ({ startIndex, endIndex, allUnites }) => {
-  const theme = useMantineTheme();
+
+const UnitTable: FC<UnitTableProps> = ({
+  startIndex,
+  endIndex,
+  allUnites,
+  handleEdit,
+}) => {
+
   const rows = allUnites.items.map((element, index) => (
     <tr key={element.id}>
       <td>{startIndex + index + 1}</td>
       <td>{element.name}</td>
-      <td>
+      <td align="right">
         <IconEdit
           className="delete-edit"
           strokeWidth="1.8"
           size="22px"
-          onClick={() => {}}
-          color={theme.colors.cobaltBlue[0]}
+
+          onClick={() => {
+            handleEdit(element);
+          }}
+
         />
         <IconTrashX
           className="delete-edit"
           strokeWidth="1.8"
           size="22px"
+
           color="red"
           onClick={() => {
             deleteModal("đơn vị tinh", element.name, () => handleDeleteUnit({id: element.id as number}));
           }}
+
         />
       </td>
     </tr>

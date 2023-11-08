@@ -3,11 +3,12 @@ import { IconPlus, IconSearch } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
 import UnitTable from "../components/Unit/UnitTable";
-import UnitForm from "../components/Unit/UnitForm";
+import UnitForm, { Unit } from "../components/Unit/UnitForm";
 import { useUnitExceptAdd } from "../hooks/useUnit";
 import { handleGlobalException } from "../utils/error";
 import { notificationShow } from "../components/Notification";
 import { useForm } from "react-hook-form";
+import Title from "../components/Title/Title";
 export interface AllUnitsProps {
   items: ItemsProps[];
   numPages: number;
@@ -25,7 +26,7 @@ export default function UnitPage() {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [searchValue, setSearchValue] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-
+  const [unit, setUnit] = useState<Unit>();
   const [allUnits, setAllUnits] = useState<AllUnitsProps>({
     items: [],
     numPages: 0,
@@ -121,9 +122,13 @@ export default function UnitPage() {
       setCurrentPage(1);
     }
   };
+  const handleEdit = (unit: Unit) => {
+    setAction("update");
+    open();
+    setUnit(unit);
+  };
   return (
     <div className="unit-ctn">
-      <h1 className="unit-title">Danh sách đơn vị tính</h1>
       <Flex>
         <div className="search-field">
           <div className="search">
@@ -148,14 +153,16 @@ export default function UnitPage() {
           size="60"
           centered
           m={20}
-          title={action === "add" ? "Thêm đơn vị tính" : ""}
+          title={action === "add" ? "Thêm đơn vị tính" : "Sửa đơn vị tính"}
           styles={() => ({
             title: {
               fontWeight: "bold",
             },
           })}
         >
-          <UnitForm title={action} onClose={close}/>
+
+          <UnitForm title={action} onClose={close} unit={unit} />
+
         </Modal>
         <Group ml="auto">
           <Button
@@ -180,11 +187,12 @@ export default function UnitPage() {
           </Button>
         </Group>
       </Flex>
-      <div className="branch-table">
+      <div className="unit-table">
         <UnitTable
           startIndex={startIndex * limitInit}
           endIndex={endIndex}
           allUnites={allUnits}
+          handleEdit={handleEdit}
         />
       </div>
       <br />

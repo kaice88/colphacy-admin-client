@@ -5,9 +5,13 @@ import {
 } from "./../constants/apis";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "../settings/axios";
+
 import { notificationShow } from "../components/Notification";
 import { useLocation, useNavigate } from "react-router-dom";
 import { handleGlobalException } from "../utils/error";
+
+import { Unit } from "../components/Unit/UnitForm";
+
 export function useUnitExceptAdd(
   search: { offset: number; limit: number; keyword: string },
   filter: {
@@ -78,6 +82,7 @@ function useUnit() {
       onError: (error) => onError(error),
     });
   };
+
   const onSubmitDeleteUnitForm = (data: { id: number }) => {
     handleDeleteUnit.mutate(data, {
       onSuccess: () => {
@@ -94,12 +99,33 @@ function useUnit() {
           }
         });
       },
+
+  const handleUpdateUnit = useMutation({
+    mutationKey: ["update-unit"],
+    mutationFn: (data: Unit) => {
+      return axios.put(REQUEST_UNITS, data);
+    },
+  });
+  const onSubmitUpdateUnitForm = (
+    data: Unit,
+    onError: (error: object) => void,
+    onSuccess: () => void
+  ) => {
+    handleUpdateUnit.mutate(data, {
+      onSuccess: onSuccess,
+      onError: (error) => onError(error),
+
     });
   };
   return {
     onSubmitAddUnitForm,
     handleAddUnit,
+
     onSubmitDeleteUnitForm,
+
+    handleUpdateUnit,
+    onSubmitUpdateUnitForm
+
   };
 }
 export default useUnit;
