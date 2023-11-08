@@ -15,4 +15,4 @@ export const deleteModal = (
     onConfirm: onConfirm,
   });
 };
-    
+
