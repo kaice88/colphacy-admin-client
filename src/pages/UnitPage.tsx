@@ -124,7 +124,6 @@ export default function UnitPage() {
   };
   return (
     <div className="unit-ctn">
-      <Title title ="Danh sách đơn vị tính" ></Title>
       <Flex>
         <div className="search-field">
           <div className="search">
@@ -156,7 +155,7 @@ export default function UnitPage() {
             },
           })}
         >
-          <UnitForm title={action} onClose={close}/>
+          <UnitForm title={action} onClose={close} />
         </Modal>
         <Group ml="auto">
           <Button
