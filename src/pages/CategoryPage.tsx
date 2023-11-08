@@ -120,7 +120,6 @@ export default function CategoryPage() {
   };
   return (
     <div className="unit-ctn">
-      <Title title="Danh sách danh mục "></Title>
       <Flex>
         <div className="search-field">
           <div className="search">

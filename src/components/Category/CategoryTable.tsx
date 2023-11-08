@@ -40,7 +40,7 @@ const CategoryTable: FC<CategoryTableProps> = ({
           size="22px"
           color="red"
           onClick={() => {
-            deleteModal("đơn vị tính", element.name, () =>
+            deleteModal("danh mục", element.name, () =>
               handleDeleteCategory({ id: element.id as number })
             );
           }}
