@@ -6,6 +6,7 @@ interface UnitTableProps {
   startIndex: number;
   endIndex: number;
   allUnites: AllUnitesProps;
+  handleEdit: (unit: Unit) => void;
 }
 interface AllUnitesProps {
   items: Unit[];
@@ -14,19 +15,31 @@ interface AllUnitesProps {
   limit: number;
   totalItems: number;
 }
-const UnitTable: FC<UnitTableProps> = ({ startIndex,endIndex, allUnites}) => {
+const UnitTable: FC<UnitTableProps> = ({
+  startIndex,
+  endIndex,
+  allUnites,
+  handleEdit,
+}) => {
   const rows = allUnites.items.map((element, index) => (
     <tr key={element.id}>
       <td>{startIndex + index + 1}</td>
       <td>{element.name}</td>
-      <td>
+      <td align="right">
         <IconEdit
           className="delete-edit"
           strokeWidth="1.8"
           size="22px"
-          onClick={()=>{}}
+          onClick={() => {
+            handleEdit(element);
+          }}
         />
-        <IconTrashX className="delete-edit" strokeWidth="1.8" size="22px" onClick={()=>{}}/>
+        <IconTrashX
+          className="delete-edit"
+          strokeWidth="1.8"
+          size="22px"
+          onClick={() => {}}
+        />
       </td>
     </tr>
   ));
