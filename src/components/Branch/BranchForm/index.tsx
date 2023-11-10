@@ -1,9 +1,4 @@
-import {
-  Button,
-  Flex,
-  TextInput,
-  Select,
-} from "@mantine/core";
+import { Button, Flex, TextInput, Select } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import Map from "../../Map/Map";
@@ -71,7 +66,6 @@ const BranchForm: React.FC<{
   idBranch,
   isEdit,
 }) => {
-
   const [provinceId, setProvinceId] = useState("");
   const [districtId, setDistrictId] = useState("");
   const [wardId, setWardId] = useState("");
@@ -83,6 +77,8 @@ const BranchForm: React.FC<{
   const [isDragging, setIsDragging] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isEditProvince, setIsEditProvince] = useState(false);
+  const [viewLat, setViewLat] = useState();
+  const [viewLng, setViewLng] = useState();
 
   const {
     control,
@@ -216,6 +212,8 @@ const BranchForm: React.FC<{
         if (data.isSuccess) {
           setIsDragging(false);
           const result = data.data.data;
+          setViewLat(result.latitude);
+          setViewLng(result.longitude);
           setDetailBranch(result);
           Object.keys(result).forEach((key) => {
             if (key === "province") {
@@ -416,14 +414,28 @@ const BranchForm: React.FC<{
           ></Controller>
         </Flex>
         <div>
-          <Map
-            isView={idBranch && !isEdit}
-            onDrag={handleDrag}
-            onStreetAddressChange={handleStreetAddressChange}
-            control={control}
-            initialLat={isDragging ? null : getValues("latitude")}
-            initialLng={isDragging ? null : getValues("longitude")}
-          />
+          {viewLat && viewLng && (
+            <div>
+              <Map
+                isView={idBranch && !isEdit}
+                onDrag={handleDrag}
+                onStreetAddressChange={handleStreetAddressChange}
+                control={control}
+                initialLat={viewLat}
+                initialLng={viewLng}
+              />
+            </div>
+          )}
+          {!viewLat && !viewLng && (
+            <div>
+              <Map
+                isView={idBranch && !isEdit}
+                onDrag={handleDrag}
+                onStreetAddressChange={handleStreetAddressChange}
+                control={control}
+              />
+            </div>
+          )}
         </div>
         <Flex direction="row">
           <Controller
