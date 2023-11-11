@@ -1,13 +1,21 @@
-import { Button, Flex, Group, Modal, Pagination, useMantineTheme, Title } from "@mantine/core";
-import { IconPlus, IconSearch } from "@tabler/icons-react";
-import { useEffect, useRef, useState } from "react";
-import { useDisclosure } from "@mantine/hooks";
-import UnitTable from "../components/Unit/UnitTable";
-import UnitForm, { Unit } from "../components/Unit/UnitForm";
-import { useUnitExceptAdd } from "../hooks/useUnit";
-import { handleGlobalException } from "../utils/error";
-import { notificationShow } from "../components/Notification";
-import { useForm } from "react-hook-form";
+import {
+  Button,
+  Flex,
+  Group,
+  Modal,
+  Pagination,
+  useMantineTheme,
+  Title,
+} from '@mantine/core';
+import { IconPlus, IconSearch } from '@tabler/icons-react';
+import { useEffect, useRef, useState } from 'react';
+import { useDisclosure } from '@mantine/hooks';
+import UnitTable from '../components/Unit/UnitTable';
+import UnitForm, { Unit } from '../components/Unit/UnitForm';
+import { useUnitExceptAdd } from '../hooks/useUnit';
+import { handleGlobalException } from '../utils/error';
+import { notificationShow } from '../components/Notification';
+import { useForm } from 'react-hook-form';
 
 export interface AllUnitsProps {
   items: ItemsProps[];
@@ -21,11 +29,11 @@ interface ItemsProps {
   name: string;
 }
 export default function UnitPage() {
-  const theme = useMantineTheme()
-  const [action, setAction] = useState("add");
+  const theme = useMantineTheme();
+  const [action, setAction] = useState('add');
   const [opened, { open, close }] = useDisclosure(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [unit, setUnit] = useState<Unit>();
   const [allUnits, setAllUnits] = useState<AllUnitsProps>({
@@ -55,12 +63,12 @@ export default function UnitPage() {
 
   const { fetchUnit, fetchUnitSearchKeywork } = useUnitExceptAdd(
     search,
-    filter
+    filter,
   );
   const { setError } = useForm({
     defaultValues: {
-      offset: "",
-      limit: "",
+      offset: '',
+      limit: '',
     },
   });
   async function fetchUnitData() {
@@ -73,7 +81,7 @@ export default function UnitPage() {
         if (error.response.status === 400) {
           const data = error.response.data;
           Object.keys(data).forEach((key) => {
-            notificationShow("error", "Error!", data[key]);
+            notificationShow('error', 'Error!', data[key]);
           });
         }
       });
@@ -86,12 +94,12 @@ export default function UnitPage() {
     } else if (data.isError) {
       const error = data.error;
       handleGlobalException(error, () => {
-        setError("offset", {
-          type: "manual",
+        setError('offset', {
+          type: 'manual',
           message: error.response.data.offset,
         });
-        setError("limit", {
-          type: "manual",
+        setError('limit', {
+          type: 'manual',
           message: error.response.data.limit,
         });
       });
@@ -118,21 +126,23 @@ export default function UnitPage() {
   };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchValue = e.target.value;
-    if (!searchValue.startsWith(" ")) {
+    if (!searchValue.startsWith(' ')) {
       setSearchValue(searchValue);
       setCurrentPage(1);
     }
   };
   const handleEdit = (unit: Unit) => {
-    setAction("update");
+    setAction('update');
     open();
     setUnit(unit);
   };
   return (
     <div className="unit-ctn">
-      <Title size="h5" color={theme.colors.cobaltBlue[0]}>Danh sách đơn vị tính</Title>
-      <Flex>
-        <div className="search-field">
+      <Title size="h5" color={theme.colors.cobaltBlue[0]}>
+        Danh sách đơn vị tính
+      </Title>
+      <Flex py="lg">
+        <div>
           <div className="search">
             <input
               ref={inputRef}
@@ -155,10 +165,10 @@ export default function UnitPage() {
           size="60"
           centered
           m={20}
-          title={action === "add" ? "Thêm đơn vị tính" : "Sửa đơn vị tính"}
+          title={action === 'add' ? 'Thêm đơn vị tính' : 'Sửa đơn vị tính'}
           styles={() => ({
             title: {
-              fontWeight: "bold",
+              fontWeight: 'bold',
             },
           })}
         >
@@ -173,13 +183,13 @@ export default function UnitPage() {
                 ...theme.fn.hover({
                   backgroundColor: theme.fn.darken(
                     theme.colors.munsellBlue[0],
-                    0.1
+                    0.1,
                   ),
                 }),
               },
             })}
             onClick={() => {
-              setAction("add");
+              setAction('add');
               open();
             }}
           >
@@ -203,10 +213,10 @@ export default function UnitPage() {
           <div>Tìm thấy 1 kết quả.</div>
         ) : (
           <div>
-            Hiển thị{" "}
-            {endIndex <= totalUnits ? itemsPerPage : totalUnits % itemsPerPage}{" "}
-            kết quả từ {startIndex + 1} -{" "}
-            {endIndex <= totalUnits ? endIndex : totalUnits} trong tổng{" "}
+            Hiển thị{' '}
+            {endIndex <= totalUnits ? itemsPerPage : totalUnits % itemsPerPage}{' '}
+            kết quả từ {startIndex + 1} -{' '}
+            {endIndex <= totalUnits ? endIndex : totalUnits} trong tổng{' '}
             {totalUnits} kết quả
           </div>
         )}
@@ -217,7 +227,7 @@ export default function UnitPage() {
           position="center"
           styles={(theme) => ({
             control: {
-              "&[data-active]": {
+              '&[data-active]': {
                 backgroundColor: theme.colors.munsellBlue[0],
                 border: 0,
               },
