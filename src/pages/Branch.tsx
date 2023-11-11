@@ -6,9 +6,7 @@ import { useBranch } from "../hooks/useBranch";
 import { handleGlobalException } from "../utils/error";
 import { useForm } from "react-hook-form";
 import { useDisclosure } from "@mantine/hooks";
-import BranchForm from "../components/BranchForm";
-import { useTheme } from "@emotion/react";
-
+import BranchForm from "../components/Branch/BranchForm";
 interface AllBranchesProps {
   items: ItemsProps[];
   numPages: number;
@@ -195,10 +193,15 @@ function Branch() {
     }
   };
 
-  const handleSuccessSubmit = () => {
+  const handleSuccessSubmitAdd = () => {
     close();
     setIsReloadata(!isReloadata);
     setCurrentPage(totalPages);
+  };
+
+  const handleSuccessSubmitEdit = () => {
+    close();
+    setIsReloadata(!isReloadata);
   };
 
   const handleCloseModal = () => {
@@ -209,39 +212,55 @@ function Branch() {
     <div className="branch-ctn">
       <Title size="h5" color={theme.colors.cobaltBlue[0]}>Danh sách chi nhánh</Title>
       <div className="search-field">
-        <div className="search">
-          <input
-            ref={inputRef}
-            value={searchValue}
-            placeholder="Tìm bằng tên đường và tỉnh thành..."
-            spellCheck={false}
-            onChange={handleChange}
-          />
-          <button
-            className="search-btn"
-            onMouseDown={(e) => e.preventDefault()}
-          >
-            <IconSearch size="1.3rem"></IconSearch>
-          </button>
+        <div className="search-ctn">
+          <div className="search">
+            <input
+              ref={inputRef}
+              value={searchValue}
+              placeholder="Tìm bằng tên đường và tỉnh thành..."
+              spellCheck={false}
+              onChange={handleChange}
+            />
+            <button
+              className="search-btn"
+              onMouseDown={(e) => e.preventDefault()}
+            >
+              <IconSearch size="1.3rem"></IconSearch>
+            </button>
+          </div>
+          <div className="label">hoặc</div>
+          <div className="filter">
+            <Select
+              placeholder="Chọn Tỉnh/ Thành"
+              data={formattedProvinces}
+              onChange={handleProvincesChange}
+              value={provinceSlug}
+              clearable
+            />
+            <Select
+              placeholder="Chọn Quận/ Huyện"
+              data={formattedDistricts}
+              onChange={handleDistrictsChange}
+              value={districtSlug}
+              clearable
+            />
+          </div>
         </div>
-        <div className="label">hoặc</div>
-        <Select
-          placeholder="Chọn Tỉnh/ Thành"
-          data={formattedProvinces}
-          onChange={handleProvincesChange}
-          value={provinceSlug}
-          clearable
-        />
-        <Select
-          placeholder="Chọn Quận/ Huyện"
-          data={formattedDistricts}
-          onChange={handleDistrictsChange}
-          value={districtSlug}
-          clearable
-        />
-        <Modal opened={opened} onClose={close} size="60" centered m={20}>
+        <Modal
+          title="Thêm chi nhánh"
+          opened={opened}
+          onClose={close}
+          size="60"
+          centered
+          m={20}
+          styles={() => ({
+            title: {
+              fontWeight: "bold",
+            },
+          })}
+        >
           <BranchForm
-            onSuccesSubmit={handleSuccessSubmit}
+            onSuccesSubmitAdd={handleSuccessSubmitAdd}
             onCancel={handleCloseModal}
           />
         </Modal>
@@ -262,6 +281,7 @@ function Branch() {
       </div>
       <div className="branch-table">
         <BranchTable
+          handleSuccessEditSubmit={handleSuccessSubmitEdit}
           startIndex={startIndex}
           endIndex={endIndex}
           allBranches={allBranches}

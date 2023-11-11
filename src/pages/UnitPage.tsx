@@ -161,9 +161,7 @@ export default function UnitPage() {
             },
           })}
         >
-
           <UnitForm title={action} onClose={close} unit={unit} />
-
         </Modal>
         <Group ml="auto">
           <Button
