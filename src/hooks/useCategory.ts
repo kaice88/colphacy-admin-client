@@ -8,8 +8,8 @@ import axios from "../settings/axios";
 import { notificationShow } from "../components/Notification";
 import { useNavigate } from "react-router-dom";
 import { handleGlobalException } from "../utils/error";
-import { Category } from "../components/Category/CategoryTable";
 import { ErrorObject } from "../types/error";
+import { Category } from "../components/Category/CategoryForm";
 function useCategory(
   search: { offset: number; limit: number; keyword: string },
   filter: {
