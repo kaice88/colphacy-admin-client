@@ -1,5 +1,5 @@
-import { Flex, Pagination } from "@mantine/core";
-import { IconSearch } from "@tabler/icons-react";
+import { Button, Flex, Group, Modal, Pagination } from "@mantine/core";
+import { IconPlus, IconSearch } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 import { handleGlobalException } from "../utils/error";
 import { notificationShow } from "../components/Notification";
@@ -7,6 +7,8 @@ import { useForm } from "react-hook-form";
 import Title from "../components/Title/Title";
 import useCategory from "../hooks/useCategory";
 import CategoryTable from "../components/Category/CategoryTable";
+import { useDisclosure } from "@mantine/hooks";
+import CategoryForm from "../components/Category/CategoryForm";
 export interface AllCategoriesProps {
   items: ItemsProps[];
   numPages: number;
@@ -19,6 +21,8 @@ interface ItemsProps {
   name: string;
 }
 export default function CategoryPage() {
+  const [action, setAction] = useState("add");
+  const [opened, { open, close }] = useDisclosure(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [searchValue, setSearchValue] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -138,6 +142,43 @@ export default function CategoryPage() {
             </button>
           </div>
         </div>
+        <Modal
+          opened={opened}
+          onClose={close}
+          size="60"
+          centered
+          m={20}
+          title={action === "add" ? "Thêm danh mục" : "Chỉnh sửa danh mục"}
+          styles={() => ({
+            title: {
+              fontWeight: "bold",
+            },
+          })}
+        >
+          <CategoryForm title={action} onClose={close}/>
+        </Modal>
+        <Group ml="auto">
+          <Button
+            leftIcon={<IconPlus size="15px" />}
+            styles={(theme) => ({
+              root: {
+                backgroundColor: theme.colors.munsellBlue[0],
+                ...theme.fn.hover({
+                  backgroundColor: theme.fn.darken(
+                    theme.colors.munsellBlue[0],
+                    0.1
+                  ),
+                }),
+              },
+            })}
+            onClick={() => {
+              setAction("add");
+              open();
+            }}
+          >
+            Thêm danh mục
+          </Button>
+        </Group>
       </Flex>
       <div className="unit-table">
         <CategoryTable

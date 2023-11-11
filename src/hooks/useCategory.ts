@@ -1,5 +1,5 @@
 import { REQUEST_CATEGORIES, REQUEST_CATEGORIES_SEARCH_KEY } from "./../constants/apis";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "../settings/axios";
 function useCategory(
     search: { offset: number; limit: number; keyword: string },
@@ -22,7 +22,7 @@ function useCategory(
       return params;
     };
     const fetchCategory = useQuery({
-      queryKey: ["get-Categories"],
+      queryKey: ["get-categories"],
       queryFn: () => {
         const params = buildParams();
   
@@ -33,16 +33,34 @@ function useCategory(
       enabled: false,
     });
     const fetchCategoriesSearchKeywork = useQuery({
-      queryKey: ["Category_search_keywork"],
+      queryKey: ["category_search_keywork"],
       queryFn: () =>
         axios.get(
           REQUEST_CATEGORIES_SEARCH_KEY(search.keyword, search.offset, search.limit)
         ),
       enabled: false,
     });
+    const handleAddCategory = useMutation({
+      mutationKey: ["add-category"],
+      mutationFn: (data: { name: string }) => {
+        return axios.post(REQUEST_CATEGORIES, data);
+      },
+    });
+    const onSubmitAddCategoryForm = (
+      data: { name: string },
+      onError: (error: object) => void,
+      onSuccess: () => void
+    ) => {
+      handleAddCategory.mutate(data, {
+        onSuccess: onSuccess,
+        onError: (error) => onError(error),
+      });
+    };
     return {
       fetchCategory,
-      fetchCategoriesSearchKeywork
+      fetchCategoriesSearchKeywork,
+      onSubmitAddCategoryForm,
+      handleAddCategory
     };
   }
 
