@@ -37,11 +37,19 @@
     td {
       padding-left: 4rem;
     }
-    .delete-edit {
+    .edit-button {
       margin: 0 0.5rem;
 
       &:hover {
         color: $munsellBlue;
+        cursor: pointer;
+      }
+    }
+    .delete-button {
+      margin: 0 0.5rem;
+
+      &:hover {
+        color: red;
         cursor: pointer;
       }
     }
@@ -63,7 +71,6 @@
   display: flex;
   align-items: center;
   border-radius: 10px;
-  width: 400px;
   button {
     outline: none;
     border: none;

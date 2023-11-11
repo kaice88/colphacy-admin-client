@@ -28,7 +28,7 @@ const CategoryTable: FC<CategoryTableProps> = ({
       <td>{element.name}</td>
       <td align="right">
         <IconEdit
-          className="delete-edit"
+          className="edit-button"
           strokeWidth="1.8"
           size="22px"
           onClick={() => {
@@ -36,10 +36,9 @@ const CategoryTable: FC<CategoryTableProps> = ({
           }}
         />
         <IconTrashX
-          className="delete-edit"
+          className="delete-button"
           strokeWidth="1.8"
           size="22px"
-          color="red"
           onClick={() => {
             deleteModal("danh mục", element.name, () =>
               handleDeleteCategory({ id: element.id as number })
