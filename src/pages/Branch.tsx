@@ -3,7 +3,6 @@ import {
   Pagination,
   Select,
   Modal,
-  Group,
   Title,
   useMantineTheme,
   Flex,
