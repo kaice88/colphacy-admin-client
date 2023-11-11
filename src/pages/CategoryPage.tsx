@@ -5,9 +5,10 @@ import { handleGlobalException } from "../utils/error";
 import { notificationShow } from "../components/Notification";
 import { useForm } from "react-hook-form";
 import useCategory from "../hooks/useCategory";
-import CategoryTable, { Category } from "../components/Category/CategoryTable";
+import CategoryTable from "../components/Category/CategoryTable";
 import { useDisclosure } from "@mantine/hooks";
-import CategoryForm from "../components/Category/CategoryForm";
+import CategoryForm, { Category } from "../components/Category/CategoryForm";
+import { ErrorObject } from "../types/error";
 export interface AllCategoriesProps {
   items: ItemsProps[];
   numPages: number;
@@ -40,7 +41,6 @@ export default function CategoryPage() {
   const endIndex = startIndex + itemsPerPage;
   const totalCategories = allCategories.totalItems;
   const totalPages = allCategories.numPages;
-  const limitInit = 10;
   const offset = currentPage * 10 - 10;
   const search = {
     offset: offset,
@@ -68,7 +68,7 @@ export default function CategoryPage() {
     if (data.isSuccess) {
       setAllCategories(data.data.data);
     } else if (data.isError) {
-      const error = data.error;
+      const error = data.error as ErrorObject;
       handleGlobalException(error, () => {
         if (error.response.status === 400) {
           const data = error.response.data;
@@ -84,7 +84,7 @@ export default function CategoryPage() {
     if (data.isSuccess) {
       setAllCategories(data.data.data);
     } else if (data.isError) {
-      const error = data.error;
+      const error = data.error as ErrorObject;
       handleGlobalException(error, () => {
         setError("offset", {
           type: "manual",
@@ -180,6 +180,7 @@ export default function CategoryPage() {
             })}
             onClick={() => {
               setAction("add");
+              setCategory(undefined);
               open();
             }}
           >

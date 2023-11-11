@@ -4,10 +4,11 @@ import useCategory from "../../hooks/useCategory";
 import { handleGlobalException } from "../../utils/error";
 import { notificationShow } from "../Notification";
 import { useLocation, useNavigate } from "react-router-dom";
+import { ErrorObject } from "../../types/error";
 
 export interface Category {
   id: number | undefined;
-  name: string | undefined;
+  name: string ;
 }
 const CategoryForm: React.FC<{
   onClose: () => void;
@@ -45,18 +46,17 @@ const CategoryForm: React.FC<{
   const navigate = useNavigate();
   const onSubmit: SubmitHandler<{
     id: string | number | undefined;
-    name: string | undefined;
+    name: string;
   }> = (data) => {
     if (title === "add") {
       onSubmitAddCategoryForm(
         { name: data.name },
         (error) => {
-          handleGlobalException(error, () => {
-            Object.keys(error.response.data).forEach((key) => {
-              setError(key, {
-                type: "manual",
-                message: error.response.data[key],
-              });
+          const newError = error as ErrorObject;
+          handleGlobalException(newError, () => {
+            setError("name", {
+              type: "manual",
+              message: newError.response.data.name,
             });
           });
         },
@@ -69,14 +69,13 @@ const CategoryForm: React.FC<{
     }
     if (title === "update") {
       onSubmitUpdateCategoryForm(
-        data,
+        data as Category, 
         (error) => {
-          handleGlobalException(error, () => {
-            Object.keys(error.response.data).forEach((key) => {
-              setError(key, {
-                type: "manual",
-                message: error.response.data[key],
-              });
+          const newError = error as ErrorObject;
+          handleGlobalException(newError, () => {
+            setError("name", {
+              type: "manual",
+              message: newError.response.data.name,
             });
           });
         },

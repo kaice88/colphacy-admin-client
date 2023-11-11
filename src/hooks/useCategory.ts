@@ -9,6 +9,7 @@ import { notificationShow } from "../components/Notification";
 import { useNavigate } from "react-router-dom";
 import { handleGlobalException } from "../utils/error";
 import { Category } from "../components/Category/CategoryTable";
+import { ErrorObject } from "../types/error";
 function useCategory(
   search: { offset: number; limit: number; keyword: string },
   filter: {
@@ -66,12 +67,11 @@ function useCategory(
         navigate("/", { state: { from: location.pathname } });
       },
       onError: (error) => {
-        handleGlobalException(error, () => {
-          if (error.response.status === 400) {
-            const data = error.response.data;
-            Object.keys(data).forEach((key) => {
-              notificationShow("error", "Error!", data[key]);
-            });
+        const newError = error as ErrorObject
+        handleGlobalException(newError, () => {
+          if (newError.response.status === 400) {
+            const data = newError.response.data;
+            notificationShow("error", "Error!", data.error);
           }
         });
       },
@@ -90,7 +90,7 @@ function useCategory(
   ) => {
     handleAddCategory.mutate(data, {
       onSuccess: onSuccess,
-      onError: (error) => onError(error),
+      onError: (error) => onError(error as ErrorObject),
     });
   };
   const handleUpdateCategory = useMutation({
@@ -106,7 +106,7 @@ function useCategory(
   ) => {
     handleUpdateCategory.mutate(data, {
       onSuccess: onSuccess,
-      onError: (error) => onError(error),
+      onError: (error) => onError(error as ErrorObject),
     });
   };
   return {

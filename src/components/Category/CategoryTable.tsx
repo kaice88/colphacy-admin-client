@@ -3,15 +3,12 @@ import { Table } from "@mantine/core";
 import { IconEdit, IconTrashX } from "@tabler/icons-react";
 import { deleteModal } from "../../utils/deleteModal";
 import useCategory from "../../hooks/useCategory";
-export interface Category {
-  id: number | undefined;
-  name: string | undefined;
-}
+import { Category } from "./CategoryForm";
 interface CategoryTableProps {
   startIndex: number;
   endIndex: number;
   allCategoryes: AllCategoryesProps;
-  handleEdit: (unit: Category) => void;
+  handleEdit: (category: Category) => void;
 }
 interface AllCategoryesProps {
   items: Category[];
