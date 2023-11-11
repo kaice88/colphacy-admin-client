@@ -79,6 +79,7 @@ const Map: React.FC<{
         onDrag(latLng.lat(), latLng.lng());
 
         autocompleteInput.value = place.name;
+        onStreetAddressChange(place.name);
       }, 500)
     );
 
@@ -92,12 +93,18 @@ const Map: React.FC<{
     window.initMap = initMap;
 
     const loadScript = () => {
-      const script = document.createElement("script");
-      script.src =
-        "https://maps.googleapis.com/maps/api/js?key=AIzaSyAHUq7rXW6gtVCss6HHxDGK9Su14uwkdU0&libraries=places&callback=initMap";
-      script.async = true;
-      script.defer = true;
-      document.body.appendChild(script);
+      if (
+        !document.querySelector(
+          'script[src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAHUq7rXW6gtVCss6HHxDGK9Su14uwkdU0&libraries=places&callback=initMap"]'
+        )
+      ) {
+        const script = document.createElement("script");
+        script.src =
+          "https://maps.googleapis.com/maps/api/js?key=AIzaSyAHUq7rXW6gtVCss6HHxDGK9Su14uwkdU0&libraries=places&callback=initMap";
+        script.async = true;
+        script.defer = true;
+        document.body.appendChild(script);
+      }
     };
 
     if (!window.google || !window.google.maps) {
