@@ -1,13 +1,17 @@
-import { Button, Flex, Modal } from '@mantine/core';
+import { Button, Flex, Modal, Title, useMantineTheme } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconPlus } from '@tabler/icons-react';
 import ProductForm from '../components/Product/ProductForm';
 
 export default function Product() {
   const [opened, { open, close }] = useDisclosure(false);
+  const theme = useMantineTheme();
 
   return (
     <div>
+      <Title size="h5" color={theme.colors.cobaltBlue[0]}>
+        Danh sách sản phẩm
+      </Title>
       <Flex justify="flex-end">
         <Modal
           size="70%"

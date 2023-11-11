@@ -30,3 +30,4 @@ export const REQUEST_UNITS_DELETE = (id: number) => `/units/${id}`;
 
 // PRODUCT
 export const UPLOAD_IMAGES = '/images/upload';
+export const REQUEST_CATEGORIES = `/categories`;
