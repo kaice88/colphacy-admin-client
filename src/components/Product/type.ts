@@ -1,11 +1,11 @@
 export interface Product {
   name: string;
-  category: string;
+  categoryId: string;
   packing: string;
   manufacturer: string;
   brandOrigin: string;
   indications: string;
-  registrationNumber: number;
+  registrationNumber: string;
   ingredients: {
     name: string;
     amount: number;
@@ -15,13 +15,13 @@ export interface Product {
   storage: string;
   notes: string;
   usage: string;
-  status: boolean;
+  status: 'PRE_ORDER' | 'FOR_SALE';
   images: { url: string }[];
   productUnits: {
-    unitId: string;
+    unitId?: string;
     ratio: number;
     salePrice: number;
-    importPrice: number;
-    isDefaultUnit: boolean;
+    importPrice?: number;
+    defaultUnit: boolean;
   }[];
 }
