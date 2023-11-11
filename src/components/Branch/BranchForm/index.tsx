@@ -1,40 +1,35 @@
-import {
-  Button,
-  Flex,
-  TextInput,
-  Select,
-} from "@mantine/core";
-import { useEffect, useState } from "react";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import Map from "../../Map/Map";
-import { handleGlobalException } from "../../../utils/error";
+import { Button, Flex, TextInput, Select } from '@mantine/core';
+import { useEffect, useState } from 'react';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import Map from '../../Map/Map';
+import { handleGlobalException } from '../../../utils/error';
 import {
   useAddBranch,
   useEditBranch,
   useViewDetailBranch,
-} from "../../../hooks/useBranch";
-import { notificationShow } from "../../Notification";
-import { isEmpty } from "lodash";
-import { Branch, DetailBranch } from "../type";
+} from '../../../hooks/useBranch';
+import { notificationShow } from '../../Notification';
+import { isEmpty } from 'lodash';
+import { Branch, DetailBranch } from '../type';
 
 function findName(
   id: string,
   data: Record<any, any>[],
   idKey: string,
-  nameKey: string
+  nameKey: string,
 ) {
   for (let i = 0; i < data.length; i++) {
     if (data[i][idKey] === id) {
       return data[i][nameKey];
     }
   }
-  return "ProvinceID not found";
+  return 'ProvinceID not found';
 }
 function findId(
   name: string,
   data: Record<any, any>[],
   idKey: string,
-  nameKey: string
+  nameKey: string,
 ) {
   const record = data.find((item) => item[nameKey] === name);
   return record[idKey];
@@ -43,7 +38,7 @@ function findId(
 function formatData(
   data: Record<string, string>[],
   idKey: string,
-  nameKey: string
+  nameKey: string,
 ) {
   return data.map((item) => ({
     value: item[idKey],
@@ -71,10 +66,9 @@ const BranchForm: React.FC<{
   idBranch,
   isEdit,
 }) => {
-
-  const [provinceId, setProvinceId] = useState("");
-  const [districtId, setDistrictId] = useState("");
-  const [wardId, setWardId] = useState("");
+  const [provinceId, setProvinceId] = useState('');
+  const [districtId, setDistrictId] = useState('');
+  const [wardId, setWardId] = useState('');
   const [branchesProvinces, setBranchesProvinces] = useState([]);
   const [branchesDistricts, setBranchesDistricts] = useState([]);
   const [branchesWards, setBranchesWards] = useState([]);
@@ -83,6 +77,8 @@ const BranchForm: React.FC<{
   const [isDragging, setIsDragging] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isEditProvince, setIsEditProvince] = useState(false);
+  const [viewLat, setViewLat] = useState();
+  const [viewLng, setViewLng] = useState();
 
   const {
     control,
@@ -93,14 +89,14 @@ const BranchForm: React.FC<{
     setError,
   } = useForm({
     defaultValues: {
-      status: "OPEN",
-      closingHour: "",
-      openingHour: "",
-      phone: "",
-      streetAddress: "",
-      ward: "",
-      district: "",
-      province: "",
+      status: 'OPEN',
+      closingHour: '',
+      openingHour: '',
+      phone: '',
+      streetAddress: '',
+      ward: '',
+      district: '',
+      province: '',
       latitude: 0,
       longitude: 0,
     },
@@ -122,13 +118,13 @@ const BranchForm: React.FC<{
   const handleProvincesChange = (value: string) => {
     setIsEditProvince(true);
     setValue(
-      "province",
-      findName(value, branchesProvinces, "ProvinceID", "ProvinceName")
+      'province',
+      findName(value, branchesProvinces, 'ProvinceID', 'ProvinceName'),
     );
     setProvinceId(value);
-    setDistrictId("");
-    setWardId("");
-    setValue("ward", "");
+    setDistrictId('');
+    setWardId('');
+    setValue('ward', '');
     setBranchesDistricts([]);
     setBranchesWards([]);
     if (isEdit) {
@@ -140,20 +136,20 @@ const BranchForm: React.FC<{
   const handleDistrictsChange = (value: string) => {
     setIsEditProvince(true);
     setValue(
-      "district",
-      findName(value, branchesDistricts, "DistrictID", "DistrictName")
+      'district',
+      findName(value, branchesDistricts, 'DistrictID', 'DistrictName'),
     );
     setDistrictId(value);
-    setWardId("");
-    setValue("ward", "");
+    setWardId('');
+    setValue('ward', '');
     setBranchesWards([]);
   };
   const handleWardsChange = (value: string) => {
-    setValue("ward", value);
+    setValue('ward', value);
     setWardId(value);
   };
   const handleStreetAddressChange = (address: string) => {
-    setValue("streetAddress", address);
+    setValue('streetAddress', address);
   };
 
   useEffect(() => {
@@ -216,14 +212,16 @@ const BranchForm: React.FC<{
         if (data.isSuccess) {
           setIsDragging(false);
           const result = data.data.data;
+          setViewLat(result.latitude);
+          setViewLng(result.longitude);
           setDetailBranch(result);
           Object.keys(result).forEach((key) => {
-            if (key === "province") {
+            if (key === 'province') {
               const Id = findId(
                 result[key],
                 branchesProvinces,
-                "ProvinceID",
-                "ProvinceName"
+                'ProvinceID',
+                'ProvinceName',
               );
               setValue(key, Number(Id));
               setProvinceId(Number(Id));
@@ -243,15 +241,15 @@ const BranchForm: React.FC<{
   useEffect(() => {
     if (!isEditing && detailBranch && !isEmpty(branchesDistricts)) {
       Object.keys(detailBranch).forEach((key) => {
-        if (key === "district") {
+        if (key === 'district') {
           const Id = branchesDistricts.every((branch) =>
-            branch.hasOwnProperty("DistrictID")
+            branch.hasOwnProperty('DistrictID'),
           )
             ? findId(
                 detailBranch[key],
                 branchesDistricts,
-                "DistrictID",
-                "DistrictName"
+                'DistrictID',
+                'DistrictName',
               )
             : null;
           setValue(key, Number(Id));
@@ -264,7 +262,7 @@ const BranchForm: React.FC<{
   useEffect(() => {
     if (detailBranch && !isEmpty(branchesWards)) {
       Object.keys(detailBranch).forEach((key) => {
-        if (key === "ward") {
+        if (key === 'ward') {
           setValue(key, detailBranch[key]);
         }
       });
@@ -273,19 +271,19 @@ const BranchForm: React.FC<{
 
   const formattedProvinces = formatData(
     branchesProvinces,
-    "ProvinceID",
-    "ProvinceName"
+    'ProvinceID',
+    'ProvinceName',
   );
   const formattedDistricts = formatData(
     branchesDistricts,
-    "DistrictID",
-    "DistrictName"
+    'DistrictID',
+    'DistrictName',
   );
   const formattedWards = formatDataWards(branchesWards);
 
   const handleDrag = (lat: number, lng: number) => {
-    setValue("latitude", lat);
-    setValue("longitude", lng);
+    setValue('latitude', lat);
+    setValue('longitude', lng);
     setIsDragging(true);
   };
   const handleCancel = () => {
@@ -298,21 +296,21 @@ const BranchForm: React.FC<{
       } else {
         onSuccesSubmitAdd();
       }
-      notificationShow("success", "Success!", message);
+      notificationShow('success', 'Success!', message);
     };
 
     const handleError = (error) => {
       handleGlobalException(error, () => {
-        setError("openingHour", {
-          type: "manual",
+        setError('openingHour', {
+          type: 'manual',
           message: error.response.data.openingHour,
         });
-        setError("closingHour", {
-          type: "manual",
+        setError('closingHour', {
+          type: 'manual',
           message: error.response.data.closingHour,
         });
-        setError("phone", {
-          type: "manual",
+        setError('phone', {
+          type: 'manual',
           message: error.response.data.phone,
         });
       });
@@ -320,34 +318,34 @@ const BranchForm: React.FC<{
 
     if (!isEditProvince) {
       data.province = findName(
-        getValues("province"),
+        getValues('province'),
         branchesProvinces,
-        "ProvinceID",
-        "ProvinceName"
+        'ProvinceID',
+        'ProvinceName',
       );
 
       data.district = findName(
-        getValues("district"),
+        getValues('district'),
         branchesDistricts,
-        "DistrictID",
-        "DistrictName"
+        'DistrictID',
+        'DistrictName',
       );
     }
     if (!isEdit) {
       onSubmitAddBranchForm(
         data,
         () => {
-          handleSuccess("Thêm nhánh mới thành công!");
+          handleSuccess('Thêm nhánh mới thành công!');
         },
-        handleError
+        handleError,
       );
     } else {
       onSubmitEditBranchForm(
         data,
         () => {
-          handleSuccess("Chỉnh sửa nhánh thành công!");
+          handleSuccess('Chỉnh sửa nhánh thành công!');
         },
-        handleError
+        handleError,
       );
     }
   };
@@ -359,7 +357,7 @@ const BranchForm: React.FC<{
           <Controller
             name="province"
             control={control}
-            rules={{ required: "Vui lòng chọn Tỉnh/ Thành" }}
+            rules={{ required: 'Vui lòng chọn Tỉnh/ Thành' }}
             render={({ field }) => {
               return (
                 <Select
@@ -380,7 +378,7 @@ const BranchForm: React.FC<{
           <Controller
             name="district"
             control={control}
-            rules={{ required: "Vui lòng chọn Quận/ Huyện" }}
+            rules={{ required: 'Vui lòng chọn Quận/ Huyện' }}
             render={({ field }) => (
               <Select
                 disabled={idBranch && !isEdit}
@@ -399,7 +397,7 @@ const BranchForm: React.FC<{
           <Controller
             name="ward"
             control={control}
-            rules={{ required: "Vui lòng chọn Phường/ Xã" }}
+            rules={{ required: 'Vui lòng chọn Phường/ Xã' }}
             render={({ field }) => (
               <Select
                 disabled={idBranch && !isEdit}
@@ -416,14 +414,28 @@ const BranchForm: React.FC<{
           ></Controller>
         </Flex>
         <div>
-          <Map
-            isView={idBranch && !isEdit}
-            onDrag={handleDrag}
-            onStreetAddressChange={handleStreetAddressChange}
-            control={control}
-            initialLat={isDragging ? null : getValues("latitude")}
-            initialLng={isDragging ? null : getValues("longitude")}
-          />
+          {viewLat && viewLng && (
+            <div>
+              <Map
+                isView={idBranch && !isEdit}
+                onDrag={handleDrag}
+                onStreetAddressChange={handleStreetAddressChange}
+                control={control}
+                initialLat={viewLat}
+                initialLng={viewLng}
+              />
+            </div>
+          )}
+          {!viewLat && !viewLng && (
+            <div>
+              <Map
+                isView={idBranch && !isEdit}
+                onDrag={handleDrag}
+                onStreetAddressChange={handleStreetAddressChange}
+                control={control}
+              />
+            </div>
+          )}
         </div>
         <Flex direction="row">
           <Controller
@@ -440,9 +452,9 @@ const BranchForm: React.FC<{
                 radius="md"
                 error={
                   errors.openingHour
-                    ? errors.openingHour.type === "minLength" ||
-                      errors.openingHour.type === "maxLength"
-                      ? "Sai định dạng giờ (HH:mm)"
+                    ? errors.openingHour.type === 'minLength' ||
+                      errors.openingHour.type === 'maxLength'
+                      ? 'Sai định dạng giờ (HH:mm)'
                       : errors.openingHour.message
                     : false
                 }
@@ -463,9 +475,9 @@ const BranchForm: React.FC<{
                 radius="md"
                 error={
                   errors.closingHour
-                    ? errors.closingHour.type === "minLength" ||
-                      errors.closingHour.type === "maxLength"
-                      ? "Sai định dạng giờ (HH:mm)"
+                    ? errors.closingHour.type === 'minLength' ||
+                      errors.closingHour.type === 'maxLength'
+                      ? 'Sai định dạng giờ (HH:mm)'
                       : errors.closingHour.message
                     : false
                 }
@@ -488,9 +500,9 @@ const BranchForm: React.FC<{
                 radius="md"
                 error={
                   errors.phone
-                    ? errors.phone.type === "minLength" ||
-                      errors.phone.type === "maxLength"
-                      ? "Số điện thoại phải gồm 10 chữ số đó"
+                    ? errors.phone.type === 'minLength' ||
+                      errors.phone.type === 'maxLength'
+                      ? 'Số điện thoại phải gồm 10 chữ số đó'
                       : errors.phone.message
                     : false
                 }
@@ -528,14 +540,13 @@ const BranchForm: React.FC<{
                   ...theme.fn.hover({
                     backgroundColor: theme.fn.darken(
                       theme.colors.munsellBlue[0],
-                      0.1
+                      0.1,
                     ),
                   }),
                 },
               })}
               type="submit"
             >
-              {" "}
               Lưu
             </Button>
             <Button
@@ -552,7 +563,7 @@ const BranchForm: React.FC<{
               })}
               onClick={handleCancel}
             >
-              {" "}
+              {' '}
               Hủy
             </Button>
           </Flex>
