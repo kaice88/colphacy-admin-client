@@ -12,7 +12,8 @@ export interface Category {
 const CategoryForm: React.FC<{
   onClose: () => void;
   title: string;
-}> = ({ title, onClose }) => {
+  category: Category | undefined;
+}> = ({ title, onClose, category }) => {
   const {
     handleSubmit,
     control,
@@ -20,23 +21,35 @@ const CategoryForm: React.FC<{
     setError,
   } = useForm({
     defaultValues: {
-      name: "",
+      id: category ? category.id : "",
+      name: category ? category.name : "",
     },
   });
-  const { handleAddCategory, onSubmitAddCategoryForm } = useCategory({
-    offset: 0,
-    limit: 10,
-    keyword: "",
-  },{
-    offset: 0,
-    limit: 5
-  });
+  const {
+    handleAddCategory,
+    onSubmitAddCategoryForm,
+    onSubmitUpdateCategoryForm,
+    handleUpdateCategory,
+  } = useCategory(
+    {
+      offset: 0,
+      limit: 10,
+      keyword: "",
+    },
+    {
+      offset: 0,
+      limit: 5,
+    }
+  );
   const location = useLocation();
   const navigate = useNavigate();
-  const onSubmit: SubmitHandler<{ name: string }> = (data) => {
+  const onSubmit: SubmitHandler<{
+    id: string | number | undefined;
+    name: string | undefined;
+  }> = (data) => {
     if (title === "add") {
       onSubmitAddCategoryForm(
-        data,
+        { name: data.name },
         (error) => {
           handleGlobalException(error, () => {
             Object.keys(error.response.data).forEach((key) => {
@@ -50,6 +63,26 @@ const CategoryForm: React.FC<{
         () => {
           onClose();
           notificationShow("success", "Success!", "Thêm danh mục thành công!");
+          navigate("/", { state: { from: location.pathname } });
+        }
+      );
+    }
+    if (title === "update") {
+      onSubmitUpdateCategoryForm(
+        data,
+        (error) => {
+          handleGlobalException(error, () => {
+            Object.keys(error.response.data).forEach((key) => {
+              setError(key, {
+                type: "manual",
+                message: error.response.data[key],
+              });
+            });
+          });
+        },
+        () => {
+          onClose();
+          notificationShow("success", "Success!", "Sửa danh mục thành công!");
           navigate("/", { state: { from: location.pathname } });
         }
       );
@@ -95,6 +128,7 @@ const CategoryForm: React.FC<{
           Lưu
         </Button>
         <Button
+          loading={handleUpdateCategory.isLoading}
           className="button cancel"
           variant="outline"
           styles={(theme) => ({

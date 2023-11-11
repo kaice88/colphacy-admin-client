@@ -8,6 +8,7 @@ import axios from "../settings/axios";
 import { notificationShow } from "../components/Notification";
 import { useNavigate } from "react-router-dom";
 import { handleGlobalException } from "../utils/error";
+import { Category } from "../components/Category/CategoryTable";
 function useCategory(
   search: { offset: number; limit: number; keyword: string },
   filter: {
@@ -92,12 +93,30 @@ function useCategory(
       onError: (error) => onError(error),
     });
   };
+  const handleUpdateCategory = useMutation({
+    mutationKey: ["update-category"],
+    mutationFn: (data: Category) => {
+      return axios.put(REQUEST_CATEGORIES, data);
+    },
+  });
+  const onSubmitUpdateCategoryForm = (
+    data: Category,
+    onError: (error: object) => void,
+    onSuccess: () => void
+  ) => {
+    handleUpdateCategory.mutate(data, {
+      onSuccess: onSuccess,
+      onError: (error) => onError(error),
+    });
+  };
   return {
     fetchCategory,
     fetchCategoriesSearchKeywork,
     onSubmitAddCategoryForm,
     handleAddCategory,
     onSubmitDeleteCategoryForm,
+    onSubmitUpdateCategoryForm,
+    handleUpdateCategory,
   };
 }
 

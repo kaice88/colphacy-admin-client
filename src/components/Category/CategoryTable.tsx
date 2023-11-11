@@ -11,6 +11,7 @@ interface CategoryTableProps {
   startIndex: number;
   endIndex: number;
   allCategoryes: AllCategoryesProps;
+  handleEdit: (unit: Category) => void;
 }
 interface AllCategoryesProps {
   items: Category[];
@@ -22,6 +23,7 @@ interface AllCategoryesProps {
 const CategoryTable: FC<CategoryTableProps> = ({
   startIndex,
   allCategoryes,
+  handleEdit,
 }) => {
   const rows = allCategoryes.items.map((element, index) => (
     <tr key={element.id}>
@@ -32,7 +34,9 @@ const CategoryTable: FC<CategoryTableProps> = ({
           className="delete-edit"
           strokeWidth="1.8"
           size="22px"
-          onClick={() => {}}
+          onClick={() => {
+            handleEdit(element);
+          }}
         />
         <IconTrashX
           className="delete-edit"
