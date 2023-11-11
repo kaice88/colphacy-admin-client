@@ -1,4 +1,4 @@
-import { Button, Flex, Group, Modal, Pagination } from "@mantine/core";
+import { Button, Flex, Group, Modal, Pagination, Title, useMantineTheme } from "@mantine/core";
 import { IconPlus, IconSearch } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 import { handleGlobalException } from "../utils/error";
@@ -20,6 +20,7 @@ interface ItemsProps {
   name: string;
 }
 export default function CategoryPage() {
+  const theme = useMantineTheme()
   const [action, setAction] = useState("add");
   const [category, setCategory] = useState<Category>();
   const [opened, { open, close }] = useDisclosure(false);
@@ -40,7 +41,7 @@ export default function CategoryPage() {
   const totalCategories = allCategories.totalItems;
   const totalPages = allCategories.numPages;
   const limitInit = 10;
-  const offset = currentPage - 1;
+  const offset = currentPage * 10 - 10;
   const search = {
     offset: offset,
     limit: 10,
@@ -129,6 +130,7 @@ export default function CategoryPage() {
   };
   return (
     <div className="unit-ctn">
+      <Title size="h5" color={theme.colors.cobaltBlue[0]}>Danh sách danh mục</Title>
       <Flex>
         <div className="search-field">
           <div className="search">
@@ -187,7 +189,7 @@ export default function CategoryPage() {
       </Flex>
       <div className="unit-table">
         <CategoryTable
-          startIndex={startIndex * limitInit}
+          startIndex={startIndex}
           endIndex={endIndex}
           allCategoryes={allCategories}
           handleEdit={handleEdit}
