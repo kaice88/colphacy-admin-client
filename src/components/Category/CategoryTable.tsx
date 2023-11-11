@@ -1,6 +1,8 @@
 import { FC } from "react";
 import { Table } from "@mantine/core";
 import { IconEdit, IconTrashX } from "@tabler/icons-react";
+import { deleteModal } from "../../utils/deleteModal";
+import useCategory from "../../hooks/useCategory";
 export interface Category {
   id: number | undefined;
   name: string | undefined;
@@ -37,12 +39,22 @@ const CategoryTable: FC<CategoryTableProps> = ({
           strokeWidth="1.8"
           size="22px"
           color="red"
-          onClick={() => {}}
+          onClick={() => {
+            deleteModal("danh mục", element.name, () =>
+              handleDeleteCategory({ id: element.id as number })
+            );
+          }}
         />
       </td>
     </tr>
   ));
-
+  const { onSubmitDeleteCategoryForm } = useCategory(
+    { offset: 0, limit: 5, keyword: "" },
+    { offset: 0, limit: 5 }
+  );
+  const handleDeleteCategory = (data: { id: number }) => {
+    onSubmitDeleteCategoryForm(data);
+  };
   return (
     <Table horizontalSpacing="xl" striped highlightOnHover withBorder>
       <thead>
