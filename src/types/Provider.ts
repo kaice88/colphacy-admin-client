@@ -1,8 +1,8 @@
 export type Provider = {
-    id: 0,
+    id: 0|string,
     name: string,
     address: string,
-    phone: number,
+    phone: string|number,
     email: string
   }
 

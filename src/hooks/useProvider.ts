@@ -2,8 +2,10 @@ import {
   REQUEST_PROVIDERS,
   REQUEST_PROVIDERS_SEARCH_KEY,
 } from "./../constants/apis";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "../settings/axios";
+import { ErrorObject } from "../types/error";
+import { Provider } from "../types/Provider";
 function useProvider(
   search: { offset: number; limit: number; keyword: string },
   filter: {
@@ -47,9 +49,27 @@ function useProvider(
       ),
     enabled: false,
   });
+  const handleAddProvider = useMutation({
+    mutationKey: ["add-provider"],
+    mutationFn: (data: { name: string }) => {
+      return axios.post(REQUEST_PROVIDERS, data);
+    },
+  });
+  const onSubmitAddProviderForm = (
+    data: Provider,
+    onError: (error: object) => void,
+    onSuccess: () => void
+  ) => {
+    handleAddProvider.mutate(data, {
+      onSuccess: onSuccess,
+      onError: (error) => onError(error as ErrorObject),
+    });
+  };
   return {
     fetchProvider,
-    fetchProvidersSearchKeywork
+    fetchProvidersSearchKeywork,
+    handleAddProvider,
+    onSubmitAddProviderForm
   };
 }
 

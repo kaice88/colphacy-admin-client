@@ -1,15 +1,20 @@
-import { Flex, Pagination, Title, useMantineTheme } from "@mantine/core";
-import { IconSearch } from "@tabler/icons-react";
+import { Button, Flex, Group, Modal, Pagination, Title, useMantineTheme } from "@mantine/core";
+import { IconPlus, IconSearch } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 import { handleGlobalException } from "../utils/error";
 import { notificationShow } from "../components/Notification";
 import { useForm } from "react-hook-form";
 import { ErrorObject } from "../types/error";
-import { AllProvidersProps } from "../types/Provider";
+import { AllProvidersProps, Provider } from "../types/Provider";
 import useProvider from "../hooks/useProvider";
 import ProviderTable from "../components/_Provider/ProviderTable";
+import ProviderForm from "../components/_Provider/ProviderForm";
+import { useDisclosure } from "@mantine/hooks";
 export default function ProviderPage() {
   const theme = useMantineTheme();
+  const [action, setAction] = useState("add");
+  const [provider, setProvider] = useState<Provider>();
+  const [opened, { open, close }] = useDisclosure(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [searchValue, setSearchValue] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -112,7 +117,7 @@ export default function ProviderPage() {
   return (
     <div className="unit-ctn">
       <Title size="h5" color={theme.colors.cobaltBlue[0]}>
-        Danh sách danh mục
+        Danh sách nhà cung cấp
       </Title>
       <Flex>
         <div className="search-field">
@@ -132,6 +137,44 @@ export default function ProviderPage() {
             </button>
           </div>
         </div>
+        <Modal
+          opened={opened}
+          onClose={close}
+          size="60"
+          centered
+          m={20}
+          title={action === "add" ? "Thêm danh mục" : "Sửa danh mục"}
+          styles={() => ({
+            title: {
+              fontWeight: "bold",
+            },
+          })}
+        >
+          <ProviderForm title={action} onClose={close} Provider={provider}/>
+        </Modal>
+        <Group ml="auto">
+          <Button
+            leftIcon={<IconPlus size="15px" />}
+            styles={(theme) => ({
+              root: {
+                backgroundColor: theme.colors.munsellBlue[0],
+                ...theme.fn.hover({
+                  backgroundColor: theme.fn.darken(
+                    theme.colors.munsellBlue[0],
+                    0.1
+                  ),
+                }),
+              },
+            })}
+            onClick={() => {
+              setAction("add");
+              setProvider(undefined);
+              open();
+            }}
+          >
+            Thêm nhà cung cấp
+          </Button>
+        </Group>
       </Flex>
       <div className="unit-table">
         <ProviderTable
