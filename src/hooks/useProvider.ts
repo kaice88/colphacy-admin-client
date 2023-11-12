@@ -65,11 +65,30 @@ function useProvider(
       onError: (error) => onError(error as ErrorObject),
     });
   };
+  const handleUpdateProvider = useMutation({
+    mutationKey: ["update-provider"],
+    mutationFn: (data: Provider) => {
+      return axios.put(REQUEST_PROVIDERS, data);
+    },
+  });
+  const onSubmitUpdateProviderForm = (
+    data: Provider,
+    onError: (error: object) => void,
+    onSuccess: () => void
+  ) => {
+    handleUpdateProvider.mutate(data, {
+      onSuccess: onSuccess,
+      onError: (error) => onError(error as ErrorObject),
+
+    });
+  };
   return {
     fetchProvider,
     fetchProvidersSearchKeywork,
     handleAddProvider,
-    onSubmitAddProviderForm
+    onSubmitAddProviderForm,
+    handleUpdateProvider,
+    onSubmitUpdateProviderForm
   };
 }
 

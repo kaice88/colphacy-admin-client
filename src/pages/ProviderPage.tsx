@@ -112,8 +112,11 @@ export default function ProviderPage() {
       setSearchValue(searchValue);
       setCurrentPage(1);
     }
+  };const handleEdit = (Provider: Provider) => {
+    setAction("update");
+    open();
+    setProvider(Provider);  
   };
-  const handleEdit = () => {};
   return (
     <div className="unit-ctn">
       <Title size="h5" color={theme.colors.cobaltBlue[0]}>
@@ -143,7 +146,7 @@ export default function ProviderPage() {
           size="60"
           centered
           m={20}
-          title={action === "add" ? "Thêm danh mục" : "Sửa danh mục"}
+          title={action === "add" ? "Thêm nhà phân phối" : "Sửa nhà phân phối"}
           styles={() => ({
             title: {
               fontWeight: "bold",

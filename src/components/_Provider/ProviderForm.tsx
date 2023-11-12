@@ -26,7 +26,12 @@ const ProviderForm: React.FC<{
       email: Provider ? Provider.email : "",
     },
   });
-  const { handleAddProvider, onSubmitAddProviderForm } = useProvider(
+  const {
+    handleAddProvider,
+    onSubmitAddProviderForm,
+    handleUpdateProvider,
+    onSubmitUpdateProviderForm,
+  } = useProvider(
     {
       offset: 0,
       limit: 10,
@@ -43,7 +48,7 @@ const ProviderForm: React.FC<{
     id: string | 0;
     name: string;
     address: string;
-    phone: string|number;
+    phone: string | number;
     email: string;
   }> = (data) => {
     if (title === "add") {
@@ -52,22 +57,19 @@ const ProviderForm: React.FC<{
         (error) => {
           const newError = error as ErrorObject;
           handleGlobalException(newError, () => {
-            setError("name", {
-              type: "manual",
-              message: newError.response.data.name,
+            Object.keys(newError.response.data).forEach((key) => {
+              const typedKey = key as
+                | "name"
+                | "address"
+                | "phone"
+                | "email"
+                | `root.${string}`
+                | "root";
+              setError(typedKey, {
+                type: "manual",
+                message: newError.response.data[typedKey],
+              });
             });
-            setError("phone", {
-              type: "manual",
-              message: newError.response.data.phone,
-            });
-          });
-          setError("email", {
-            type: "manual",
-            message: newError.response.data.email,
-          });
-          setError("address", {
-            type: "manual",
-            message: newError.response.data.address,
           });
         },
         () => {
@@ -76,6 +78,38 @@ const ProviderForm: React.FC<{
             "success",
             "Success!",
             "Thêm nhà phân phối thành công!"
+          );
+          navigate("/", { state: { from: location.pathname } });
+        }
+      );
+    }
+    if (title === "update") {
+      onSubmitUpdateProviderForm(
+        data,
+        (error) => {
+          const newError = error as ErrorObject;
+          handleGlobalException(newError, () => {
+            Object.keys(newError.response.data).forEach((key) => {
+              const typedKey = key as
+                | "name"
+                | "address"
+                | "phone"
+                | "email"
+                | `root.${string}`
+                | "root";
+              setError(typedKey, {
+                type: "manual",
+                message: newError.response.data[typedKey],
+              });
+            });
+          });
+        },
+        () => {
+          onClose();
+          notificationShow(
+            "success",
+            "Success!",
+            "Sửa nhà phân phối thành công!"
           );
           navigate("/", { state: { from: location.pathname } });
         }
@@ -148,7 +182,9 @@ const ProviderForm: React.FC<{
 
       <Flex justify="space-around" align="center" my="xs">
         <Button
-          loading={handleAddProvider.isLoading}
+          loading={
+            handleAddProvider.isLoading || handleUpdateProvider.isLoading
+          }
           className="button"
           styles={(theme) => ({
             root: {
