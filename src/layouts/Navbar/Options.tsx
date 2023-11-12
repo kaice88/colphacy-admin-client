@@ -33,6 +33,10 @@ export const options: Option[] = [
         url: 'product-management',
         label: 'Sản phẩm',
       },
+      {
+        url: 'provider-management',
+        label: 'Nhà cung cấp',
+      },
     ],
   },
 ];
