@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import {
   REQUEST_CATEGORIES,
+  REQUEST_PRODUCTS,
   REQUEST_UNITS,
   UPLOAD_IMAGES,
 } from '../constants/apis';
@@ -15,7 +16,6 @@ function useProductDetail() {
   const [unitData, setUnitData] = useState<{ id: number; name: string }[]>();
   const [categoryData, setCategoryData] =
     useState<{ id: number; name: string }[]>();
-  // const [unitData, setUnitData] = useState();
   const handleUploadImages = useMutation({
     mutationKey: ['upload-images'],
     mutationFn: (data) => {
@@ -38,7 +38,7 @@ function useProductDetail() {
           unitId: Number(item.unitId),
         })),
       };
-      return axios.post('/products', transformData);
+      return axios.post(REQUEST_PRODUCTS, transformData);
     },
   });
 

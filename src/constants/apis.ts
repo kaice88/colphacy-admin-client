@@ -28,6 +28,9 @@ export const REQUEST_UNITS_SEARCH_KEY = (
 ) => `/units?keyword=${keyword}&offset=${offset}&limit=${limit}`;
 export const REQUEST_UNITS_DELETE = (id: number) => `/units/${id}`;
 
+// CATEGORY
+export const REQUEST_CATEGORIES = `/categories`;
+
 // PRODUCT
 export const UPLOAD_IMAGES = '/images/upload';
-export const REQUEST_CATEGORIES = `/categories`;
+export const REQUEST_PRODUCTS = '/products';

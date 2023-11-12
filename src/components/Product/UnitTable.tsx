@@ -118,36 +118,44 @@ const UnitTable: FC<{
 
   return (
     <>
-      <Input.Wrapper
-        label="Bảng đơn vị tính"
-        required
-        error={
-          errors.productUnits?.root
-            ? errors.productUnits?.root.type === 'required'
-              ? 'Luôn phải có đơn vị tính có tỉ lệ quy đổi là 1'
-              : errors.productUnits?.root.message
-            : false
-        }
-      >
-        <Table
-          horizontalSpacing="xl"
-          striped
-          highlightOnHover
-          withBorder
-          my="5px"
-        >
-          <thead>
-            <tr>
-              <th>Đơn vị tính</th>
-              <th>Tỉ lệ quy đổi</th>
-              <th>Giá bán lẻ</th>
-              <th>Mặc định bán</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>{rows}</tbody>
-        </Table>
-      </Input.Wrapper>
+      <Controller
+        name="productUnits"
+        control={control}
+        render={({ field }) => (
+          <Input.Wrapper
+            {...field}
+            label="Bảng đơn vị tính"
+            required
+            error={errors.productUnits?.message}
+            // error={
+            //   errors.productUnits?.root
+            //     ? errors.productUnits?.root.type === 'required'
+            //       ? 'Phải có duy nhất 1 tỉ lệ quy đổi có giá trị bằng 1'
+            //       : errors.productUnits?.message
+            //     : false
+            // }
+          >
+            <Table
+              horizontalSpacing="xl"
+              striped
+              highlightOnHover
+              withBorder
+              my="5px"
+            >
+              <thead>
+                <tr>
+                  <th>Đơn vị tính</th>
+                  <th>Tỉ lệ quy đổi</th>
+                  <th>Giá bán lẻ</th>
+                  <th>Mặc định bán</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>{rows}</tbody>
+            </Table>
+          </Input.Wrapper>
+        )}
+      ></Controller>
       <Flex justify="flex-end">
         <Button
           my="xs"

@@ -18,6 +18,7 @@ import useProductDetail from '../../hooks/useProductDetail';
 import { transformSelectData } from '../../utils/helper';
 import { handleGlobalException } from '../../utils/error';
 import { ProductStatus } from '../../enums/Product';
+import { notificationShow } from '../Notification';
 
 const ProductForm: React.FC<{
   onClose: () => void;
@@ -103,6 +104,7 @@ const ProductForm: React.FC<{
   };
 
   const onSubmit = (data: Product) => {
+    console.log(data);
     onSubmitAddProductForm(data, (error) => {
       handleGlobalException(error, () => {
         Object.keys(error.response.data).forEach((key) => {
@@ -197,7 +199,7 @@ const ProductForm: React.FC<{
                 )}
               />
               <Button
-                // disabled={ingredientFields.length === 1}
+                disabled={ingredientFields.length === 1}
                 onClick={() => {
                   removeIngredient(index);
                 }}
@@ -366,11 +368,10 @@ const ProductForm: React.FC<{
         <Controller
           name="sideEffects"
           control={control}
-          rules={{ required: true }}
+          rules={{ required: false }}
           render={({ field }) => (
             <Textarea
               {...field}
-              required
               radius="md"
               label="Tác dụng phụ"
               autosize
@@ -384,11 +385,10 @@ const ProductForm: React.FC<{
         <Controller
           name="notes"
           control={control}
-          rules={{ required: true }}
+          rules={{ required: false }}
           render={({ field }) => (
             <Textarea
               {...field}
-              required
               radius="md"
               label="Lưu ý"
               autosize
