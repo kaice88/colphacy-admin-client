@@ -30,3 +30,12 @@ export const REQUEST_UNITS_SEARCH_KEY = (keyword: string,offset: number,
 export const REQUEST_VIEW_DETAIL_BRANCHES = (id: number) => `/branches/${id}`;
 
 export const REQUEST_BRANCHES_STATUSES = `/branches/statuses`;
+
+export const REQUEST_PROVIDERS = `/providers`;
+export const REQUEST_PROVIDERS_SEARCH_KEY  = (
+  keyword: string,
+  offset: number,
+  limit: number
+) => `/providers?keyword=${keyword}&offset=${offset}&limit=${limit}`;
+export const REQUEST_PROVIDER_DELETE = (id: number) =>
+  `/providers/${id}`;

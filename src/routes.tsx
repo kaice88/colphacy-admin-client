@@ -9,6 +9,7 @@ import Branch from './pages/Branch';
 import Product from './pages/Product';
 import UnitPage from './pages/UnitPage';
 import ChangePassword from './pages/ChangePassword';
+import ProviderPage from './pages/ProviderPage';
 
 export const router = createBrowserRouter([
   {
@@ -22,7 +23,6 @@ export const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       {
-        index: true,
         element: <Navigate to="/branch-management" />,
       },
       {
@@ -44,6 +44,10 @@ export const router = createBrowserRouter([
       {
         path: 'unit-management',
         element: <UnitPage />,
+      },
+      {
+        path: 'provider-management',
+        element: <ProviderPage />,
       },
     ],
   },
