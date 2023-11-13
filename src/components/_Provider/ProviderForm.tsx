@@ -31,6 +31,7 @@ const ProviderForm: React.FC<{
     onSubmitAddProviderForm,
     handleUpdateProvider,
     onSubmitUpdateProviderForm,
+    fetchProvider,
   } = useProvider(
     {
       offset: 0,
@@ -77,7 +78,7 @@ const ProviderForm: React.FC<{
           notificationShow(
             "success",
             "Success!",
-            "Thêm nhà phân phối thành công!"
+            "Thêm nhà cung cấp thành công!"
           );
           navigate("/", { state: { from: location.pathname } });
         }
@@ -104,12 +105,13 @@ const ProviderForm: React.FC<{
             });
           });
         },
-        () => {
+        async () => {
+          await fetchProvider.refetch();
           onClose();
           notificationShow(
             "success",
             "Success!",
-            "Sửa nhà phân phối thành công!"
+            "Sửa nhà cung cấp thành công!"
           );
           navigate("/", { state: { from: location.pathname } });
         }
@@ -129,7 +131,7 @@ const ProviderForm: React.FC<{
               <TextInput
                 {...field}
                 required
-                label="Tên nhà phân phối"
+                label="Tên nhà cung cấp "
                 radius="md"
                 error={errors.name ? errors.name.message : false}
               />

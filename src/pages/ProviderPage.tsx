@@ -146,7 +146,7 @@ export default function ProviderPage() {
           size="60"
           centered
           m={20}
-          title={action === "add" ? "Thêm nhà phân phối" : "Sửa nhà phân phối"}
+          title={action === "add" ? "Thêm nhà cung cấp" : "Sửa nhà cung cấp"}
           styles={() => ({
             title: {
               fontWeight: "bold",

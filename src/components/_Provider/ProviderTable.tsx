@@ -2,6 +2,8 @@ import { FC } from "react";
 import { Table } from "@mantine/core";
 import { IconEdit, IconTrashX } from "@tabler/icons-react";
 import { AllProvidersProps, Provider } from "../../types/Provider";
+import { deleteModal } from "../../utils/deleteModal";
+import useProvider from "../../hooks/useProvider";
 interface ProviderTableProps {
   startIndex: number;
   endIndex: number;
@@ -33,11 +35,22 @@ const ProviderTable: FC<ProviderTableProps> = ({
           className="delete-button"
           strokeWidth="1.8"
           size="22px"
-          onClick={() => {}}
+          onClick={() => {
+            deleteModal("nhà cung cấp", element.name, () =>
+              handleDeleteProvider({ id: element.id as number })
+            );
+          }}
         />
       </td>
     </tr>
   ));
+  const { onSubmitDeleteProviderForm } = useProvider(
+    { offset: 0, limit: 5, keyword: "" },
+    { offset: 0, limit: 5 }
+  );
+  const handleDeleteProvider = (data: { id: number }) => {
+    onSubmitDeleteProviderForm(data);
+  };
   return (
     <Table horizontalSpacing="xl" striped highlightOnHover withBorder>
       <thead>
@@ -46,7 +59,7 @@ const ProviderTable: FC<ProviderTableProps> = ({
           <th>Tên</th>
           <th>Địa chỉ</th>
           <th>SĐT</th>
-          <th>Email ỉ</th>
+          <th>Email</th>
         </tr>
       </thead>
       <tbody>{rows}</tbody>

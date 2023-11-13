@@ -23,7 +23,6 @@ export const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       {
-        index: true,
         element: <Navigate to="/branch-management" />,
       },
       {
