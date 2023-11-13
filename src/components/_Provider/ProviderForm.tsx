@@ -31,6 +31,7 @@ const ProviderForm: React.FC<{
     onSubmitAddProviderForm,
     handleUpdateProvider,
     onSubmitUpdateProviderForm,
+    fetchProvider,
   } = useProvider(
     {
       offset: 0,
@@ -104,7 +105,8 @@ const ProviderForm: React.FC<{
             });
           });
         },
-        () => {
+        async () => {
+          await fetchProvider.refetch();
           onClose();
           notificationShow(
             "success",

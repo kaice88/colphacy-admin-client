@@ -37,3 +37,5 @@ export const REQUEST_PROVIDERS_SEARCH_KEY  = (
   offset: number,
   limit: number
 ) => `/providers?keyword=${keyword}&offset=${offset}&limit=${limit}`;
+export const REQUEST_PROVIDER_DELETE = (id: number) =>
+  `/providers/${id}`;
