@@ -27,7 +27,16 @@ const UnitTable: FC<{
   unitData: { id: number; name: string }[];
   appendUnit: UseFieldArrayAppend<Product, 'productUnits'>;
   removeUnit: UseFieldArrayRemove;
-}> = ({ unitFields, control, errors, unitData, appendUnit, removeUnit }) => {
+  mode: 'ADD' | 'VIEW' | 'EDIT';
+}> = ({
+  unitFields,
+  control,
+  errors,
+  unitData,
+  appendUnit,
+  removeUnit,
+  mode,
+}) => {
   const rows = unitFields.map((unitField, index) => (
     <tr key={unitField.id}>
       <td>
@@ -38,6 +47,7 @@ const UnitTable: FC<{
           render={({ field }) => (
             <Select
               {...field}
+              disabled={mode === 'VIEW'}
               required
               radius="md"
               data={transformSelectData(unitData)}
@@ -62,6 +72,7 @@ const UnitTable: FC<{
             <NumberInput
               {...field}
               w="100%"
+              disabled={mode === 'VIEW'}
               required
               min={1}
               error={
@@ -82,6 +93,7 @@ const UnitTable: FC<{
             <NumberInput
               {...field}
               w="100%"
+              disabled={mode === 'VIEW'}
               required
               min={1000}
               step={1000}
@@ -100,19 +112,25 @@ const UnitTable: FC<{
           control={control}
           render={({ field }) => (
             <Input.Wrapper {...field}>
-              <Checkbox checked={field.value} onChange={field.onChange} />
+              <Checkbox
+                checked={field.value}
+                onChange={field.onChange}
+                disabled={mode === 'VIEW'}
+              />
             </Input.Wrapper>
           )}
         />
       </td>
-      <td>
-        <IconTrashX
-          className="delete-edit"
-          strokeWidth="1.8"
-          size="22px"
-          onClick={() => removeUnit(index)}
-        />
-      </td>
+      {mode !== 'VIEW' && (
+        <td>
+          <IconTrashX
+            className="delete-edit"
+            strokeWidth="1.8"
+            size="22px"
+            onClick={() => removeUnit(index)}
+          />
+        </td>
+      )}
     </tr>
   ));
 
@@ -121,19 +139,11 @@ const UnitTable: FC<{
       <Controller
         name="productUnits"
         control={control}
-        render={({ field }) => (
+        render={() => (
           <Input.Wrapper
-            {...field}
             label="Bảng đơn vị tính"
             required
             error={errors.productUnits?.message}
-            // error={
-            //   errors.productUnits?.root
-            //     ? errors.productUnits?.root.type === 'required'
-            //       ? 'Phải có duy nhất 1 tỉ lệ quy đổi có giá trị bằng 1'
-            //       : errors.productUnits?.message
-            //     : false
-            // }
           >
             <Table
               horizontalSpacing="xl"
@@ -148,7 +158,7 @@ const UnitTable: FC<{
                   <th>Tỉ lệ quy đổi</th>
                   <th>Giá bán lẻ</th>
                   <th>Mặc định bán</th>
-                  <th></th>
+                  {mode !== 'VIEW' && <th></th>}
                 </tr>
               </thead>
               <tbody>{rows}</tbody>
@@ -156,42 +166,44 @@ const UnitTable: FC<{
           </Input.Wrapper>
         )}
       ></Controller>
-      <Flex justify="flex-end">
-        <Button
-          my="xs"
-          onClick={() =>
-            appendUnit({
-              unitId: '',
-              ratio: 1,
-              salePrice: 1000,
-              defaultUnit: true,
-            })
-          }
-          variant="default"
-          styles={(theme) => ({
-            root: {
-              textAlign: 'center',
-              width: '10%',
-              minWidth: '70px',
-              height: '30px',
-              padding: 0,
-              border: '0px',
-              backgroundColor: theme.fn.lighten(
-                theme.colors.flashWhite[0],
-                0.3,
-              ),
-              ...theme.fn.hover({
-                backgroundColor: theme.colors.flashWhite[0],
-              }),
-            },
-            label: {
-              fontWeight: 500,
-            },
-          })}
-        >
-          + Thêm
-        </Button>
-      </Flex>
+      {mode !== 'VIEW' && (
+        <Flex justify="flex-end">
+          <Button
+            my="xs"
+            onClick={() =>
+              appendUnit({
+                unitId: '',
+                ratio: 1,
+                salePrice: 1000,
+                defaultUnit: true,
+              })
+            }
+            variant="default"
+            styles={(theme) => ({
+              root: {
+                textAlign: 'center',
+                width: '10%',
+                minWidth: '70px',
+                height: '30px',
+                padding: 0,
+                border: '0px',
+                backgroundColor: theme.fn.lighten(
+                  theme.colors.flashWhite[0],
+                  0.3,
+                ),
+                ...theme.fn.hover({
+                  backgroundColor: theme.colors.flashWhite[0],
+                }),
+              },
+              label: {
+                fontWeight: 500,
+              },
+            })}
+          >
+            + Thêm
+          </Button>
+        </Flex>
+      )}
     </>
   );
 };

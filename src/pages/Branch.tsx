@@ -6,6 +6,7 @@ import {
   Group,
   Title,
   useMantineTheme,
+  Flex,
 } from '@mantine/core';
 import BranchTable from '../components/Branch/BranchTable';
 import { IconPlus, IconSearch } from '@tabler/icons-react';
@@ -14,9 +15,7 @@ import { useBranch } from '../hooks/useBranch';
 import { handleGlobalException } from '../utils/error';
 import { useForm } from 'react-hook-form';
 import { useDisclosure } from '@mantine/hooks';
-import BranchForm from '../components/BranchForm';
-import { useTheme } from '@emotion/react';
-
+import BranchForm from '../components/Branch/BranchForm';
 interface AllBranchesProps {
   items: ItemsProps[];
   numPages: number;
@@ -130,26 +129,25 @@ function Branch() {
       }
     }
     fetchBranchData();
-
-    if (searchArr.keyword) {
-      async function fetchKeyworkData() {
-        const data = await fetchBranchSearchKeywork.refetch();
-        if (data.isSuccess) {
-          setAllBranches(data.data.data);
-        } else if (data.isError) {
-          const error = data.error;
-          handleGlobalException(error, () => {
-            setError('offset', {
-              type: 'manual',
-              message: error.response.data.offset,
-            });
-            setError('limit', {
-              type: 'manual',
-              message: error.response.data.limit,
-            });
+    async function fetchKeyworkData() {
+      const data = await fetchBranchSearchKeywork.refetch();
+      if (data.isSuccess) {
+        setAllBranches(data.data.data);
+      } else if (data.isError) {
+        const error = data.error;
+        handleGlobalException(error, () => {
+          setError('offset', {
+            type: 'manual',
+            message: error.response.data.offset,
           });
-        }
+          setError('limit', {
+            type: 'manual',
+            message: error.response.data.limit,
+          });
+        });
       }
+    }
+    if (searchArr.keyword) {
       fetchKeyworkData();
     }
   }, [filterArr, searchArr, isReloadata]);
@@ -167,16 +165,16 @@ function Branch() {
       }
     }
     fetchProvincesData();
-    if (provinceSlug) {
-      async function fetchDistrictsData() {
-        const data = await fetchBranchDistricts.refetch();
-        if (data.isSuccess) {
-          setBranchesDistricts(data.data.data);
-        } else if (data.isError) {
-          const error = data.error;
-          handleGlobalException(error, () => {});
-        }
+    async function fetchDistrictsData() {
+      const data = await fetchBranchDistricts.refetch();
+      if (data.isSuccess) {
+        setBranchesDistricts(data.data.data);
+      } else if (data.isError) {
+        const error = data.error;
+        handleGlobalException(error, () => {});
       }
+    }
+    if (provinceSlug) {
       fetchDistrictsData();
     }
   }, [provinceSlug]);
@@ -203,10 +201,15 @@ function Branch() {
     }
   };
 
-  const handleSuccessSubmit = () => {
+  const handleSuccessSubmitAdd = () => {
     close();
     setIsReloadata(!isReloadata);
     setCurrentPage(totalPages);
+  };
+
+  const handleSuccessSubmitEdit = () => {
+    close();
+    setIsReloadata(!isReloadata);
   };
 
   const handleCloseModal = () => {
@@ -218,60 +221,74 @@ function Branch() {
       <Title size="h5" color={theme.colors.cobaltBlue[0]}>
         Danh sách chi nhánh
       </Title>
-      <div className="search-field">
-        <div className="search">
-          <input
-            ref={inputRef}
-            value={searchValue}
-            placeholder="Tìm bằng tên đường và tỉnh thành..."
-            spellCheck={false}
-            onChange={handleChange}
-          />
-          <button
-            className="search-btn"
-            onMouseDown={(e) => e.preventDefault()}
-          >
-            <IconSearch size="1.3rem"></IconSearch>
-          </button>
-        </div>
-        <div className="label">hoặc</div>
-        <Select
-          placeholder="Chọn Tỉnh/ Thành"
-          data={formattedProvinces}
-          onChange={handleProvincesChange}
-          value={provinceSlug}
-          clearable
+      <Flex justify="space-between" py="lg">
+        <Flex className="search-ctn" gap="xs" direction={'column'}>
+          <Flex className="search" justify="space-between">
+            <input
+              ref={inputRef}
+              value={searchValue}
+              placeholder="Tìm bằng tên đường và tỉnh thành..."
+              spellCheck={false}
+              onChange={handleChange}
+            />
+            <button
+              className="search-btn"
+              onMouseDown={(e) => e.preventDefault()}
+            >
+              <IconSearch size="1.3rem"></IconSearch>
+            </button>
+          </Flex>
+          <Flex gap="xs">
+            <Select
+              placeholder="Chọn Tỉnh/ Thành"
+              data={formattedProvinces}
+              onChange={handleProvincesChange}
+              value={provinceSlug}
+              clearable
+            />
+            <Select
+              placeholder="Chọn Quận/ Huyện"
+              data={formattedDistricts}
+              onChange={handleDistrictsChange}
+              value={districtSlug}
+              clearable
+            />
+          </Flex>
+        </Flex>
+        <Button
+          className="button add-button"
+          leftIcon={<IconPlus size="15px" />}
+          styles={(theme) => ({
+            root: {
+              backgroundColor: theme.colors.munsellBlue[0],
+            },
+          })}
+          onClick={open}
+        >
+          Thêm chi nhánh
+        </Button>
+      </Flex>
+      <Modal
+        title="Thêm chi nhánh"
+        opened={opened}
+        onClose={close}
+        size="60"
+        centered
+        m={20}
+        styles={() => ({
+          title: {
+            fontWeight: 'bold',
+          },
+        })}
+      >
+        <BranchForm
+          onSuccesSubmitAdd={handleSuccessSubmitAdd}
+          onCancel={handleCloseModal}
         />
-        <Select
-          placeholder="Chọn Quận/ Huyện"
-          data={formattedDistricts}
-          onChange={handleDistrictsChange}
-          value={districtSlug}
-          clearable
-        />
-        <Modal opened={opened} onClose={close} size="60" centered m={20}>
-          <BranchForm
-            onSuccesSubmit={handleSuccessSubmit}
-            onCancel={handleCloseModal}
-          />
-        </Modal>
-        <Group position="center">
-          <Button
-            className="button add-button"
-            leftIcon={<IconPlus size="15px" />}
-            styles={(theme) => ({
-              root: {
-                backgroundColor: theme.colors.munsellBlue[0],
-              },
-            })}
-            onClick={open}
-          >
-            Thêm chi nhánh
-          </Button>
-        </Group>
-      </div>
+      </Modal>
       <div className="branch-table">
         <BranchTable
+          handleSuccessEditSubmit={handleSuccessSubmitEdit}
           startIndex={startIndex}
           endIndex={endIndex}
           allBranches={allBranches}

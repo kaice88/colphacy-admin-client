@@ -8,12 +8,13 @@ import {
 import axios from '../settings/axios';
 import { useEffect, useState } from 'react';
 import { handleGlobalException } from '../utils/error';
-import { Product } from '../components/Product/type';
+import { Product, ProductData } from '../components/Product/type';
 import { notificationShow } from '../components/Notification';
 
-function useProductDetail() {
+function useProductDetail(productId: number | null) {
   const [loading, setLoading] = useState(false);
   const [unitData, setUnitData] = useState<{ id: number; name: string }[]>();
+  const [productData, setProductData] = useState<ProductData>();
   const [categoryData, setCategoryData] =
     useState<{ id: number; name: string }[]>();
   const handleUploadImages = useMutation({
@@ -22,11 +23,13 @@ function useProductDetail() {
       return axios.post(UPLOAD_IMAGES, data);
     },
     onError: (error) => {
-      console.log(error);
+      handleGlobalException(error, () => {
+        notificationShow('error', 'Error!', error.response.data.error);
+      });
     },
   });
 
-  const handleAddProductForm = useMutation({
+  const handleSubmitProductForm = useMutation({
     mutationKey: ['add-product'],
     mutationFn: (data: Product) => {
       const transformData = {
@@ -38,22 +41,19 @@ function useProductDetail() {
           unitId: Number(item.unitId),
         })),
       };
-      return axios.post(REQUEST_PRODUCTS, transformData);
+      return !productId
+        ? axios.post(REQUEST_PRODUCTS, transformData)
+        : axios.put(REQUEST_PRODUCTS, transformData);
     },
   });
 
-  const onSubmitAddProductForm = (
+  const onSubmitProductForm = (
     data: Product,
     onError: (error: object) => void,
+    onSuccess: () => void,
   ) => {
-    handleAddProductForm.mutate(data, {
-      onSuccess: () => {
-        notificationShow(
-          'success',
-          'Success!',
-          'Thêm sản phẩm mới thành công!',
-        );
-      },
+    handleSubmitProductForm.mutate(data, {
+      onSuccess: () => onSuccess(),
       onError: (error) => onError(error),
     });
   };
@@ -63,6 +63,10 @@ function useProductDetail() {
       setLoading(true);
       const unitData = await axios.get(`${REQUEST_UNITS}/all`);
       const categoryData = await axios.get(`${REQUEST_CATEGORIES}/all`);
+      if (productId) {
+        const productData = await axios.get(`${REQUEST_PRODUCTS}/${productId}`);
+        setProductData(productData.data);
+      }
       setUnitData(unitData.data);
       setCategoryData(categoryData.data);
     } catch (error) {
@@ -71,6 +75,7 @@ function useProductDetail() {
       setLoading(false);
     }
   }
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -79,8 +84,9 @@ function useProductDetail() {
     uploadImages: handleUploadImages,
     unitData,
     categoryData,
+    productData,
     loading,
-    onSubmitAddProductForm,
+    onSubmitProductForm,
   };
 }
 export default useProductDetail;

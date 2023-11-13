@@ -1,5 +1,10 @@
 import type { ReactElement } from 'react';
-import { IconBrandAppgallery, IconBuildingStore, IconListDetails, IconMapPins } from '@tabler/icons-react';
+import {
+  IconBrandAppgallery,
+  IconBuildingStore,
+  IconListDetails,
+  IconMapPins,
+} from '@tabler/icons-react';
 
 export interface Option {
   icon: ReactElement;
@@ -9,12 +14,6 @@ export interface Option {
 }
 
 export const options: Option[] = [
-  {
-    icon: <IconListDetails size="1rem"></IconListDetails>,
-    url: 'store-management',
-    label: 'Quản lý kho',
-    links: [],
-  },
   {
     icon: <IconBuildingStore size="1rem"></IconBuildingStore>,
     url: 'branch-management',

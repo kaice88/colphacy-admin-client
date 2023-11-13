@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { Navigate, createBrowserRouter } from 'react-router-dom';
 import Layout from './layouts/Layout';
 import ErrorPage from './pages/Error';
 import Home from './pages/Home';
@@ -23,10 +23,10 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Home />,
+        element: <Navigate to="/branch-management" />,
       },
       {
-        path: "/profile",
+        path: '/profile',
         element: <Account />,
       },
       {
@@ -35,14 +35,14 @@ export const router = createBrowserRouter([
       },
       {
         element: <Branch />,
-        path: "/branch-management",
+        path: 'branch-management',
       },
       {
-        path: "product-management",
+        path: 'product-management',
         element: <Product />,
       },
       {
-        path: "unit-management",
+        path: 'unit-management',
         element: <UnitPage />,
       },
     ],

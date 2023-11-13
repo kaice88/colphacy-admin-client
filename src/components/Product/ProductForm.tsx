@@ -10,7 +10,6 @@ import {
 } from '@mantine/core';
 import { IconPhotoPlus, IconTrashOff } from '@tabler/icons-react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
-import useImage from '../../hooks/useImage';
 import { Product } from './type';
 import ImageUploaded from './ImageUploaded';
 import UnitTable from './UnitTable';
@@ -18,19 +17,29 @@ import useProductDetail from '../../hooks/useProductDetail';
 import { transformSelectData } from '../../utils/helper';
 import { handleGlobalException } from '../../utils/error';
 import { ProductStatus } from '../../enums/Product';
+import { useEffect } from 'react';
 import { notificationShow } from '../Notification';
 
 const ProductForm: React.FC<{
   onClose: () => void;
-}> = ({ onClose }) => {
-  const { uploadImages } = useImage();
-  const { unitData, categoryData, onSubmitAddProductForm } = useProductDetail();
+  productId: number | null;
+  mode: 'ADD' | 'VIEW' | 'EDIT';
+}> = ({ onClose, productId, mode }) => {
+  const {
+    unitData,
+    categoryData,
+    onSubmitProductForm,
+    productData,
+    uploadImages,
+  } = useProductDetail(productId);
 
   const {
     control,
     handleSubmit,
     watch,
     setError,
+    setValue,
+    getValues,
     formState: { errors },
   } = useForm<Product>({
     defaultValues: {
@@ -86,7 +95,6 @@ const ProductForm: React.FC<{
   } = useFieldArray({
     name: 'productUnits',
     control,
-    rules: { required: true },
   });
 
   const handleUpload = (items: File[]) => {
@@ -104,18 +112,53 @@ const ProductForm: React.FC<{
   };
 
   const onSubmit = (data: Product) => {
-    console.log(data);
-    onSubmitAddProductForm(data, (error) => {
-      handleGlobalException(error, () => {
-        Object.keys(error.response.data).forEach((key) => {
-          setError(key, {
-            type: 'manual',
-            message: error.response.data[key],
+    onSubmitProductForm(
+      data,
+      (error) => {
+        handleGlobalException(error, () => {
+          Object.keys(error.response.data).forEach((key) => {
+            setError(key, {
+              type: 'manual',
+              message: error.response.data[key],
+            });
           });
         });
-      });
-    });
+      },
+      () => {
+        notificationShow(
+          'success',
+          'Success!',
+          `${
+            !productId
+              ? 'Thêm sản phẩm mới thành công!'
+              : 'Cập nhật sản phẩm thành công!'
+          } `,
+        );
+        onClose();
+      },
+    );
   };
+
+  useEffect(() => {
+    if (productData && mode !== 'ADD') {
+      const transformData = {
+        ...productData,
+        categoryId: productData.categoryId.toString(),
+        images: productData.images.map((item) => ({ url: item })),
+        productUnits: productData.productUnits.map((item) => ({
+          ...item,
+          unitId: item.unitId?.toString(),
+        })),
+      };
+      type TransformDataKeys = keyof typeof transformData;
+
+      (Object.keys(transformData) as TransformDataKeys[]).map(
+        (item: TransformDataKeys) => {
+          setValue(item, transformData[item]);
+        },
+      );
+    }
+  }, [productData]);
 
   return (
     unitData !== undefined &&
@@ -128,6 +171,7 @@ const ProductForm: React.FC<{
           render={({ field }) => (
             <TextInput
               {...field}
+              disabled={mode === 'VIEW'}
               required
               label="Tên sản phẩm"
               radius="md"
@@ -143,6 +187,7 @@ const ProductForm: React.FC<{
           render={({ field }) => (
             <Select
               {...field}
+              disabled={mode === 'VIEW'}
               required
               radius="md"
               label="Danh mục"
@@ -158,97 +203,116 @@ const ProductForm: React.FC<{
             />
           )}
         />
+        <Controller
+          name="ingredients"
+          control={control}
+          render={() => (
+            <Input.Wrapper
+              label="Thành phần"
+              required
+              className="product-input"
+              error={errors.ingredients?.message}
+            >
+              {ingredientFields.map((imageField, index) => (
+                <Flex
+                  justify="space-between"
+                  gap="5px"
+                  key={imageField.id}
+                  py={3}
+                >
+                  <Controller
+                    name={`ingredients.${index}.name` as const}
+                    control={control}
+                    rules={{ required: true }}
+                    render={({ field }) => (
+                      <Input
+                        {...field}
+                        disabled={mode === 'VIEW'}
+                        w="100%"
+                        required
+                        error={
+                          errors?.ingredients?.[index]?.name
+                            ? errors.ingredients?.[index]?.name?.message
+                            : false
+                        }
+                      />
+                    )}
+                  />
+                  <Controller
+                    name={`ingredients.${index}.amount` as const}
+                    control={control}
+                    rules={{ required: true, min: 0.01 }}
+                    render={({ field }) => (
+                      <NumberInput
+                        {...field}
+                        disabled={mode === 'VIEW'}
+                        w="100%"
+                        precision={2}
+                        min={0.01}
+                        required
+                        error={
+                          errors?.ingredients?.[index]?.amount
+                            ? errors.ingredients?.[index]?.amount?.message
+                            : false
+                        }
+                      />
+                    )}
+                  />
+                  <Button
+                    disabled={ingredientFields.length === 1}
+                    onClick={() => {
+                      removeIngredient(index);
+                    }}
+                    variant="light"
+                    color="pink"
+                    styles={() => ({
+                      root: {
+                        width: '10%',
+                        height: '36px',
+                        padding: 0,
+                        border: '0px',
+                        ...(mode === 'VIEW' ? { display: 'none' } : {}),
+                      },
+                      label: {
+                        fontWeight: 500,
+                      },
+                    })}
+                  >
+                    <IconTrashOff size="1.2rem" />
+                  </Button>
+                </Flex>
+              ))}
 
-        <Input.Wrapper label="Thành phần" required className="product-input">
-          {ingredientFields.map((imageField, index) => (
-            <Flex justify="space-between" gap="5px" key={imageField.id} py={3}>
-              <Controller
-                name={`ingredients.${index}.name` as const}
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <Input
-                    {...field}
-                    w="100%"
-                    required
-                    error={
-                      errors.ingredients?.[index]?.name
-                        ? errors.ingredients?.[index]?.name?.message
-                        : false
-                    }
-                  />
-                )}
-              />
-              <Controller
-                name={`ingredients.${index}.amount` as const}
-                control={control}
-                rules={{ required: true, min: 0.01 }}
-                render={({ field }) => (
-                  <NumberInput
-                    {...field}
-                    w="100%"
-                    precision={2}
-                    min={0.01}
-                    required
-                    error={
-                      errors?.ingredients?.[index]?.amount
-                        ? errors.ingredients?.[index]?.amount?.message
-                        : false
-                    }
-                  />
-                )}
-              />
               <Button
-                disabled={ingredientFields.length === 1}
                 onClick={() => {
-                  removeIngredient(index);
+                  appendIngredient({ name: '', amount: 0.01 });
                 }}
-                variant="light"
-                color="pink"
-                styles={() => ({
+                variant="default"
+                styles={(theme) => ({
                   root: {
-                    width: '10%',
-                    height: '36px',
+                    width: '100%',
+                    height: '30px',
                     padding: 0,
                     border: '0px',
+                    backgroundColor: theme.fn.lighten(
+                      theme.colors.flashWhite[0],
+                      0.3,
+                    ),
+                    ...theme.fn.hover({
+                      backgroundColor: theme.colors.flashWhite[0],
+                    }),
+                    ...(mode === 'VIEW' ? { display: 'none' } : {}),
                   },
                   label: {
                     fontWeight: 500,
                   },
                 })}
               >
-                <IconTrashOff size="1.2rem" />
+                + Thêm
               </Button>
-            </Flex>
-          ))}
-
-          <Button
-            onClick={() => {
-              appendIngredient({ name: '', amount: 0.01 });
-            }}
-            variant="default"
-            styles={(theme) => ({
-              root: {
-                width: '100%',
-                height: '30px',
-                padding: 0,
-                border: '0px',
-                backgroundColor: theme.fn.lighten(
-                  theme.colors.flashWhite[0],
-                  0.3,
-                ),
-                ...theme.fn.hover({
-                  backgroundColor: theme.colors.flashWhite[0],
-                }),
-              },
-              label: {
-                fontWeight: 500,
-              },
-            })}
-          >
-            + Thêm
-          </Button>
-        </Input.Wrapper>
+            </Input.Wrapper>
+          )}
+        />
 
         <Controller
           name="packing"
@@ -258,6 +322,7 @@ const ProductForm: React.FC<{
             <TextInput
               {...field}
               required
+              disabled={mode === 'VIEW'}
               label="Quy cách"
               radius="md"
               error={errors.packing ? errors.packing.message : false}
@@ -273,6 +338,7 @@ const ProductForm: React.FC<{
             <TextInput
               {...field}
               required
+              disabled={mode === 'VIEW'}
               label="Nhà sản xuất"
               radius="md"
               error={errors.manufacturer ? errors.manufacturer.message : false}
@@ -287,6 +353,7 @@ const ProductForm: React.FC<{
           render={({ field }) => (
             <TextInput
               {...field}
+              disabled={mode === 'VIEW'}
               required
               label="Xuất xứ thương hiệu"
               radius="md"
@@ -303,6 +370,7 @@ const ProductForm: React.FC<{
             <TextInput
               {...field}
               required
+              disabled={mode === 'VIEW'}
               label="Chỉ định"
               radius="md"
               error={errors.indications ? errors.indications.message : false}
@@ -318,6 +386,7 @@ const ProductForm: React.FC<{
             <TextInput
               {...field}
               required
+              disabled={mode === 'VIEW'}
               label="Số đăng kí"
               radius="md"
               error={
@@ -337,6 +406,7 @@ const ProductForm: React.FC<{
             <Textarea
               {...field}
               required
+              disabled={mode === 'VIEW'}
               radius="md"
               label="Công dụng"
               autosize
@@ -355,6 +425,7 @@ const ProductForm: React.FC<{
             <Textarea
               {...field}
               required
+              disabled={mode === 'VIEW'}
               radius="md"
               label="Cách dùng"
               autosize
@@ -373,6 +444,7 @@ const ProductForm: React.FC<{
             <Textarea
               {...field}
               radius="md"
+              disabled={mode === 'VIEW'}
               label="Tác dụng phụ"
               autosize
               minRows={2}
@@ -390,6 +462,7 @@ const ProductForm: React.FC<{
             <Textarea
               {...field}
               radius="md"
+              disabled={mode === 'VIEW'}
               label="Lưu ý"
               autosize
               minRows={2}
@@ -407,6 +480,7 @@ const ProductForm: React.FC<{
             <Textarea
               {...field}
               required
+              disabled={mode === 'VIEW'}
               radius="md"
               label="Bảo quản"
               autosize
@@ -426,6 +500,7 @@ const ProductForm: React.FC<{
               {...field}
               required
               radius="md"
+              disabled={mode === 'VIEW'}
               label="Trạng thái"
               data={[
                 { value: 'PRE_ORDER', label: ProductStatus.PRE_ORDER },
@@ -470,6 +545,7 @@ const ProductForm: React.FC<{
               {(props) => (
                 <Button
                   {...props}
+                  disabled={mode === 'VIEW'}
                   variant="default"
                   styles={() => ({
                     root: {
@@ -489,6 +565,7 @@ const ProductForm: React.FC<{
                 index={index}
                 control={control}
                 removeImage={removeImage}
+                mode={mode}
               />
             ))}
           </Flex>
@@ -500,42 +577,45 @@ const ProductForm: React.FC<{
           unitData={unitData}
           appendUnit={appendUnit}
           removeUnit={removeUnit}
+          mode={mode}
         />
-        <Flex justify="flex-end" align="center" my="xs">
-          <Button
-            mx="xs"
-            className="button"
-            styles={(theme) => ({
-              root: {
-                backgroundColor: theme.colors.munsellBlue[0],
-                ...theme.fn.hover({
-                  backgroundColor: theme.fn.darken(
-                    theme.colors.munsellBlue[0],
-                    0.1,
-                  ),
-                }),
-              },
-            })}
-            type="submit"
-          >
-            Lưu
-          </Button>
-          <Button
-            className="button cancel"
-            variant="outline"
-            styles={(theme) => ({
-              root: {
-                color: theme.colors.munsellBlue[0],
-                ...theme.fn.hover({
-                  color: theme.fn.darken(theme.colors.munsellBlue[0], 0.1),
-                }),
-              },
-            })}
-            onClick={onClose}
-          >
-            Hủy
-          </Button>
-        </Flex>
+        {mode !== 'VIEW' && (
+          <Flex justify="flex-end" align="center" my="xs">
+            <Button
+              mx="xs"
+              className="button"
+              styles={(theme) => ({
+                root: {
+                  backgroundColor: theme.colors.munsellBlue[0],
+                  ...theme.fn.hover({
+                    backgroundColor: theme.fn.darken(
+                      theme.colors.munsellBlue[0],
+                      0.1,
+                    ),
+                  }),
+                },
+              })}
+              type="submit"
+            >
+              Lưu
+            </Button>
+            <Button
+              className="button cancel"
+              variant="outline"
+              styles={(theme) => ({
+                root: {
+                  color: theme.colors.munsellBlue[0],
+                  ...theme.fn.hover({
+                    color: theme.fn.darken(theme.colors.munsellBlue[0], 0.1),
+                  }),
+                },
+              })}
+              onClick={onClose}
+            >
+              Hủy
+            </Button>
+          </Flex>
+        )}
       </form>
     )
   );

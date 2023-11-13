@@ -1,10 +1,14 @@
-import { FC } from "react";
-import { Table } from "@mantine/core";
-import { IconEdit, IconTrashX } from "@tabler/icons-react";
+import { FC, useState } from 'react';
+import { Modal, Table } from '@mantine/core';
+import { IconEdit, IconTrashX } from '@tabler/icons-react';
+import BranchForm from './BranchForm';
+import { useDisclosure } from '@mantine/hooks';
+import React from 'react';
 interface BranchTableProps {
   startIndex: number;
   endIndex: number;
   allBranches: AllBranchesProps;
+  handleSuccessEditSubmit: () => void;
 }
 interface AllBranchesProps {
   items: ItemsProps[];
@@ -18,17 +22,70 @@ interface ItemsProps {
   address: string;
   phone: string;
 }
-const BranchTable: FC<BranchTableProps> = ({ startIndex, allBranches }) => {
+const BranchTable: FC<BranchTableProps> = ({
+  startIndex,
+  allBranches,
+  handleSuccessEditSubmit,
+}) => {
+  const [opened, { open, close }] = useDisclosure(false);
+  const handleSuccessSubmit = () => {
+    close();
+    handleSuccessEditSubmit();
+  };
+  const handleCloseModal = () => {
+    close();
+  };
+  const [openedRowId, setOpenedRowId] = useState<number>(0);
+  const [isEdit, setIsEdit] = useState<boolean>(false);
+
+  const openModal = (rowId: number, isEditing: boolean) => {
+    open();
+    setOpenedRowId(rowId);
+    setIsEdit(isEditing);
+  };
+
   const rows = allBranches.items.map((element, index) => (
-    <tr key={element.id}>
-      <td>{startIndex + index + 1}</td>
-      <td>{element.address}</td>
-      <td>{element.phone}</td>
-      <td>
-        <IconEdit className="delete-edit" strokeWidth="1.8" size="22px" />
-        <IconTrashX className="delete-edit" strokeWidth="1.8" size="22px" />
-      </td>
-    </tr>
+    <React.Fragment key={element.id}>
+      {openedRowId === element.id && (
+        <Modal
+          title={isEdit ? 'Sửa chi nhánh' : 'Xem chi nhánh'}
+          opened={opened}
+          onClose={close}
+          size="60"
+          centered
+          m={20}
+          styles={() => ({
+            title: {
+              fontWeight: 'bold',
+            },
+          })}
+        >
+          <BranchForm
+            isEdit={isEdit}
+            onSuccesSubmitEdit={handleSuccessSubmit}
+            onCancel={handleCloseModal}
+            idBranch={element.id}
+          />
+        </Modal>
+      )}
+      <tr key={element.id} onClick={() => openModal(element.id, false)}>
+        <td>{startIndex + index + 1}</td>
+        <td>{element.address}</td>
+        <td>{element.phone}</td>
+        <td className="button-row">
+          <IconEdit
+            className="edit-button"
+            strokeWidth="1.8"
+            size="22px"
+            onClick={(event) => {
+              event.stopPropagation();
+              openModal(element.id, true);
+            }}
+          />
+          <IconTrashX className="delete-button" strokeWidth="1.8" size="22px" />
+        </td>
+      </tr>
+    </React.Fragment>
   ));
 
   return (
