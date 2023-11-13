@@ -12,11 +12,11 @@ import { useEffect, useRef, useState } from 'react';
 import { useDisclosure } from '@mantine/hooks';
 import UnitTable from '../components/Unit/UnitTable';
 import UnitForm, { Unit } from '../components/Unit/UnitForm';
-import { useUnitExceptAdd } from '../hooks/useUnit';
+import useUnit, { useUnitExceptAdd } from '../hooks/useUnit';
 import { handleGlobalException } from '../utils/error';
 import { notificationShow } from '../components/Notification';
 import { useForm } from 'react-hook-form';
-
+import { ErrorObject } from '../types/error';
 export interface AllUnitsProps {
   items: ItemsProps[];
   numPages: number;
@@ -65,6 +65,13 @@ export default function UnitPage() {
     search,
     filter,
   );
+  const { onSubmitDeleteUnitForm } = useUnit();
+  const handleDeleteUnit = (data: { id: number }) => {
+    onSubmitDeleteUnitForm(data, () => {
+      notificationShow('success', 'Success!', 'Xóa đơn vị thành công!');
+      fetchUnitData();
+    });
+  };
   const { setError } = useForm({
     defaultValues: {
       offset: '',
@@ -92,7 +99,7 @@ export default function UnitPage() {
     if (data.isSuccess) {
       setAllUnits(data.data.data);
     } else if (data.isError) {
-      const error = data.error;
+      const error = data.error as ErrorObject;
       handleGlobalException(error, () => {
         setError('offset', {
           type: 'manual',
@@ -172,7 +179,14 @@ export default function UnitPage() {
             },
           })}
         >
-          <UnitForm title={action} onClose={close} unit={unit} />
+          <UnitForm
+            title={action}
+            onClose={() => {
+              fetchUnitData();
+              close();
+            }}
+            unit={unit}
+          />
         </Modal>
         <Group ml="auto">
           <Button
@@ -203,6 +217,7 @@ export default function UnitPage() {
           endIndex={endIndex}
           allUnites={allUnits}
           handleEdit={handleEdit}
+          handleDeleteUnit={handleDeleteUnit}
         />
       </div>
       <br />

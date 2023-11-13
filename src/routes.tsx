@@ -1,7 +1,6 @@
 import { Navigate, createBrowserRouter } from 'react-router-dom';
 import Layout from './layouts/Layout';
 import ErrorPage from './pages/Error';
-import Home from './pages/Home';
 import * as ROUTES from './constants/routes';
 import Login from './pages/Login';
 import Account from './pages/Account';
@@ -9,6 +8,7 @@ import Branch from './pages/Branch';
 import Product from './pages/Product';
 import UnitPage from './pages/UnitPage';
 import ChangePassword from './pages/ChangePassword';
+import CategoryPage from './pages/CategoryPage';
 import ProviderPage from './pages/ProviderPage';
 
 export const router = createBrowserRouter([
@@ -23,6 +23,7 @@ export const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       {
+        index: true,
         element: <Navigate to="/branch-management" />,
       },
       {
@@ -44,6 +45,10 @@ export const router = createBrowserRouter([
       {
         path: 'unit-management',
         element: <UnitPage />,
+      },
+      {
+        path: 'category-management',
+        element: <CategoryPage />,
       },
       {
         path: 'provider-management',

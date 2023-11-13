@@ -1,44 +1,46 @@
-import {
-  Button,
-  Flex,
-  Group,
-  Modal,
-  Pagination,
-  Title,
-  useMantineTheme,
-} from '@mantine/core';
-import { IconPlus, IconSearch } from '@tabler/icons-react';
-import { useEffect, useRef, useState } from 'react';
-import { handleGlobalException } from '../utils/error';
-import { notificationShow } from '../components/Notification';
-import { useForm } from 'react-hook-form';
-import { ErrorObject } from '../types/error';
-import { AllProvidersProps, Provider } from '../types/Provider';
-import useProvider from '../hooks/useProvider';
-import ProviderTable from '../components/Provider/ProviderTable';
-import ProviderForm from '../components/Provider/ProviderForm';
-import { useDisclosure } from '@mantine/hooks';
-export default function ProviderPage() {
-  const theme = useMantineTheme();
-  const [action, setAction] = useState('add');
-  const [provider, setProvider] = useState<Provider>();
+import { Button, Flex, Group, Modal, Pagination, Title, useMantineTheme } from "@mantine/core";
+import { IconPlus, IconSearch } from "@tabler/icons-react";
+import { useEffect, useRef, useState } from "react";
+import { handleGlobalException } from "../utils/error";
+import { notificationShow } from "../components/Notification";
+import { useForm } from "react-hook-form";
+import useCategory from "../hooks/useCategory";
+import CategoryTable from "../components/Category/CategoryTable";
+import { useDisclosure } from "@mantine/hooks";
+import CategoryForm, { Category } from "../components/Category/CategoryForm";
+import { ErrorObject } from "../types/error";
+export interface AllCategoriesProps {
+  items: ItemsProps[];
+  numPages: number;
+  offset: number;
+  limit: number;
+  totalItems: number;
+}
+interface ItemsProps {
+  id: number;
+  name: string;
+}
+export default function CategoryPage() {
+  const theme = useMantineTheme()
+  const [action, setAction] = useState("add");
+  const [category, setCategory] = useState<Category>();
   const [opened, { open, close }] = useDisclosure(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const [searchValue, setSearchValue] = useState('');
+  const [searchValue, setSearchValue] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  const [allProviders, setAllProviders] = useState<AllProvidersProps>({
+  const [allCategories, setAllCategories] = useState<AllCategoriesProps>({
     items: [],
     numPages: 0,
     offset: 0,
     limit: 0,
     totalItems: 0,
   });
-  const itemsPerPage = allProviders.limit;
-  const startIndex = allProviders.offset;
+  const itemsPerPage = allCategories.limit;
+  const startIndex = allCategories.offset;
   const endIndex = startIndex + itemsPerPage;
-  const totalProviders = allProviders.totalItems;
-  const totalPages = allProviders.numPages;
+  const totalCategories = allCategories.totalItems;
+  const totalPages = allCategories.numPages;
   const offset = currentPage * 10 - 10;
   const search = {
     offset: offset,
@@ -51,45 +53,45 @@ export default function ProviderPage() {
   };
   const [searchArr, setSearchArr] = useState(search);
 
-  const { fetchProvider, fetchProvidersSearchKeywork } = useProvider(
+  const { fetchCategory, fetchCategoriesSearchKeywork } = useCategory(
     search,
-    filter,
+    filter
   );
   const { setError } = useForm({
     defaultValues: {
-      offset: '',
-      limit: '',
+      offset: "",
+      limit: "",
     },
   });
-  async function fetchProviderData() {
-    const data = await fetchProvider.refetch();
+  async function fetchCategoryData() {
+    const data = await fetchCategory.refetch();
     if (data.isSuccess) {
-      setAllProviders(data.data.data);
+      setAllCategories(data.data.data);
     } else if (data.isError) {
       const error = data.error as ErrorObject;
       handleGlobalException(error, () => {
         if (error.response.status === 400) {
           const data = error.response.data;
           Object.keys(data).forEach((key) => {
-            notificationShow('error', 'Error!', data[key]);
+            notificationShow("error", "Error!", data[key]);
           });
         }
       });
     }
   }
   async function fetchKeyworkData() {
-    const data = await fetchProvidersSearchKeywork.refetch();
+    const data = await fetchCategoriesSearchKeywork.refetch();
     if (data.isSuccess) {
-      setAllProviders(data.data.data);
+      setAllCategories(data.data.data);
     } else if (data.isError) {
       const error = data.error as ErrorObject;
       handleGlobalException(error, () => {
-        setError('offset', {
-          type: 'manual',
+        setError("offset", {
+          type: "manual",
           message: error.response.data.offset,
         });
-        setError('limit', {
-          type: 'manual',
+        setError("limit", {
+          type: "manual",
           message: error.response.data.limit,
         });
       });
@@ -99,7 +101,7 @@ export default function ProviderPage() {
     if (searchArr.keyword) {
       fetchKeyworkData();
     } else {
-      fetchProviderData();
+      fetchCategoryData();
     }
   }, [searchArr]);
   useEffect(() => {
@@ -116,21 +118,19 @@ export default function ProviderPage() {
   };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchValue = e.target.value;
-    if (!searchValue.startsWith(' ')) {
+    if (!searchValue.startsWith(" ")) {
       setSearchValue(searchValue);
       setCurrentPage(1);
     }
   };
-  const handleEdit = (Provider: Provider) => {
-    setAction('update');
+  const handleEdit = (Category: Category) => {
+    setAction("update");
     open();
-    setProvider(Provider);
+    setCategory(Category);  
   };
   return (
     <div className="unit-ctn">
-      <Title size="h5" color={theme.colors.cobaltBlue[0]}>
-        Danh sách nhà cung cấp
-      </Title>
+      <Title size="h5" color={theme.colors.cobaltBlue[0]}>Danh sách danh mục</Title>
       <Flex>
         <div className="search-field">
           <div className="search">
@@ -155,14 +155,14 @@ export default function ProviderPage() {
           size="60"
           centered
           m={20}
-          title={action === 'add' ? 'Thêm nhà cung cấp' : 'Sửa nhà cung cấp'}
+          title={action === "add" ? "Thêm danh mục" : "Sửa danh mục"}
           styles={() => ({
             title: {
-              fontWeight: 'bold',
+              fontWeight: "bold",
             },
           })}
         >
-          <ProviderForm title={action} onClose={close} Provider={provider} />
+          <CategoryForm title={action} onClose={close} category={category}/>
         </Modal>
         <Group ml="auto">
           <Button
@@ -173,44 +173,44 @@ export default function ProviderPage() {
                 ...theme.fn.hover({
                   backgroundColor: theme.fn.darken(
                     theme.colors.munsellBlue[0],
-                    0.1,
+                    0.1
                   ),
                 }),
               },
             })}
             onClick={() => {
-              setAction('add');
-              setProvider(undefined);
+              setAction("add");
+              setCategory(undefined);
               open();
             }}
           >
-            Thêm nhà cung cấp
+            Thêm danh mục
           </Button>
         </Group>
       </Flex>
       <div className="unit-table">
-        <ProviderTable
+        <CategoryTable
           startIndex={startIndex}
           endIndex={endIndex}
-          allProvideres={allProviders}
+          allCategoryes={allCategories}
           handleEdit={handleEdit}
         />
       </div>
       <br />
       <div className="pagination-ctn">
-        {totalProviders === 0 ? (
+        {totalCategories === 0 ? (
           <div> Không tìm thấy kết quả nào.</div>
-        ) : totalProviders === 1 ? (
+        ) : totalCategories === 1 ? (
           <div>Tìm thấy 1 kết quả.</div>
         ) : (
           <div>
-            Hiển thị{' '}
-            {endIndex <= totalProviders
+            Hiển thị{" "}
+            {endIndex <= totalCategories
               ? itemsPerPage
-              : totalProviders % itemsPerPage}{' '}
-            kết quả từ {startIndex + 1} -{' '}
-            {endIndex <= totalProviders ? endIndex : totalProviders} trong tổng{' '}
-            {totalProviders} kết quả
+              : totalCategories % itemsPerPage}{" "}
+            kết quả từ {startIndex + 1} -{" "}
+            {endIndex <= totalCategories ? endIndex : totalCategories} trong
+            tổng {totalCategories} kết quả
           </div>
         )}
         <Pagination
@@ -220,7 +220,7 @@ export default function ProviderPage() {
           position="center"
           styles={(theme) => ({
             control: {
-              '&[data-active]': {
+              "&[data-active]": {
                 backgroundColor: theme.colors.munsellBlue[0],
                 border: 0,
               },

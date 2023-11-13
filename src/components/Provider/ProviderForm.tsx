@@ -1,11 +1,11 @@
-import { Button, Flex, TextInput } from "@mantine/core";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { handleGlobalException } from "../../utils/error";
-import { notificationShow } from "../Notification";
-import { useLocation, useNavigate } from "react-router-dom";
-import { ErrorObject } from "../../types/error";
-import { Provider } from "../../types/Provider";
-import useProvider from "../../hooks/useProvider";
+import { Button, Flex, TextInput } from '@mantine/core';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { handleGlobalException } from '../../utils/error';
+import { notificationShow } from '../Notification';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { ErrorObject } from '../../types/error';
+import { Provider } from '../../types/Provider';
+import useProvider from '../../hooks/useProvider';
 
 const ProviderForm: React.FC<{
   onClose: () => void;
@@ -19,11 +19,11 @@ const ProviderForm: React.FC<{
     setError,
   } = useForm({
     defaultValues: {
-      id: Provider ? Provider.id : "",
-      name: Provider ? Provider.name : "",
-      address: Provider ? Provider.address : "",
-      phone: Provider ? Provider.phone : "",
-      email: Provider ? Provider.email : "",
+      id: Provider ? Provider.id : '',
+      name: Provider ? Provider.name : '',
+      address: Provider ? Provider.address : '',
+      phone: Provider ? Provider.phone : '',
+      email: Provider ? Provider.email : '',
     },
   });
   const {
@@ -36,12 +36,12 @@ const ProviderForm: React.FC<{
     {
       offset: 0,
       limit: 10,
-      keyword: "",
+      keyword: '',
     },
     {
       offset: 0,
       limit: 5,
-    }
+    },
   );
   const location = useLocation();
   const navigate = useNavigate();
@@ -52,23 +52,22 @@ const ProviderForm: React.FC<{
     phone: string | number;
     email: string;
   }> = (data) => {
-    if (title === "add") {
+    if (title === 'add') {
       onSubmitAddProviderForm(
         data,
         (error) => {
-          const newError = error as ErrorObject;
-          handleGlobalException(newError, () => {
-            Object.keys(newError.response.data).forEach((key) => {
+          handleGlobalException(error, () => {
+            Object.keys(error.response.data).forEach((key) => {
               const typedKey = key as
-                | "name"
-                | "address"
-                | "phone"
-                | "email"
+                | 'name'
+                | 'address'
+                | 'phone'
+                | 'email'
                 | `root.${string}`
-                | "root";
+                | 'root';
               setError(typedKey, {
-                type: "manual",
-                message: newError.response.data[typedKey],
+                type: 'manual',
+                message: error.response.data[typedKey],
               });
             });
           });
@@ -76,15 +75,15 @@ const ProviderForm: React.FC<{
         () => {
           onClose();
           notificationShow(
-            "success",
-            "Success!",
-            "Thêm nhà cung cấp thành công!"
+            'success',
+            'Success!',
+            'Thêm nhà cung cấp thành công!',
           );
-          navigate("/", { state: { from: location.pathname } });
-        }
+          navigate('/', { state: { from: location.pathname } });
+        },
       );
     }
-    if (title === "update") {
+    if (title === 'update') {
       onSubmitUpdateProviderForm(
         data,
         (error) => {
@@ -92,14 +91,14 @@ const ProviderForm: React.FC<{
           handleGlobalException(newError, () => {
             Object.keys(newError.response.data).forEach((key) => {
               const typedKey = key as
-                | "name"
-                | "address"
-                | "phone"
-                | "email"
+                | 'name'
+                | 'address'
+                | 'phone'
+                | 'email'
                 | `root.${string}`
-                | "root";
+                | 'root';
               setError(typedKey, {
-                type: "manual",
+                type: 'manual',
                 message: newError.response.data[typedKey],
               });
             });
@@ -109,19 +108,19 @@ const ProviderForm: React.FC<{
           await fetchProvider.refetch();
           onClose();
           notificationShow(
-            "success",
-            "Success!",
-            "Sửa nhà cung cấp thành công!"
+            'success',
+            'Success!',
+            'Sửa nhà cung cấp thành công!',
           );
-          navigate("/", { state: { from: location.pathname } });
-        }
+          navigate('/', { state: { from: location.pathname } });
+        },
       );
     }
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      {title !== "delete" && (
+      {title !== 'delete' && (
         <Flex direction="column" gap="md" pb="lg">
           <Controller
             name="name"
@@ -194,7 +193,7 @@ const ProviderForm: React.FC<{
               ...theme.fn.hover({
                 backgroundColor: theme.fn.darken(
                   theme.colors.munsellBlue[0],
-                  0.1
+                  0.1,
                 ),
               }),
             },
