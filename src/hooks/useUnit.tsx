@@ -11,6 +11,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { handleGlobalException } from '../utils/error';
 
 import { Unit } from '../components/Unit/UnitForm';
+import { ErrorObject } from '../types/error';
 
 export function useUnitExceptAdd(
   search: { offset: number; limit: number; keyword: string },
@@ -83,12 +84,12 @@ function useUnit() {
     });
   };
 
-  const onSubmitDeleteUnitForm = (data: { id: number }) => {
+  const onSubmitDeleteUnitForm = (
+    data: { id: number },
+    onSuccess: () => void,
+  ) => {
     handleDeleteUnit.mutate(data, {
-      onSuccess: () => {
-        notificationShow('success', 'Success!', 'Xóa đơn vị thành công!');
-        navigate('/', { state: { from: location.pathname } });
-      },
+      onSuccess: () => onSuccess(),
       onError: (error) => {
         handleGlobalException(error, () => {
           if (error.response.status === 400) {
@@ -109,12 +110,12 @@ function useUnit() {
   });
   const onSubmitUpdateUnitForm = (
     data: Unit,
-    onError: (error: object) => void,
+    onError: (error: ErrorObject) => void,
     onSuccess: () => void,
   ) => {
     handleUpdateUnit.mutate(data, {
       onSuccess: onSuccess,
-      onError: (error) => onError(error),
+      onError: (error) => onError(error as ErrorObject),
     });
   };
 

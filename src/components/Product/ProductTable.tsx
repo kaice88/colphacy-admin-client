@@ -57,7 +57,17 @@ const ProductTable: React.FC<{
   ));
 
   return (
-    <Table horizontalSpacing="xl" striped highlightOnHover withBorder>
+    <Table
+      horizontalSpacing="xl"
+      striped
+      highlightOnHover
+      withBorder
+      styles={() => ({
+        '.mantine-Table-th': {
+          padding: '0px 0px',
+        },
+      })}
+    >
       <thead>
         <tr>
           <th>STT</th>

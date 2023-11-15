@@ -1,10 +1,10 @@
-import { AppShell } from "@mantine/core";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import Header from "./Header";
-import Navbar from "./Navbar/Navbar";
-import { useEffect } from "react";
-import useAuth from "../hooks/useAuth";
-import { LOGIN } from "../constants/routes";
+import { AppShell } from '@mantine/core';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import Header from './Header';
+import Navbar from './Navbar/Navbar';
+import { useEffect } from 'react';
+import useAuth from '../hooks/useAuth';
+import { LOGIN } from '../constants/routes';
 
 const Layout: React.FC = () => {
   const { isAuthenticated } = useAuth();

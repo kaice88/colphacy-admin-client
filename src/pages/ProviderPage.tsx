@@ -4,52 +4,42 @@ import {
   Group,
   Modal,
   Pagination,
-  useMantineTheme,
   Title,
+  useMantineTheme,
 } from '@mantine/core';
 import { IconPlus, IconSearch } from '@tabler/icons-react';
 import { useEffect, useRef, useState } from 'react';
-import { useDisclosure } from '@mantine/hooks';
-import UnitTable from '../components/Unit/UnitTable';
-import UnitForm, { Unit } from '../components/Unit/UnitForm';
-import useUnit, { useUnitExceptAdd } from '../hooks/useUnit';
 import { handleGlobalException } from '../utils/error';
 import { notificationShow } from '../components/Notification';
 import { useForm } from 'react-hook-form';
 import { ErrorObject } from '../types/error';
-export interface AllUnitsProps {
-  items: ItemsProps[];
-  numPages: number;
-  offset: number;
-  limit: number;
-  totalItems: number;
-}
-interface ItemsProps {
-  id: number;
-  name: string;
-}
-export default function UnitPage() {
+import { AllProvidersProps, Provider } from '../types/Provider';
+import useProvider from '../hooks/useProvider';
+import ProviderTable from '../components/Provider/ProviderTable';
+import ProviderForm from '../components/Provider/ProviderForm';
+import { useDisclosure } from '@mantine/hooks';
+export default function ProviderPage() {
   const theme = useMantineTheme();
   const [action, setAction] = useState('add');
+  const [provider, setProvider] = useState<Provider>();
   const [opened, { open, close }] = useDisclosure(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [searchValue, setSearchValue] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [unit, setUnit] = useState<Unit>();
-  const [allUnits, setAllUnits] = useState<AllUnitsProps>({
+
+  const [allProviders, setAllProviders] = useState<AllProvidersProps>({
     items: [],
     numPages: 0,
     offset: 0,
     limit: 0,
     totalItems: 0,
   });
-  const itemsPerPage = allUnits.limit;
-  const startIndex = allUnits.offset;
+  const itemsPerPage = allProviders.limit;
+  const startIndex = allProviders.offset;
   const endIndex = startIndex + itemsPerPage;
-  const totalUnits = allUnits.totalItems;
-  const totalPages = allUnits.numPages;
-  const limitInit = 10;
-  const offset = currentPage - 1;
+  const totalProviders = allProviders.totalItems;
+  const totalPages = allProviders.numPages;
+  const offset = currentPage * 10 - 10;
   const search = {
     offset: offset,
     limit: 10,
@@ -61,29 +51,22 @@ export default function UnitPage() {
   };
   const [searchArr, setSearchArr] = useState(search);
 
-  const { fetchUnit, fetchUnitSearchKeywork } = useUnitExceptAdd(
+  const { fetchProvider, fetchProvidersSearchKeywork } = useProvider(
     search,
     filter,
   );
-  const { onSubmitDeleteUnitForm } = useUnit();
-  const handleDeleteUnit = (data: { id: number }) => {
-    onSubmitDeleteUnitForm(data, () => {
-      notificationShow('success', 'Success!', 'Xóa đơn vị thành công!');
-      fetchUnitData();
-    });
-  };
   const { setError } = useForm({
     defaultValues: {
       offset: '',
       limit: '',
     },
   });
-  async function fetchUnitData() {
-    const data = await fetchUnit.refetch();
+  async function fetchProviderData() {
+    const data = await fetchProvider.refetch();
     if (data.isSuccess) {
-      setAllUnits(data.data.data);
+      setAllProviders(data.data.data);
     } else if (data.isError) {
-      const error = data.error;
+      const error = data.error as ErrorObject;
       handleGlobalException(error, () => {
         if (error.response.status === 400) {
           const data = error.response.data;
@@ -95,9 +78,9 @@ export default function UnitPage() {
     }
   }
   async function fetchKeyworkData() {
-    const data = await fetchUnitSearchKeywork.refetch();
+    const data = await fetchProvidersSearchKeywork.refetch();
     if (data.isSuccess) {
-      setAllUnits(data.data.data);
+      setAllProviders(data.data.data);
     } else if (data.isError) {
       const error = data.error as ErrorObject;
       handleGlobalException(error, () => {
@@ -116,7 +99,7 @@ export default function UnitPage() {
     if (searchArr.keyword) {
       fetchKeyworkData();
     } else {
-      fetchUnitData();
+      fetchProviderData();
     }
   }, [searchArr]);
   useEffect(() => {
@@ -138,31 +121,33 @@ export default function UnitPage() {
       setCurrentPage(1);
     }
   };
-  const handleEdit = (unit: Unit) => {
+  const handleEdit = (Provider: Provider) => {
     setAction('update');
     open();
-    setUnit(unit);
+    setProvider(Provider);
   };
   return (
     <div className="unit-ctn">
       <Title size="h5" color={theme.colors.cobaltBlue[0]}>
-        Danh sách đơn vị tính
+        Danh sách nhà cung cấp
       </Title>
-      <Flex py="lg">
-        <div className="search">
-          <input
-            ref={inputRef}
-            value={searchValue}
-            placeholder="Tìm kiếm..."
-            spellCheck={false}
-            onChange={handleChange}
-          />
-          <button
-            className="search-btn"
-            onMouseDown={(e) => e.preventDefault()}
-          >
-            <IconSearch size="1.3rem"></IconSearch>
-          </button>
+      <Flex>
+        <div className="search-field">
+          <div className="search">
+            <input
+              ref={inputRef}
+              value={searchValue}
+              placeholder="Tìm kiếm..."
+              spellCheck={false}
+              onChange={handleChange}
+            />
+            <button
+              className="search-btn"
+              onMouseDown={(e) => e.preventDefault()}
+            >
+              <IconSearch size="1.3rem"></IconSearch>
+            </button>
+          </div>
         </div>
         <Modal
           opened={opened}
@@ -170,21 +155,14 @@ export default function UnitPage() {
           size="60"
           centered
           m={20}
-          title={action === 'add' ? 'Thêm đơn vị tính' : 'Sửa đơn vị tính'}
+          title={action === 'add' ? 'Thêm nhà cung cấp' : 'Sửa nhà cung cấp'}
           styles={() => ({
             title: {
               fontWeight: 'bold',
             },
           })}
         >
-          <UnitForm
-            title={action}
-            onClose={() => {
-              fetchUnitData();
-              close();
-            }}
-            unit={unit}
-          />
+          <ProviderForm title={action} onClose={close} Provider={provider} />
         </Modal>
         <Group ml="auto">
           <Button
@@ -202,35 +180,37 @@ export default function UnitPage() {
             })}
             onClick={() => {
               setAction('add');
+              setProvider(undefined);
               open();
             }}
           >
-            Thêm đơn vị tính
+            Thêm nhà cung cấp
           </Button>
         </Group>
       </Flex>
       <div className="unit-table">
-        <UnitTable
-          startIndex={startIndex * limitInit}
+        <ProviderTable
+          startIndex={startIndex}
           endIndex={endIndex}
-          allUnites={allUnits}
+          allProvideres={allProviders}
           handleEdit={handleEdit}
-          handleDeleteUnit={handleDeleteUnit}
         />
       </div>
       <br />
       <div className="pagination-ctn">
-        {totalUnits === 0 ? (
+        {totalProviders === 0 ? (
           <div> Không tìm thấy kết quả nào.</div>
-        ) : totalUnits === 1 ? (
+        ) : totalProviders === 1 ? (
           <div>Tìm thấy 1 kết quả.</div>
         ) : (
           <div>
             Hiển thị{' '}
-            {endIndex <= totalUnits ? itemsPerPage : totalUnits % itemsPerPage}{' '}
+            {endIndex <= totalProviders
+              ? itemsPerPage
+              : totalProviders % itemsPerPage}{' '}
             kết quả từ {startIndex + 1} -{' '}
-            {endIndex <= totalUnits ? endIndex : totalUnits} trong tổng{' '}
-            {totalUnits} kết quả
+            {endIndex <= totalProviders ? endIndex : totalProviders} trong tổng{' '}
+            {totalProviders} kết quả
           </div>
         )}
         <Pagination
