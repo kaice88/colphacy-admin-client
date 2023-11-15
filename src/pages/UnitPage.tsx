@@ -149,22 +149,20 @@ export default function UnitPage() {
         Danh sách đơn vị tính
       </Title>
       <Flex py="lg">
-        <div>
-          <div className="search">
-            <input
-              ref={inputRef}
-              value={searchValue}
-              placeholder="Tìm kiếm..."
-              spellCheck={false}
-              onChange={handleChange}
-            />
-            <button
-              className="search-btn"
-              onMouseDown={(e) => e.preventDefault()}
-            >
-              <IconSearch size="1.3rem"></IconSearch>
-            </button>
-          </div>
+        <div className="search">
+          <input
+            ref={inputRef}
+            value={searchValue}
+            placeholder="Tìm kiếm..."
+            spellCheck={false}
+            onChange={handleChange}
+          />
+          <button
+            className="search-btn"
+            onMouseDown={(e) => e.preventDefault()}
+          >
+            <IconSearch size="1.3rem"></IconSearch>
+          </button>
         </div>
         <Modal
           opened={opened}
