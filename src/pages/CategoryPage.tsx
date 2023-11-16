@@ -1,14 +1,22 @@
-import { Button, Flex, Group, Modal, Pagination, Title, useMantineTheme } from "@mantine/core";
-import { IconPlus, IconSearch } from "@tabler/icons-react";
-import { useEffect, useRef, useState } from "react";
-import { handleGlobalException } from "../utils/error";
-import { notificationShow } from "../components/Notification";
-import { useForm } from "react-hook-form";
-import useCategory from "../hooks/useCategory";
-import CategoryTable from "../components/Category/CategoryTable";
-import { useDisclosure } from "@mantine/hooks";
-import CategoryForm, { Category } from "../components/Category/CategoryForm";
-import { ErrorObject } from "../types/error";
+import {
+  Button,
+  Flex,
+  Group,
+  Modal,
+  Pagination,
+  Title,
+  useMantineTheme,
+} from '@mantine/core';
+import { IconPlus, IconSearch } from '@tabler/icons-react';
+import { useEffect, useRef, useState } from 'react';
+import { handleGlobalException } from '../utils/error';
+import { notificationShow } from '../components/Notification';
+import { useForm } from 'react-hook-form';
+import useCategory from '../hooks/useCategory';
+import CategoryTable from '../components/Category/CategoryTable';
+import { useDisclosure } from '@mantine/hooks';
+import CategoryForm, { Category } from '../components/Category/CategoryForm';
+import { ErrorObject } from '../types/error';
 export interface AllCategoriesProps {
   items: ItemsProps[];
   numPages: number;
@@ -21,12 +29,12 @@ interface ItemsProps {
   name: string;
 }
 export default function CategoryPage() {
-  const theme = useMantineTheme()
-  const [action, setAction] = useState("add");
+  const theme = useMantineTheme();
+  const [action, setAction] = useState('add');
   const [category, setCategory] = useState<Category>();
   const [opened, { open, close }] = useDisclosure(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
 
   const [allCategories, setAllCategories] = useState<AllCategoriesProps>({
@@ -55,12 +63,12 @@ export default function CategoryPage() {
 
   const { fetchCategory, fetchCategoriesSearchKeywork } = useCategory(
     search,
-    filter
+    filter,
   );
   const { setError } = useForm({
     defaultValues: {
-      offset: "",
-      limit: "",
+      offset: '',
+      limit: '',
     },
   });
   async function fetchCategoryData() {
@@ -73,7 +81,7 @@ export default function CategoryPage() {
         if (error.response.status === 400) {
           const data = error.response.data;
           Object.keys(data).forEach((key) => {
-            notificationShow("error", "Error!", data[key]);
+            notificationShow('error', 'Error!', data[key]);
           });
         }
       });
@@ -86,12 +94,12 @@ export default function CategoryPage() {
     } else if (data.isError) {
       const error = data.error as ErrorObject;
       handleGlobalException(error, () => {
-        setError("offset", {
-          type: "manual",
+        setError('offset', {
+          type: 'manual',
           message: error.response.data.offset,
         });
-        setError("limit", {
-          type: "manual",
+        setError('limit', {
+          type: 'manual',
           message: error.response.data.limit,
         });
       });
@@ -118,19 +126,21 @@ export default function CategoryPage() {
   };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchValue = e.target.value;
-    if (!searchValue.startsWith(" ")) {
+    if (!searchValue.startsWith(' ')) {
       setSearchValue(searchValue);
       setCurrentPage(1);
     }
   };
   const handleEdit = (Category: Category) => {
-    setAction("update");
+    setAction('update');
     open();
-    setCategory(Category);  
+    setCategory(Category);
   };
   return (
     <div className="unit-ctn">
-      <Title size="h5" color={theme.colors.cobaltBlue[0]}>Danh sách danh mục</Title>
+      <Title size="h5" color={theme.colors.cobaltBlue[0]}>
+        Danh sách danh mục
+      </Title>
       <Flex>
         <div className="search-field">
           <div className="search">
@@ -151,18 +161,21 @@ export default function CategoryPage() {
         </div>
         <Modal
           opened={opened}
-          onClose={close}
+          onClose={() => {
+            fetchCategoryData();
+            close();
+          }}
           size="60"
           centered
           m={20}
-          title={action === "add" ? "Thêm danh mục" : "Sửa danh mục"}
+          title={action === 'add' ? 'Thêm danh mục' : 'Sửa danh mục'}
           styles={() => ({
             title: {
-              fontWeight: "bold",
+              fontWeight: 'bold',
             },
           })}
         >
-          <CategoryForm title={action} onClose={close} category={category}/>
+          <CategoryForm title={action} onClose={close} category={category} />
         </Modal>
         <Group ml="auto">
           <Button
@@ -173,13 +186,13 @@ export default function CategoryPage() {
                 ...theme.fn.hover({
                   backgroundColor: theme.fn.darken(
                     theme.colors.munsellBlue[0],
-                    0.1
+                    0.1,
                   ),
                 }),
               },
             })}
             onClick={() => {
-              setAction("add");
+              setAction('add');
               setCategory(undefined);
               open();
             }}
@@ -204,11 +217,11 @@ export default function CategoryPage() {
           <div>Tìm thấy 1 kết quả.</div>
         ) : (
           <div>
-            Hiển thị{" "}
+            Hiển thị{' '}
             {endIndex <= totalCategories
               ? itemsPerPage
-              : totalCategories % itemsPerPage}{" "}
-            kết quả từ {startIndex + 1} -{" "}
+              : totalCategories % itemsPerPage}{' '}
+            kết quả từ {startIndex + 1} -{' '}
             {endIndex <= totalCategories ? endIndex : totalCategories} trong
             tổng {totalCategories} kết quả
           </div>
@@ -220,7 +233,7 @@ export default function CategoryPage() {
           position="center"
           styles={(theme) => ({
             control: {
-              "&[data-active]": {
+              '&[data-active]': {
                 backgroundColor: theme.colors.munsellBlue[0],
                 border: 0,
               },

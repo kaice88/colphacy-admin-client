@@ -1,14 +1,14 @@
-import { Button, Flex, TextInput } from "@mantine/core";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import useCategory from "../../hooks/useCategory";
-import { handleGlobalException } from "../../utils/error";
-import { notificationShow } from "../Notification";
-import { useLocation, useNavigate } from "react-router-dom";
-import { ErrorObject } from "../../types/error";
+import { Button, Flex, TextInput } from '@mantine/core';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import useCategory from '../../hooks/useCategory';
+import { handleGlobalException } from '../../utils/error';
+import { notificationShow } from '../Notification';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { ErrorObject } from '../../types/error';
 
 export interface Category {
   id: number | undefined;
-  name: string ;
+  name: string;
 }
 const CategoryForm: React.FC<{
   onClose: () => void;
@@ -22,8 +22,8 @@ const CategoryForm: React.FC<{
     setError,
   } = useForm({
     defaultValues: {
-      id: category ? category.id : "",
-      name: category ? category.name : "",
+      id: category ? category.id : '',
+      name: category ? category.name : '',
     },
   });
   const {
@@ -35,12 +35,12 @@ const CategoryForm: React.FC<{
     {
       offset: 0,
       limit: 10,
-      keyword: "",
+      keyword: '',
     },
     {
       offset: 0,
       limit: 5,
-    }
+    },
   );
   const location = useLocation();
   const navigate = useNavigate();
@@ -48,49 +48,47 @@ const CategoryForm: React.FC<{
     id: string | number | undefined;
     name: string;
   }> = (data) => {
-    if (title === "add") {
+    if (title === 'add') {
       onSubmitAddCategoryForm(
         { name: data.name },
         (error) => {
           const newError = error as ErrorObject;
           handleGlobalException(newError, () => {
-            setError("name", {
-              type: "manual",
+            setError('name', {
+              type: 'manual',
               message: newError.response.data.name,
             });
           });
         },
         () => {
           onClose();
-          notificationShow("success", "Success!", "Thêm danh mục thành công!");
-          navigate("/", { state: { from: location.pathname } });
-        }
+          notificationShow('success', 'Success!', 'Thêm danh mục thành công!');
+        },
       );
     }
-    if (title === "update") {
+    if (title === 'update') {
       onSubmitUpdateCategoryForm(
-        data as Category, 
+        data as Category,
         (error) => {
           const newError = error as ErrorObject;
           handleGlobalException(newError, () => {
-            setError("name", {
-              type: "manual",
+            setError('name', {
+              type: 'manual',
               message: newError.response.data.name,
             });
           });
         },
         () => {
           onClose();
-          notificationShow("success", "Success!", "Sửa danh mục thành công!");
-          navigate("/", { state: { from: location.pathname } });
-        }
+          notificationShow('success', 'Success!', 'Sửa danh mục thành công!');
+        },
       );
     }
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      {title !== "delete" && (
+      {title !== 'delete' && (
         <Controller
           name="name"
           control={control}
@@ -117,7 +115,7 @@ const CategoryForm: React.FC<{
               ...theme.fn.hover({
                 backgroundColor: theme.fn.darken(
                   theme.colors.munsellBlue[0],
-                  0.1
+                  0.1,
                 ),
               }),
             },
@@ -140,7 +138,7 @@ const CategoryForm: React.FC<{
           })}
           onClick={onClose}
         >
-          {" "}
+          {' '}
           Hủy
         </Button>
       </Flex>

@@ -53,7 +53,7 @@ function useProduct(
   });
   const onSubmitDeleteProductForm = (id: number, onSuccess: () => void) => {
     handleDeleteProduct.mutate(id, {
-      onSuccess: () => onSuccess(),
+      onSuccess: onSuccess,
       onError: (error) => {
         handleGlobalException(error, () => {
           if (error.response.status === 400) {

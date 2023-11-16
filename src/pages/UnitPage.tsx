@@ -166,7 +166,10 @@ export default function UnitPage() {
         </div>
         <Modal
           opened={opened}
-          onClose={close}
+          onClose={() => {
+            fetchUnitData();
+            close();
+          }}
           size="60"
           centered
           m={20}

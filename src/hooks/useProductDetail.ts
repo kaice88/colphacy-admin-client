@@ -53,7 +53,7 @@ function useProductDetail(productId: number | null) {
     onSuccess: () => void,
   ) => {
     handleSubmitProductForm.mutate(data, {
-      onSuccess: () => onSuccess(),
+      onSuccess: onSuccess,
       onError: (error) => onError(error),
     });
   };

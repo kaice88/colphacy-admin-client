@@ -7,7 +7,6 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import axios from '../settings/axios';
 
 import { notificationShow } from '../components/Notification';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { handleGlobalException } from '../utils/error';
 
 import { Unit } from '../components/Unit/UnitForm';
@@ -21,7 +20,7 @@ export function useUnitExceptAdd(
   },
 ) {
   const buildParams = () => {
-    const params: Record<string, any> = {};
+    const params: { [key: string]: number | string } = {};
 
     if (filter.offset) {
       params.offset = filter.offset;
@@ -59,8 +58,6 @@ export function useUnitExceptAdd(
 }
 
 function useUnit() {
-  const location = useLocation();
-  const navigate = useNavigate();
   const handleAddUnit = useMutation({
     mutationKey: ['add-unit'],
     mutationFn: (data: { name: string }) => {
@@ -89,7 +86,7 @@ function useUnit() {
     onSuccess: () => void,
   ) => {
     handleDeleteUnit.mutate(data, {
-      onSuccess: () => onSuccess(),
+      onSuccess: onSuccess,
       onError: (error) => {
         handleGlobalException(error, () => {
           if (error.response.status === 400) {
