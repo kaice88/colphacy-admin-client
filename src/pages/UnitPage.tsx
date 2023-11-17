@@ -49,7 +49,7 @@ export default function UnitPage() {
   const totalUnits = allUnits.totalItems;
   const totalPages = allUnits.numPages;
   const limitInit = 10;
-  const offset = currentPage - 1;
+  const offset = currentPage *10 - 10;
   const search = {
     offset: offset,
     limit: 10,
@@ -214,7 +214,7 @@ export default function UnitPage() {
       </Flex>
       <div className="unit-table">
         <UnitTable
-          startIndex={startIndex * limitInit}
+          startIndex={startIndex}
           endIndex={endIndex}
           allUnites={allUnits}
           handleEdit={handleEdit}
