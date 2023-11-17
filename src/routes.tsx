@@ -10,6 +10,7 @@ import UnitPage from './pages/UnitPage';
 import ChangePassword from './pages/ChangePassword';
 import CategoryPage from './pages/CategoryPage';
 import ProviderPage from './pages/ProviderPage';
+import Import from './pages/Import';
 
 export const router = createBrowserRouter([
   {
@@ -53,6 +54,10 @@ export const router = createBrowserRouter([
       {
         path: 'provider-management',
         element: <ProviderPage />,
+      },
+      {
+        path: 'import-management',
+        element: <Import />,
       },
     ],
   },

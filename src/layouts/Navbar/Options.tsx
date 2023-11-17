@@ -2,8 +2,7 @@ import type { ReactElement } from 'react';
 import {
   IconBrandAppgallery,
   IconBuildingStore,
-  IconListDetails,
-  IconMapPins,
+  IconHomePlus,
 } from '@tabler/icons-react';
 
 export interface Option {
@@ -37,10 +36,16 @@ export const options: Option[] = [
         url: 'category-management',
         label: 'Danh mục',
       },
-        {
+      {
         url: 'provider-management',
         label: 'Nhà cung cấp',
       },
     ],
+  },
+  {
+    icon: <IconHomePlus size="1rem"></IconHomePlus>,
+    url: 'import-management',
+    label: 'Quản lý nhập hàng',
+    links: [],
   },
 ];
