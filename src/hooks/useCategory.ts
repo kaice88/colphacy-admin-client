@@ -2,20 +2,20 @@ import {
   REQUEST_CATEGORIES,
   REQUEST_CATEGORIES_SEARCH_KEY,
   REQUEST_CATEGORY_DELETE,
-} from "./../constants/apis";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import axios from "../settings/axios";
-import { notificationShow } from "../components/Notification";
-import { useNavigate } from "react-router-dom";
-import { handleGlobalException } from "../utils/error";
-import { ErrorObject } from "../types/error";
-import { Category } from "../components/Category/CategoryForm";
+} from './../constants/apis';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import axios from '../settings/axios';
+import { notificationShow } from '../components/Notification';
+import { useNavigate } from 'react-router-dom';
+import { handleGlobalException } from '../utils/error';
+import { ErrorObject } from '../types/error';
+import { Category } from '../components/Category/CategoryForm';
 function useCategory(
   search: { offset: number; limit: number; keyword: string },
   filter: {
     offset: number;
     limit: number;
-  }
+  },
 ) {
   const buildParams = () => {
     const params: Record<string, any> = {};
@@ -32,7 +32,7 @@ function useCategory(
   };
   const navigate = useNavigate();
   const fetchCategory = useQuery({
-    queryKey: ["get-categories"],
+    queryKey: ['get-categories'],
     queryFn: () => {
       const params = buildParams();
 
@@ -43,42 +43,39 @@ function useCategory(
     enabled: false,
   });
   const fetchCategoriesSearchKeywork = useQuery({
-    queryKey: ["category_search_keywork"],
+    queryKey: ['category_search_keywork'],
     queryFn: () =>
       axios.get(
         REQUEST_CATEGORIES_SEARCH_KEY(
           search.keyword,
           search.offset,
-          search.limit
-        )
+          search.limit,
+        ),
       ),
     enabled: false,
   });
   const handleDeleteCategory = useMutation({
-    mutationKey: ["delete-category"],
+    mutationKey: ['delete-category'],
     mutationFn: (data: { id: number }) => {
       return axios.delete(REQUEST_CATEGORY_DELETE(data.id));
     },
   });
-  const onSubmitDeleteCategoryForm = (data: { id: number }) => {
+  const onSubmitDeleteCategoryForm = (data: { id: number }, onSuccess) => {
     handleDeleteCategory.mutate(data, {
-      onSuccess: () => {
-        notificationShow("success", "Success!", "Xóa danh mục thành công!");
-        navigate("/", { state: { from: location.pathname } });
-      },
+      onSuccess: onSuccess,
       onError: (error) => {
-        const newError = error as ErrorObject
+        const newError = error as ErrorObject;
         handleGlobalException(newError, () => {
           if (newError.response.status === 400) {
             const data = newError.response.data;
-            notificationShow("error", "Error!", data.error);
+            notificationShow('error', 'Error!', data.error);
           }
         });
       },
     });
   };
   const handleAddCategory = useMutation({
-    mutationKey: ["add-category"],
+    mutationKey: ['add-category'],
     mutationFn: (data: { name: string }) => {
       return axios.post(REQUEST_CATEGORIES, data);
     },
@@ -86,7 +83,7 @@ function useCategory(
   const onSubmitAddCategoryForm = (
     data: { name: string },
     onError: (error: object) => void,
-    onSuccess: () => void
+    onSuccess: () => void,
   ) => {
     handleAddCategory.mutate(data, {
       onSuccess: onSuccess,
@@ -94,7 +91,7 @@ function useCategory(
     });
   };
   const handleUpdateCategory = useMutation({
-    mutationKey: ["update-category"],
+    mutationKey: ['update-category'],
     mutationFn: (data: Category) => {
       return axios.put(REQUEST_CATEGORIES, data);
     },
@@ -102,7 +99,7 @@ function useCategory(
   const onSubmitUpdateCategoryForm = (
     data: Category,
     onError: (error: object) => void,
-    onSuccess: () => void
+    onSuccess: () => void,
   ) => {
     handleUpdateCategory.mutate(data, {
       onSuccess: onSuccess,

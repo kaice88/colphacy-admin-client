@@ -79,7 +79,6 @@ const ProviderForm: React.FC<{
             'Success!',
             'Thêm nhà cung cấp thành công!',
           );
-          navigate('/', { state: { from: location.pathname } });
         },
       );
     }
@@ -112,7 +111,6 @@ const ProviderForm: React.FC<{
             'Success!',
             'Sửa nhà cung cấp thành công!',
           );
-          navigate('/', { state: { from: location.pathname } });
         },
       );
     }

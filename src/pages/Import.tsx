@@ -9,28 +9,30 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { IconPlus, IconSearch } from '@tabler/icons-react';
 // import ImportForm from '../components/Import/ImportForm';
-// import ImportTable from '../components/Import/ImportTable';
+import ImportTable from '../components/Import/ImportTable';
 // import useImport from '../hooks/useImport';
 import { useRef, useState } from 'react';
-import { notificationShow } from '../components/Notification';
 import ImportForm from '../components/Import/ImportForm';
+import useImport from '../hooks/useImport';
 
 const LIMIT = 10;
 
 export default function Import() {
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [ImportId, setImportId] = useState<number | null>(null);
+  const [importId, setImportId] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [keyword, setKeyWord] = useState<string>('');
-  const [sortBy, setSortBy] = useState<'salePrice' | 'importPrice' | null>(
-    null,
-  );
-  const [order, setOrder] = useState<'desc' | 'asc' | null>(null);
+  // const [sortBy, setSortBy] = useState<'salePrice' | 'importPrice' | null>(
+  //   null,
+  // );
+  // const [order, setOrder] = useState<'desc' | 'asc' | null>(null);
   const [opened, { open, close }] = useDisclosure(false);
   const [mode, setMode] = useState<'ADD' | 'EDIT' | 'VIEW'>('EDIT');
   const theme = useMantineTheme();
-  //   const { ImportData, loading, onSubmitDeleteImportForm, fetchImport } =
-  //     useImport((currentPage - 1) * LIMIT, keyword, sortBy, order);
+  const { importData, loading, fetchImport } = useImport(
+    (currentPage - 1) * LIMIT,
+    keyword,
+  );
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const keyword = e.target.value.trim();
     setKeyWord(keyword);
@@ -43,31 +45,22 @@ export default function Import() {
     open();
   };
 
-  //   const handleDelete = (Id: number) => {
-  //     onSubmitDeleteImportForm(Id, () => {
-  //       notificationShow('success', 'Success!', 'Xóa đơn nhập hàng thành công!');
-  //       fetchImport.refetch();
-  //     });
-  //   };
+  const handleDelete = (Id: number) => {
+    // onSubmitDeleteImportForm(Id, () => {
+    //   notificationShow('success', 'Success!', 'Xóa đơn nhập hàng thành công!');
+    //   fetchImport.refetch();
+    // });
+  };
 
   const handleView = (Id: number) => {
     setMode('VIEW');
     setImportId(Id);
     open();
   };
-  const handleSortData = (sortBy: 'salePrice' | 'importPrice' | null) => {
-    if (order !== 'asc') {
-      setSortBy(sortBy);
-    } else {
-      setSortBy(null);
-    }
-    setOrder((prev) =>
-      prev === 'desc' ? 'asc' : prev === 'asc' ? null : 'desc',
-    );
-  };
+
   const handleCloseModal = () => {
     close();
-    // fetchImport.refetch();
+    fetchImport.refetch();
   };
 
   return (
@@ -114,7 +107,7 @@ export default function Import() {
         </Button>
       </Flex>
       <Modal
-        size="70%"
+        size="100%"
         opened={opened}
         onClose={close}
         centered
@@ -132,39 +125,36 @@ export default function Import() {
           },
         })}
       >
-        <ImportForm onClose={handleCloseModal} mode={mode} importId={1} />
+        <ImportForm onClose={handleCloseModal} mode={mode} importId={null} />
       </Modal>
-      {/* <div className="branch-table">
+      <div className="branch-table">
         <ImportTable
-          data={ImportData?.items}
-          startIndex={ImportData?.offset}
+          data={importData?.items}
+          startIndex={importData?.offset}
           handleEdit={handleEdit}
           handleDelete={handleDelete}
           handleView={handleView}
-          handleSortData={handleSortData}
-          sortBy={sortBy}
-          order={order}
         />
       </div>
-      {!loading && ImportData && (
+      {!loading && importData && (
         <Flex justify="space-between" align="center" py="lg">
           <div>
-            {ImportData?.totalItems === 0 ? (
+            {importData?.totalItems === 0 ? (
               <div>Không tìm thấy kết quả nào.</div>
-            ) : ImportData?.totalItems === 1 ? (
+            ) : importData?.totalItems === 1 ? (
               <div>Tìm thấy 1 kết quả.</div>
             ) : (
               <div>
-                Hiển thị {ImportData?.items.length} kết quả từ{' '}
-                {ImportData?.offset + 1} -{' '}
-                {ImportData?.offset + ImportData?.items.length} trong tổng{' '}
-                {ImportData?.totalItems} kết quả
+                Hiển thị {importData?.items.length} kết quả từ{' '}
+                {importData?.offset + 1} -{' '}
+                {importData?.offset + importData?.items.length} trong tổng{' '}
+                {importData?.totalItems} kết quả
               </div>
             )}
           </div>
           <Pagination
             value={currentPage}
-            total={ImportData?.numPages}
+            total={importData?.numPages}
             onChange={setCurrentPage}
             position="center"
             styles={(theme) => ({
@@ -177,7 +167,7 @@ export default function Import() {
             })}
           />
         </Flex>
-      )} */}
+      )}
     </div>
   );
 }

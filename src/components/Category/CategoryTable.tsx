@@ -1,9 +1,9 @@
-import { FC } from "react";
-import { Table } from "@mantine/core";
-import { IconEdit, IconTrashX } from "@tabler/icons-react";
-import { deleteModal } from "../../utils/deleteModal";
-import useCategory from "../../hooks/useCategory";
-import { Category } from "./CategoryForm";
+import { FC } from 'react';
+import { Table } from '@mantine/core';
+import { IconEdit, IconTrashX } from '@tabler/icons-react';
+import { deleteModal } from '../../utils/deleteModal';
+import useCategory from '../../hooks/useCategory';
+import { Category } from './CategoryForm';
 interface CategoryTableProps {
   startIndex: number;
   endIndex: number;
@@ -21,6 +21,7 @@ const CategoryTable: FC<CategoryTableProps> = ({
   startIndex,
   allCategoryes,
   handleEdit,
+  handleDeleteCategory,
 }) => {
   const rows = allCategoryes.items.map((element, index) => (
     <tr key={element.id}>
@@ -40,21 +41,15 @@ const CategoryTable: FC<CategoryTableProps> = ({
           strokeWidth="1.8"
           size="22px"
           onClick={() => {
-            deleteModal("danh mục", element.name, () =>
-              handleDeleteCategory({ id: element.id as number })
+            deleteModal('danh mục', element.name, () =>
+              handleDeleteCategory({ id: element.id as number }),
             );
           }}
         />
       </td>
     </tr>
   ));
-  const { onSubmitDeleteCategoryForm } = useCategory(
-    { offset: 0, limit: 5, keyword: "" },
-    { offset: 0, limit: 5 }
-  );
-  const handleDeleteCategory = (data: { id: number }) => {
-    onSubmitDeleteCategoryForm(data);
-  };
+
   return (
     <Table horizontalSpacing="xl" striped highlightOnHover withBorder>
       <thead>

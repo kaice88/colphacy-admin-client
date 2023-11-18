@@ -61,18 +61,21 @@ export default function CategoryPage() {
   };
   const [searchArr, setSearchArr] = useState(search);
 
-  const { fetchCategory, fetchCategoriesSearchKeywork } = useCategory(
-    search,
-    filter,
-  );
+  const {
+    fetchCategory,
+    fetchCategoriesSearchKeywork,
+    onSubmitDeleteCategoryForm,
+  } = useCategory(search, filter);
   const { setError } = useForm({
     defaultValues: {
       offset: '',
       limit: '',
     },
   });
+
   async function fetchCategoryData() {
     const data = await fetchCategory.refetch();
+
     if (data.isSuccess) {
       setAllCategories(data.data.data);
     } else if (data.isError) {
@@ -87,6 +90,13 @@ export default function CategoryPage() {
       });
     }
   }
+
+  const handleDeleteCategory = (data: { id: number }) => {
+    onSubmitDeleteCategoryForm(data, () => {
+      notificationShow('success', 'Success!', 'Xóa danh mục thành công!');
+      fetchCategoryData();
+    });
+  };
   async function fetchKeyworkData() {
     const data = await fetchCategoriesSearchKeywork.refetch();
     if (data.isSuccess) {
@@ -161,10 +171,7 @@ export default function CategoryPage() {
         </div>
         <Modal
           opened={opened}
-          onClose={() => {
-            fetchCategoryData();
-            close();
-          }}
+          onClose={close}
           size="60"
           centered
           m={20}
@@ -175,7 +182,14 @@ export default function CategoryPage() {
             },
           })}
         >
-          <CategoryForm title={action} onClose={close} category={category} />
+          <CategoryForm
+            title={action}
+            onClose={() => {
+              fetchCategoryData();
+              close();
+            }}
+            category={category}
+          />
         </Modal>
         <Group ml="auto">
           <Button
@@ -207,6 +221,7 @@ export default function CategoryPage() {
           endIndex={endIndex}
           allCategoryes={allCategories}
           handleEdit={handleEdit}
+          handleDeleteCategory={handleDeleteCategory}
         />
       </div>
       <br />
