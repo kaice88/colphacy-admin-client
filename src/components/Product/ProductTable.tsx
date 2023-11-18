@@ -67,6 +67,7 @@ const ProductTable: React.FC<{
           padding: '0px 0px',
         },
       })}
+      className="listTable"
     >
       <thead>
         <tr>

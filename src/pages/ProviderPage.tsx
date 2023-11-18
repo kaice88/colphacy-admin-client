@@ -51,10 +51,11 @@ export default function ProviderPage() {
   };
   const [searchArr, setSearchArr] = useState(search);
 
-  const { fetchProvider, fetchProvidersSearchKeywork } = useProvider(
-    search,
-    filter,
-  );
+  const {
+    fetchProvider,
+    fetchProvidersSearchKeywork,
+    onSubmitDeleteProviderForm,
+  } = useProvider(search, filter);
   const { setError } = useForm({
     defaultValues: {
       offset: '',
@@ -77,6 +78,13 @@ export default function ProviderPage() {
       });
     }
   }
+
+  const handleDeleteProvider = (data: { id: number }) => {
+    onSubmitDeleteProviderForm(data, () => {
+      notificationShow('success', 'Success!', 'Xóa nhà cung cấp thành công!');
+      fetchProviderData();
+    });
+  };
   async function fetchKeyworkData() {
     const data = await fetchProvidersSearchKeywork.refetch();
     if (data.isSuccess) {
@@ -162,7 +170,14 @@ export default function ProviderPage() {
             },
           })}
         >
-          <ProviderForm title={action} onClose={close} Provider={provider} />
+          <ProviderForm
+            title={action}
+            onClose={() => {
+              fetchProviderData();
+              close();
+            }}
+            Provider={provider}
+          />
         </Modal>
         <Group ml="auto">
           <Button
@@ -194,6 +209,7 @@ export default function ProviderPage() {
           endIndex={endIndex}
           allProvideres={allProviders}
           handleEdit={handleEdit}
+          handleDeleteProvider={handleDeleteProvider}
         />
       </div>
       <br />

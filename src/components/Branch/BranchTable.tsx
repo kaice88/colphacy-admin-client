@@ -89,7 +89,13 @@ const BranchTable: FC<BranchTableProps> = ({
   ));
 
   return (
-    <Table horizontalSpacing="xl" striped highlightOnHover withBorder>
+    <Table
+      horizontalSpacing="xl"
+      striped
+      highlightOnHover
+      withBorder
+      className="listTable"
+    >
       <thead>
         <tr>
           <th>STT</th>

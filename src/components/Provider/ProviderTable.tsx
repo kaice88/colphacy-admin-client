@@ -1,9 +1,9 @@
-import { FC } from "react";
-import { Table } from "@mantine/core";
-import { IconEdit, IconTrashX } from "@tabler/icons-react";
-import { AllProvidersProps, Provider } from "../../types/Provider";
-import { deleteModal } from "../../utils/deleteModal";
-import useProvider from "../../hooks/useProvider";
+import { FC } from 'react';
+import { Table } from '@mantine/core';
+import { IconEdit, IconTrashX } from '@tabler/icons-react';
+import { AllProvidersProps, Provider } from '../../types/Provider';
+import { deleteModal } from '../../utils/deleteModal';
+import useProvider from '../../hooks/useProvider';
 interface ProviderTableProps {
   startIndex: number;
   endIndex: number;
@@ -14,6 +14,7 @@ const ProviderTable: FC<ProviderTableProps> = ({
   startIndex,
   allProvideres,
   handleEdit,
+  handleDeleteProvider,
 }) => {
   const rows = allProvideres.items.map((element, index) => (
     <tr key={element.id}>
@@ -36,23 +37,23 @@ const ProviderTable: FC<ProviderTableProps> = ({
           strokeWidth="1.8"
           size="22px"
           onClick={() => {
-            deleteModal("nhà cung cấp", element.name, () =>
-              handleDeleteProvider({ id: element.id as number })
+            deleteModal('nhà cung cấp', element.name, () =>
+              handleDeleteProvider({ id: element.id as number }),
             );
           }}
         />
       </td>
     </tr>
   ));
-  const { onSubmitDeleteProviderForm } = useProvider(
-    { offset: 0, limit: 5, keyword: "" },
-    { offset: 0, limit: 5 }
-  );
-  const handleDeleteProvider = (data: { id: number }) => {
-    onSubmitDeleteProviderForm(data);
-  };
+
   return (
-    <Table horizontalSpacing="xl" striped highlightOnHover withBorder>
+    <Table
+      horizontalSpacing="xl"
+      striped
+      highlightOnHover
+      withBorder
+      className="listTable"
+    >
       <thead>
         <tr>
           <th>STT</th>
@@ -60,6 +61,7 @@ const ProviderTable: FC<ProviderTableProps> = ({
           <th>Địa chỉ</th>
           <th>SĐT</th>
           <th>Email</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>{rows}</tbody>

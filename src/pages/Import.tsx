@@ -8,28 +8,31 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconPlus, IconSearch } from '@tabler/icons-react';
-import ProductForm from '../components/Product/ProductForm';
-import ProductTable from '../components/Product/ProductTable';
-import useProduct from '../hooks/useProduct';
+// import ImportForm from '../components/Import/ImportForm';
+import ImportTable from '../components/Import/ImportTable';
+// import useImport from '../hooks/useImport';
 import { useRef, useState } from 'react';
-import { notificationShow } from '../components/Notification';
+import ImportForm from '../components/Import/ImportForm';
+import useImport from '../hooks/useImport';
 
 const LIMIT = 10;
 
-export default function Product() {
+export default function Import() {
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [productId, setProductId] = useState<number | null>(null);
+  const [importId, setImportId] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [keyword, setKeyWord] = useState<string>('');
-  const [sortBy, setSortBy] = useState<'salePrice' | 'importPrice' | null>(
-    null,
-  );
-  const [order, setOrder] = useState<'desc' | 'asc' | null>(null);
+  // const [sortBy, setSortBy] = useState<'salePrice' | 'importPrice' | null>(
+  //   null,
+  // );
+  // const [order, setOrder] = useState<'desc' | 'asc' | null>(null);
   const [opened, { open, close }] = useDisclosure(false);
   const [mode, setMode] = useState<'ADD' | 'EDIT' | 'VIEW'>('EDIT');
   const theme = useMantineTheme();
-  const { productData, loading, onSubmitDeleteProductForm, fetchProduct } =
-    useProduct((currentPage - 1) * LIMIT, keyword, sortBy, order);
+  const { importData, loading, fetchImport } = useImport(
+    (currentPage - 1) * LIMIT,
+    keyword,
+  );
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const keyword = e.target.value.trim();
     setKeyWord(keyword);
@@ -38,48 +41,39 @@ export default function Product() {
 
   const handleEdit = (Id: number) => {
     setMode('EDIT');
-    setProductId(Id);
+    setImportId(Id);
     open();
   };
 
   const handleDelete = (Id: number) => {
-    onSubmitDeleteProductForm(Id, () => {
-      notificationShow('success', 'Success!', 'Xóa sản phẩm thành công!');
-      fetchProduct.refetch();
-    });
+    // onSubmitDeleteImportForm(Id, () => {
+    //   notificationShow('success', 'Success!', 'Xóa đơn nhập hàng thành công!');
+    //   fetchImport.refetch();
+    // });
   };
 
   const handleView = (Id: number) => {
     setMode('VIEW');
-    setProductId(Id);
+    setImportId(Id);
     open();
   };
-  const handleSortData = (sortBy: 'salePrice' | 'importPrice' | null) => {
-    if (order !== 'asc') {
-      setSortBy(sortBy);
-    } else {
-      setSortBy(null);
-    }
-    setOrder((prev) =>
-      prev === 'desc' ? 'asc' : prev === 'asc' ? null : 'desc',
-    );
-  };
+
   const handleCloseModal = () => {
     close();
-    fetchProduct.refetch();
+    fetchImport.refetch();
   };
 
   return (
     <div className="branch-ctn">
       <Title size="h5" color={theme.colors.cobaltBlue[0]}>
-        Danh sách sản phẩm
+        Danh sách đơn nhập hàng
       </Title>
       <Flex justify="space-between" align="center" py="lg">
         <div className="search">
           <input
             ref={inputRef}
             value={keyword}
-            placeholder="Tìm bằng..."
+            placeholder="Tìm bằng tên đơn nhập hàng..."
             spellCheck={false}
             onChange={handleChange}
           />
@@ -104,26 +98,26 @@ export default function Product() {
             },
           })}
           onClick={() => {
-            setProductId(null);
+            setImportId(null);
             setMode('ADD');
             open();
           }}
         >
-          Thêm sản phẩm
+          Thêm đơn nhập hàng
         </Button>
       </Flex>
       <Modal
-        size="70%"
+        size="100%"
         opened={opened}
         onClose={close}
         centered
         m="20"
         title={
           mode === 'ADD'
-            ? 'Thêm sản phẩm'
+            ? 'Thêm đơn nhập hàng'
             : mode === 'EDIT'
-            ? 'Sửa sản phẩm'
-            : 'Xem sản phẩm'
+            ? 'Sửa đơn nhập hàng'
+            : 'Xem đơn nhập hàng'
         }
         styles={() => ({
           title: {
@@ -131,43 +125,36 @@ export default function Product() {
           },
         })}
       >
-        <ProductForm
-          onClose={handleCloseModal}
-          mode={mode}
-          productId={productId}
-        />
+        <ImportForm onClose={handleCloseModal} mode={mode} importId={null} />
       </Modal>
       <div className="branch-table">
-        <ProductTable
-          data={productData?.items}
-          startIndex={productData?.offset}
+        <ImportTable
+          data={importData?.items}
+          startIndex={importData?.offset}
           handleEdit={handleEdit}
           handleDelete={handleDelete}
           handleView={handleView}
-          handleSortData={handleSortData}
-          sortBy={sortBy}
-          order={order}
         />
       </div>
-      {!loading && productData && (
+      {!loading && importData && (
         <Flex justify="space-between" align="center" py="lg">
           <div>
-            {productData?.totalItems === 0 ? (
+            {importData?.totalItems === 0 ? (
               <div>Không tìm thấy kết quả nào.</div>
-            ) : productData?.totalItems === 1 ? (
+            ) : importData?.totalItems === 1 ? (
               <div>Tìm thấy 1 kết quả.</div>
             ) : (
               <div>
-                Hiển thị {productData?.items.length} kết quả từ{' '}
-                {productData?.offset + 1} -{' '}
-                {productData?.offset + productData?.items.length} trong tổng{' '}
-                {productData?.totalItems} kết quả
+                Hiển thị {importData?.items.length} kết quả từ{' '}
+                {importData?.offset + 1} -{' '}
+                {importData?.offset + importData?.items.length} trong tổng{' '}
+                {importData?.totalItems} kết quả
               </div>
             )}
           </div>
           <Pagination
             value={currentPage}
-            total={productData?.numPages}
+            total={importData?.numPages}
             onChange={setCurrentPage}
             position="center"
             styles={(theme) => ({

@@ -12,7 +12,7 @@ import { handleGlobalException } from '../utils/error';
 import { useNavigate } from 'react-router-dom';
 function useProvider(
   search: { offset: number; limit: number; keyword: string },
-  filter: {
+  filter?: {
     offset: number;
     limit: number;
   },
@@ -20,11 +20,11 @@ function useProvider(
   const buildParams = () => {
     const params: Record<string, any> = {};
 
-    if (filter.offset) {
+    if (filter?.offset) {
       params.offset = filter.offset;
     }
 
-    if (filter.limit) {
+    if (filter?.limit) {
       params.limit = filter.limit;
     }
 
@@ -93,12 +93,9 @@ function useProvider(
       return axios.delete(REQUEST_PROVIDER_DELETE(data.id));
     },
   });
-  const onSubmitDeleteProviderForm = (data: { id: number }) => {
+  const onSubmitDeleteProviderForm = (data: { id: number }, onSuccess) => {
     handleDeleteProvider.mutate(data, {
-      onSuccess: () => {
-        notificationShow('success', 'Success!', 'Xóa nhà cung cấp thành công!');
-        navigate('/', { state: { from: location.pathname } });
-      },
+      onSuccess: onSuccess,
       onError: (error) => {
         const newError = error as ErrorObject;
         handleGlobalException(newError, () => {
