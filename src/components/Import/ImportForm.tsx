@@ -138,7 +138,13 @@ const ImportForm: React.FC<{
                   {...field}
                   required
                   radius="md"
-                  disabled={mode === 'VIEW'}
+                  style={
+                    mode === 'VIEW'
+                      ? {
+                          pointerEvents: 'none',
+                        }
+                      : {}
+                  }
                   label="Chi nhánh"
                   data={transformSelectData(branchData || [], true)}
                   searchable
@@ -166,7 +172,13 @@ const ImportForm: React.FC<{
                   w="100%"
                   required
                   radius="md"
-                  disabled={mode === 'VIEW'}
+                  style={
+                    mode === 'VIEW'
+                      ? {
+                          pointerEvents: 'none',
+                        }
+                      : {}
+                  }
                   label="Nhà cung cấp"
                   data={transformSelectData(providerData || [])}
                   searchable
@@ -191,7 +203,13 @@ const ImportForm: React.FC<{
                 <TextInput
                   w="100%"
                   {...field}
-                  disabled={mode === 'VIEW'}
+                  style={
+                    mode === 'VIEW'
+                      ? {
+                          pointerEvents: 'none',
+                        }
+                      : {}
+                  }
                   required
                   label="Số hóa đơn"
                   radius="md"
@@ -209,7 +227,13 @@ const ImportForm: React.FC<{
                 <DateTimePicker
                   w="100%"
                   {...field}
-                  disabled={mode === 'VIEW'}
+                  style={
+                    mode === 'VIEW'
+                      ? {
+                          pointerEvents: 'none',
+                        }
+                      : {}
+                  }
                   required
                   label="Ngày nhập"
                   radius="md"

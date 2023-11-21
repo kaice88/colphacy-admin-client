@@ -173,7 +173,13 @@ const ProductForm: React.FC<{
           render={({ field }) => (
             <TextInput
               {...field}
-              disabled={mode === 'VIEW'}
+              style={
+                mode === 'VIEW'
+                  ? {
+                      pointerEvents: 'none',
+                    }
+                  : {}
+              }
               required
               label="Tên sản phẩm"
               radius="md"
@@ -189,7 +195,13 @@ const ProductForm: React.FC<{
           render={({ field }) => (
             <Select
               {...field}
-              disabled={mode === 'VIEW'}
+              style={
+                mode === 'VIEW'
+                  ? {
+                      pointerEvents: 'none',
+                    }
+                  : {}
+              }
               required
               radius="md"
               label="Danh mục"
@@ -229,7 +241,13 @@ const ProductForm: React.FC<{
                     render={({ field }) => (
                       <Input
                         {...field}
-                        disabled={mode === 'VIEW'}
+                        style={
+                          mode === 'VIEW'
+                            ? {
+                                pointerEvents: 'none',
+                              }
+                            : {}
+                        }
                         w="100%"
                         required
                         error={
@@ -247,7 +265,13 @@ const ProductForm: React.FC<{
                     render={({ field }) => (
                       <NumberInput
                         {...field}
-                        disabled={mode === 'VIEW'}
+                        style={
+                          mode === 'VIEW'
+                            ? {
+                                pointerEvents: 'none',
+                              }
+                            : {}
+                        }
                         w="100%"
                         precision={2}
                         min={0.01}
@@ -333,7 +357,13 @@ const ProductForm: React.FC<{
             <TextInput
               {...field}
               required
-              disabled={mode === 'VIEW'}
+              style={
+                mode === 'VIEW'
+                  ? {
+                      pointerEvents: 'none',
+                    }
+                  : {}
+              }
               label="Quy cách"
               radius="md"
               error={errors.packing ? errors.packing.message : false}
@@ -349,7 +379,13 @@ const ProductForm: React.FC<{
             <TextInput
               {...field}
               required
-              disabled={mode === 'VIEW'}
+              style={
+                mode === 'VIEW'
+                  ? {
+                      pointerEvents: 'none',
+                    }
+                  : {}
+              }
               label="Nhà sản xuất"
               radius="md"
               error={errors.manufacturer ? errors.manufacturer.message : false}
@@ -364,7 +400,13 @@ const ProductForm: React.FC<{
           render={({ field }) => (
             <TextInput
               {...field}
-              disabled={mode === 'VIEW'}
+              style={
+                mode === 'VIEW'
+                  ? {
+                      pointerEvents: 'none',
+                    }
+                  : {}
+              }
               required
               label="Xuất xứ thương hiệu"
               radius="md"
@@ -380,7 +422,13 @@ const ProductForm: React.FC<{
           render={({ field }) => (
             <TextInput
               {...field}
-              disabled={mode === 'VIEW'}
+              style={
+                mode === 'VIEW'
+                  ? {
+                      pointerEvents: 'none',
+                    }
+                  : {}
+              }
               label="Chỉ định"
               radius="md"
               error={errors.indications ? errors.indications.message : false}
@@ -396,7 +444,13 @@ const ProductForm: React.FC<{
             <TextInput
               {...field}
               required
-              disabled={mode === 'VIEW'}
+              style={
+                mode === 'VIEW'
+                  ? {
+                      pointerEvents: 'none',
+                    }
+                  : {}
+              }
               label="Số đăng kí"
               radius="md"
               error={
@@ -416,7 +470,13 @@ const ProductForm: React.FC<{
             <Textarea
               {...field}
               radius="md"
-              disabled={mode === 'VIEW'}
+              style={
+                mode === 'VIEW'
+                  ? {
+                      pointerEvents: 'none',
+                    }
+                  : {}
+              }
               label="Mô tả ngắn"
               autosize
               minRows={1}
@@ -445,7 +505,13 @@ const ProductForm: React.FC<{
             <Textarea
               {...field}
               radius="md"
-              disabled={mode === 'VIEW'}
+              style={
+                mode === 'VIEW'
+                  ? {
+                      pointerEvents: 'none',
+                    }
+                  : {}
+              }
               label="Mô tả đầy đủ"
               autosize
               minRows={2}
@@ -465,7 +531,13 @@ const ProductForm: React.FC<{
             <Textarea
               {...field}
               required
-              disabled={mode === 'VIEW'}
+              style={
+                mode === 'VIEW'
+                  ? {
+                      pointerEvents: 'none',
+                    }
+                  : {}
+              }
               radius="md"
               label="Công dụng"
               autosize
@@ -484,7 +556,13 @@ const ProductForm: React.FC<{
             <Textarea
               {...field}
               required
-              disabled={mode === 'VIEW'}
+              style={
+                mode === 'VIEW'
+                  ? {
+                      pointerEvents: 'none',
+                    }
+                  : {}
+              }
               radius="md"
               label="Cách dùng"
               autosize
@@ -503,7 +581,13 @@ const ProductForm: React.FC<{
             <Textarea
               {...field}
               radius="md"
-              disabled={mode === 'VIEW'}
+              style={
+                mode === 'VIEW'
+                  ? {
+                      pointerEvents: 'none',
+                    }
+                  : {}
+              }
               label="Tác dụng phụ"
               autosize
               minRows={2}
@@ -521,7 +605,13 @@ const ProductForm: React.FC<{
             <Textarea
               {...field}
               radius="md"
-              disabled={mode === 'VIEW'}
+              style={
+                mode === 'VIEW'
+                  ? {
+                      pointerEvents: 'none',
+                    }
+                  : {}
+              }
               label="Lưu ý"
               autosize
               minRows={2}
@@ -539,7 +629,13 @@ const ProductForm: React.FC<{
             <Textarea
               {...field}
               required
-              disabled={mode === 'VIEW'}
+              style={
+                mode === 'VIEW'
+                  ? {
+                      pointerEvents: 'none',
+                    }
+                  : {}
+              }
               radius="md"
               label="Bảo quản"
               autosize
@@ -559,7 +655,13 @@ const ProductForm: React.FC<{
               {...field}
               required
               radius="md"
-              disabled={mode === 'VIEW'}
+              style={
+                mode === 'VIEW'
+                  ? {
+                      pointerEvents: 'none',
+                    }
+                  : {}
+              }
               label="Trạng thái"
               data={[
                 { value: 'PRE_ORDER', label: ProductStatus.PRE_ORDER },
@@ -604,7 +706,13 @@ const ProductForm: React.FC<{
               {(props) => (
                 <Button
                   {...props}
-                  disabled={mode === 'VIEW'}
+                  style={
+                    mode === 'VIEW'
+                      ? {
+                          pointerEvents: 'none',
+                        }
+                      : {}
+                  }
                   variant="default"
                   styles={() => ({
                     root: {

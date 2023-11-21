@@ -47,7 +47,13 @@ const UnitTable: FC<{
           render={({ field }) => (
             <Select
               {...field}
-              disabled={mode === 'VIEW'}
+              style={
+                mode === 'VIEW'
+                  ? {
+                      pointerEvents: 'none',
+                    }
+                  : {}
+              }
               required
               radius="md"
               data={transformSelectData(unitData)}
@@ -72,7 +78,13 @@ const UnitTable: FC<{
             <NumberInput
               {...field}
               w="100%"
-              disabled={mode === 'VIEW'}
+              style={
+                mode === 'VIEW'
+                  ? {
+                      pointerEvents: 'none',
+                    }
+                  : {}
+              }
               required
               min={1}
               error={
@@ -93,7 +105,13 @@ const UnitTable: FC<{
             <NumberInput
               {...field}
               w="100%"
-              disabled={mode === 'VIEW'}
+              style={
+                mode === 'VIEW'
+                  ? {
+                      pointerEvents: 'none',
+                    }
+                  : {}
+              }
               required
               min={1000}
               step={10000}
@@ -121,7 +139,13 @@ const UnitTable: FC<{
               <Checkbox
                 checked={field.value}
                 onChange={field.onChange}
-                disabled={mode === 'VIEW'}
+                style={
+                  mode === 'VIEW'
+                    ? {
+                        pointerEvents: 'none',
+                      }
+                    : {}
+                }
               />
             </Input.Wrapper>
           )}

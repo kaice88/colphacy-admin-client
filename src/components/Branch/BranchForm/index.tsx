@@ -361,7 +361,13 @@ const BranchForm: React.FC<{
             render={({ field }) => {
               return (
                 <Select
-                  disabled={idBranch && !isEdit}
+                  style={
+                    idBranch && !isEdit
+                      ? {
+                          pointerEvents: 'none',
+                        }
+                      : {}
+                  }
                   p={10}
                   {...field}
                   name="province"
@@ -381,7 +387,13 @@ const BranchForm: React.FC<{
             rules={{ required: 'Vui lòng chọn Quận/ Huyện' }}
             render={({ field }) => (
               <Select
-                disabled={idBranch && !isEdit}
+                style={
+                  idBranch && !isEdit
+                    ? {
+                        pointerEvents: 'none',
+                      }
+                    : {}
+                }
                 p={10}
                 {...field}
                 name="district"
@@ -400,7 +412,13 @@ const BranchForm: React.FC<{
             rules={{ required: 'Vui lòng chọn Phường/ Xã' }}
             render={({ field }) => (
               <Select
-                disabled={idBranch && !isEdit}
+                style={
+                  idBranch && !isEdit
+                    ? {
+                        pointerEvents: 'none',
+                      }
+                    : {}
+                }
                 p={10}
                 {...field}
                 name="ward"
@@ -444,7 +462,13 @@ const BranchForm: React.FC<{
             rules={{ required: false, minLength: 4, maxLength: 5 }}
             render={({ field }) => (
               <TextInput
-                disabled={idBranch && !isEdit}
+                style={
+                  idBranch && !isEdit
+                    ? {
+                        pointerEvents: 'none',
+                      }
+                    : {}
+                }
                 p={10}
                 {...field}
                 required
@@ -467,7 +491,13 @@ const BranchForm: React.FC<{
             rules={{ required: false, minLength: 4, maxLength: 5 }}
             render={({ field }) => (
               <TextInput
-                disabled={idBranch && !isEdit}
+                style={
+                  idBranch && !isEdit
+                    ? {
+                        pointerEvents: 'none',
+                      }
+                    : {}
+                }
                 p={10}
                 {...field}
                 required
@@ -492,7 +522,13 @@ const BranchForm: React.FC<{
             rules={{ required: false, minLength: 10, maxLength: 10 }}
             render={({ field }) => (
               <TextInput
-                disabled={idBranch && !isEdit}
+                style={
+                  idBranch && !isEdit
+                    ? {
+                        pointerEvents: 'none',
+                      }
+                    : {}
+                }
                 {...field}
                 px={10}
                 required
@@ -515,7 +551,13 @@ const BranchForm: React.FC<{
               control={control}
               render={({ field }) => (
                 <Select
-                  disabled={idBranch && !isEdit}
+                  style={
+                    idBranch && !isEdit
+                      ? {
+                          pointerEvents: 'none',
+                        }
+                      : {}
+                  }
                   px={10}
                   {...field}
                   label="Trạng thái"

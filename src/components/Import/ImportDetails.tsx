@@ -70,7 +70,13 @@ const Item = ({
               {...field}
               required
               radius="md"
-              disabled={mode === 'VIEW'}
+              style={
+                mode === 'VIEW'
+                  ? {
+                      pointerEvents: 'none',
+                    }
+                  : {}
+              }
               data={transformSelectData(productData || [])}
               searchable
               onSearchChange={(value) => {
@@ -100,7 +106,13 @@ const Item = ({
           render={({ field }) => (
             <Select
               {...field}
-              disabled={mode === 'VIEW'}
+              style={
+                mode === 'VIEW'
+                  ? {
+                      pointerEvents: 'none',
+                    }
+                  : {}
+              }
               required
               radius="md"
               data={transformSelectData(unitData)}
@@ -125,7 +137,13 @@ const Item = ({
             <DatePickerInput
               {...field}
               valueFormat="DD/MM/YYYY"
-              disabled={mode === 'VIEW'}
+              style={
+                mode === 'VIEW'
+                  ? {
+                      pointerEvents: 'none',
+                    }
+                  : {}
+              }
               required
               radius="md"
               dropdownType="modal"
@@ -146,7 +164,13 @@ const Item = ({
           render={({ field }) => (
             <NumberInput
               {...field}
-              disabled={mode === 'VIEW'}
+              style={
+                mode === 'VIEW'
+                  ? {
+                      pointerEvents: 'none',
+                    }
+                  : {}
+              }
               required
               min={1}
               error={
@@ -166,7 +190,13 @@ const Item = ({
           render={({ field }) => (
             <NumberInput
               {...field}
-              disabled={mode === 'VIEW'}
+              style={
+                mode === 'VIEW'
+                  ? {
+                      pointerEvents: 'none',
+                    }
+                  : {}
+              }
               required
               min={1000}
               step={10000}
