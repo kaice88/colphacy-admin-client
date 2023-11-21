@@ -24,6 +24,8 @@ const Item = ({
   mode,
   watch,
   index,
+  importDetail,
+  setValue,
 }) => {
   const [searchProduct, setSearchProduct] = useState('');
   const [productDebounced] = useDebouncedValue(searchProduct, 200);
@@ -38,14 +40,19 @@ const Item = ({
             productId,
           },
         });
-
         setUnitData(unitData?.data);
       }
-      // return [];
     } catch (error) {
       handleGlobalException(error, () => {});
     }
   }
+  useEffect(() => {
+    if (importDetail && mode !== 'ADD') {
+      getUnitByProduct(Number(importField.product));
+      setSearchProduct(importDetail.product.name);
+    }
+  }, []);
+
   return (
     <tr key={importField.id} className="importDetailsBody">
       {/* <td>{index + 1}</td> */}
@@ -72,6 +79,7 @@ const Item = ({
               onChange={(value) => {
                 getUnitByProduct(Number(value));
                 field.onChange(value);
+                setValue(`importDetails.${index}.unitId`, '');
               }}
               error={
                 errors.importDetails?.[index]?.product
@@ -96,14 +104,6 @@ const Item = ({
               required
               radius="md"
               data={transformSelectData(unitData)}
-              // data={getUnitByProduct(
-              //   watch(`importDetails.${index}.product`),
-              // ).then((data) =>
-              //   (data || []).map((item) => ({
-              //     value: item.id.toString(),
-              //     label: item.name,
-              //   })),
-              // )}
               error={
                 errors.importDetails?.[index]?.unitId
                   ? errors.importDetails?.[index]?.unitId?.type === 'required'
@@ -169,7 +169,13 @@ const Item = ({
               disabled={mode === 'VIEW'}
               required
               min={1000}
-              step={1000}
+              step={10000}
+              parser={(value) => value.replace(/[^\d.]/g, '')}
+              formatter={(value) =>
+                !Number.isNaN(parseFloat(value))
+                  ? `${value}`.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',')
+                  : ''
+              }
               error={
                 errors?.importDetails?.[index]?.importPrice
                   ? errors.importDetails?.[index]?.importPrice?.message
@@ -184,7 +190,13 @@ const Item = ({
           disabled={true}
           required
           min={1000}
-          step={1000}
+          step={10000}
+          parser={(value) => value.replace(/[^\d.]/g, '')}
+          formatter={(value) =>
+            !Number.isNaN(parseFloat(value))
+              ? `${value}`.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',')
+              : ''
+          }
           value={
             watch(`importDetails.${index}.importPrice`) *
             watch(`importDetails.${index}.quantity`)
@@ -218,10 +230,12 @@ const ImportDetails: FC<{
   control,
   errors,
   unitData,
+  importDetails,
   appendImport,
   removeImport,
   mode,
   watch,
+  setValue,
 }) => {
   const rows = importFields.map((importField, index) => (
     <Item
@@ -233,156 +247,9 @@ const ImportDetails: FC<{
       removeImport={removeImport}
       mode={mode}
       watch={watch}
+      importDetail={importDetails?.[index]}
+      setValue={setValue}
     ></Item>
-    // <tr key={importField.id} className="importDetailsBody">
-    //   {/* <td>{index + 1}</td> */}
-    //   <td
-    //     style={{
-    //       width: '150px',
-    //     }}
-    //   >
-    //     <Controller
-    //       name={`importDetails.${index}.product` as const}
-    //       control={control}
-    //       rules={{ required: true }}
-    //       render={({ field }) => (
-    //         <Select
-    //           {...field}
-    //           required
-    //           radius="md"
-    //           disabled={mode === 'VIEW'}
-    //           data={transformSelectData(productData || [])}
-    //           searchable
-    //           onSearchChange={(value) => {
-    //             setSearchProduct(value);
-    //           }}
-    //           error={
-    //             errors.importDetails?.[index]?.product
-    //               ? errors.importDetails?.[index]?.product?.type === 'required'
-    //                 ? 'Sản phẩm không được để trống'
-    //                 : errors.importDetails?.[index]?.product?.message
-    //               : false
-    //           }
-    //         />
-    //       )}
-    //     />
-    //   </td>
-    //   <td>
-    //     <Controller
-    //       name={`importDetails.${index}.unitId` as const}
-    //       control={control}
-    //       rules={{ required: true }}
-    //       render={({ field }) => (
-    //         <Select
-    //           {...field}
-    //           disabled={mode === 'VIEW'}
-    //           required
-    //           radius="md"
-    //           data={getUnitByProduct(
-    //             watch(`importDetails.${index}.product`),
-    //           ).then((data) =>
-    //             (data || []).map((item) => ({
-    //               value: item.id.toString(),
-    //               label: item.name,
-    //             })),
-    //           )}
-    //           error={
-    //             errors.importDetails?.[index]?.unitId
-    //               ? errors.importDetails?.[index]?.unitId?.type === 'required'
-    //                 ? 'Đơn vị tính không được để trống'
-    //                 : errors.importDetails?.[index]?.unitId?.message
-    //               : false
-    //           }
-    //         />
-    //       )}
-    //     />
-    //   </td>
-
-    //   <td>
-    //     <Controller
-    //       name={`importDetails.${index}.expirationDate` as const}
-    //       control={control}
-    //       rules={{ required: true }}
-    //       render={({ field }) => (
-    //         <DateTimePicker
-    //           {...field}
-    //           disabled={mode === 'VIEW'}
-    //           required
-    //           radius="md"
-    //           dropdownType="modal"
-    //           error={
-    //             errors?.importDetails?.[index]?.expirationDate
-    //               ? errors.importDetails?.[index]?.expirationDate?.message
-    //               : false
-    //           }
-    //         />
-    //       )}
-    //     />
-    //   </td>
-    //   <td>
-    //     <Controller
-    //       name={`importDetails.${index}.quantity` as const}
-    //       control={control}
-    //       rules={{ required: true, min: 1 }}
-    //       render={({ field }) => (
-    //         <NumberInput
-    //           {...field}
-    //           disabled={mode === 'VIEW'}
-    //           required
-    //           min={1}
-    //           error={
-    //             errors?.importDetails?.[index]?.quantity
-    //               ? errors.importDetails?.[index]?.quantity?.message
-    //               : false
-    //           }
-    //         />
-    //       )}
-    //     />
-    //   </td>
-    //   <td>
-    //     <Controller
-    //       name={`importDetails.${index}.importPrice` as const}
-    //       control={control}
-    //       rules={{ required: true, min: 1000 }}
-    //       render={({ field }) => (
-    //         <NumberInput
-    //           {...field}
-    //           disabled={mode === 'VIEW'}
-    //           required
-    //           min={1000}
-    //           step={1000}
-    //           error={
-    //             errors?.importDetails?.[index]?.importPrice
-    //               ? errors.importDetails?.[index]?.importPrice?.message
-    //               : false
-    //           }
-    //         />
-    //       )}
-    //     />
-    //   </td>
-    //   <td>
-    //     <NumberInput
-    //       disabled={true}
-    //       required
-    //       min={1000}
-    //       step={1000}
-    //       value={
-    //         watch(`importDetails.${index}.importPrice`) *
-    //         watch(`importDetails.${index}.quantity`)
-    //       }
-    //     />
-    //   </td>
-    //   {mode !== 'VIEW' && (
-    //     <td>
-    //       <IconTrashX
-    //         className="delete-edit"
-    //         strokeWidth="1.8"
-    //         size="22px"
-    //         onClick={() => removeImport(index)}
-    //       />
-    //     </td>
-    //   )}
-    // </tr>
   ));
 
   const calTotal = () => {
@@ -395,7 +262,7 @@ const ImportDetails: FC<{
     );
   };
   return (
-    <div style={{ height: '70%' }}>
+    <div style={{ height: '70%', paddingBottom: '10px' }}>
       <Controller
         name="importDetails"
         control={control}
@@ -431,14 +298,14 @@ const ImportDetails: FC<{
                 <th></th>
                 <th></th>
                 <th></th>
-                <th></th>
+                {mode !== 'VIEW' && <th></th>}
                 <th>Tổng tiền</th>
                 <th
                   style={{
                     fontWeight: 'normal',
                   }}
                 >
-                  {calTotal().toLocaleString('vi-VN')} VND
+                  {calTotal().toLocaleString('vi-VN')} VNĐ
                 </th>
               </tfoot>
             </Table>

@@ -14,6 +14,7 @@ function useImportDetail(
   const [providerData, setProviderData] = useState();
   const [branchData, setBranchData] = useState();
   const [productData, setProductData] = useState();
+  const [importData, setImportData] = useState();
   const searchObjProvider = { offset: 0, limit: 20, keyword: searchProvider };
   const searchObjBranch = { offset: 0, limit: 20, keyword: searchBranch };
   const { fetchProvidersSearchKeywork } = useProvider(searchObjProvider);
@@ -53,10 +54,14 @@ function useImportDetail(
         ...data,
         branch: { id: Number(data.branch) },
         provider: { id: Number(data.provider) },
+        importTime: new Date(data.importTime.getTime() + 7 * 60 * 60 * 1000),
         importDetails: data.importDetails.map((item) => ({
           ...item,
           product: { id: Number(item.product) },
           unitId: Number(item.unitId),
+          expirationDate: new Date(
+            item.expirationDate.getTime() + 7 * 60 * 60 * 1000,
+          ),
         })),
       };
 
@@ -125,6 +130,18 @@ function useImportDetail(
       handleGlobalException(error, () => {});
     }
   }
+  async function fetchImportData() {
+    try {
+      if (importId) {
+        const importData = await axios.get(`imports/${importId}`);
+        setImportData(importData?.data);
+      } else {
+        setImportData(null);
+      }
+    } catch (error) {
+      handleGlobalException(error, () => {});
+    }
+  }
 
   useEffect(() => {
     fetchProviderSearchData();
@@ -138,10 +155,15 @@ function useImportDetail(
     fetchProductSearchData();
   }, [searchProduct]);
 
+  useEffect(() => {
+    fetchImportData();
+  }, [importId]);
+
   return {
     providerData,
     branchData,
     productData,
+    importData,
     handleSubmitImportForm,
     onSubmitImportForm,
   };

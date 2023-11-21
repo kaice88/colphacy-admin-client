@@ -16,7 +16,7 @@ import useImportDetail from '../../hooks/useImportDetail';
 import { transformSelectData } from '../../utils/helper';
 import { isEmpty } from 'lodash';
 import { useEffect, useState } from 'react';
-import { useDebouncedValue } from '@mantine/hooks';
+import { useDebouncedState, useDebouncedValue } from '@mantine/hooks';
 import ImportDetails from './ImportDetails';
 import { handleGlobalException } from '../../utils/error';
 import { notificationShow } from '../Notification';
@@ -52,15 +52,13 @@ const ImportForm: React.FC<{
     },
   });
 
-  const [searchProvider, setSearchProvider] = useState('');
-  const [providerDebounced] = useDebouncedValue(searchProvider, 200);
+  // const [searchProvider, setSearchProvider] = useState('');
+  // const [providerDebounced] = useDebouncedValue(searchProvider, 100);
+  const [searchProvider, setSearchProvider] = useDebouncedState('', 200);
   const [searchBranch, setSearchBranch] = useState('');
-  const [branchDebounced] = useDebouncedValue(searchBranch, 200);
-  const { providerData, branchData, onSubmitImportForm } = useImportDetail(
-    importId,
-    providerDebounced,
-    branchDebounced,
-  );
+  const [branchDebounced] = useDebouncedValue(searchBranch, 100);
+  const { providerData, branchData, onSubmitImportForm, importData } =
+    useImportDetail(importId, searchProvider, branchDebounced);
 
   const {
     fields: importFields,
@@ -99,167 +97,182 @@ const ImportForm: React.FC<{
     );
   };
 
-  //   useEffect(() => {
-  //     if (productData && mode !== 'ADD') {
-  //       const transformData = {
-  //         ...productData,
-  //         categoryId: productData.categoryId.toString(),
-  //         images: productData.images.map((item) => ({ url: item })),
-  //         productUnits: productData.productUnits.map((item) => ({
-  //           ...item,
-  //           unitId: item.unitId?.toString(),
-  //         })),
-  //       };
-  //       type TransformDataKeys = keyof typeof transformData;
+  useEffect(() => {
+    if (importData && mode !== 'ADD') {
+      const transformData = {
+        ...importData,
+        importTime: new Date(importData.importTime),
+        branch: importData.branch.id.toString(),
+        provider: importData.provider.id.toString(),
+        importDetails: importData.importDetails.map((item) => ({
+          ...item,
+          product: item.product.id.toString(),
+          expirationDate: new Date(item.expirationDate),
+          unitId: item.unitId.toString(),
+        })),
+      };
+      setSearchProvider(importData.provider.name);
+      setSearchBranch(importData.branch.address);
+      type TransformDataKeys = keyof typeof transformData;
 
-  //       (Object.keys(transformData) as TransformDataKeys[]).map(
-  //         (item: TransformDataKeys) => {
-  //           setValue(item, transformData[item]);
-  //         },
-  //       );
-  //     }
-  //   }, [productData]);
+      (Object.keys(transformData) as TransformDataKeys[]).map(
+        (item: TransformDataKeys) => {
+          setValue(item, transformData[item]);
+        },
+      );
+    }
+  }, [importData]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      {/* <Flex direction="column" justify="space-between"> */}
-      <div style={{ height: '100%', minHeight: '300px' }}>
-        <Flex justify="space-between" py={10}>
-          <Controller
-            name="branch"
-            control={control}
-            rules={{ required: true }}
-            render={({ field }) => (
-              <Select
-                {...field}
-                required
-                radius="md"
-                disabled={mode === 'VIEW'}
-                label="Chi nhánh"
-                data={transformSelectData(branchData || [], true)}
-                searchable
-                onSearchChange={(value) => {
-                  setSearchBranch(value);
-                }}
-                error={
-                  errors.branch
-                    ? errors.branch.type === 'required'
-                      ? 'Chi nhánh không được để trống'
-                      : errors.branch.message
-                    : false
-                }
-              />
-            )}
-          />
-          <Controller
-            name="provider"
-            control={control}
-            rules={{ required: true }}
-            render={({ field }) => (
-              <Select
-                {...field}
-                required
-                radius="md"
-                disabled={mode === 'VIEW'}
-                label="Nhà cung cấp"
-                data={transformSelectData(providerData || [])}
-                searchable
-                onSearchChange={(value) => {
-                  setSearchProvider(value);
-                }}
-                error={
-                  errors.provider
-                    ? errors.provider.type === 'required'
-                      ? 'Nhà cung cấp phẩm không được để trống'
-                      : errors.provider.message
-                    : false
-                }
-              />
-            )}
-          />
-          <Controller
-            name="invoiceNumber"
-            control={control}
-            rules={{ required: true }}
-            render={({ field }) => (
-              <TextInput
-                {...field}
-                disabled={mode === 'VIEW'}
-                required
-                label="Số hóa đơn"
-                radius="md"
-                error={
-                  errors.invoiceNumber ? errors.invoiceNumber.message : false
-                }
-              />
-            )}
-          />
-          <Controller
-            name="importTime"
-            control={control}
-            rules={{ required: true }}
-            render={({ field }) => (
-              <DateTimePicker
-                {...field}
-                disabled={mode === 'VIEW'}
-                required
-                label="Ngày nhập"
-                radius="md"
-                error={errors.importTime ? errors.importTime.message : false}
-                dropdownType="modal"
-              />
-            )}
-          />
-        </Flex>
-        <ImportDetails
-          control={control}
-          importFields={importFields}
-          errors={errors}
-          unitData={[]}
-          appendImport={appendImport}
-          removeImport={removeImport}
-          mode={mode}
-          watch={watch}
-        />
-      </div>
+    branchData !== undefined &&
+    providerData !== undefined && (
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div style={{ height: '100%', minHeight: '300px' }}>
+          <Flex justify="space-between" py="lg" gap="lg">
+            <Controller
+              name="branch"
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  required
+                  radius="md"
+                  disabled={mode === 'VIEW'}
+                  label="Chi nhánh"
+                  data={transformSelectData(branchData || [], true)}
+                  searchable
+                  onSearchChange={(value) => {
+                    setSearchBranch(value);
+                  }}
+                  error={
+                    errors.branch
+                      ? errors.branch.type === 'required'
+                        ? 'Chi nhánh không được để trống'
+                        : errors.branch.message
+                      : false
+                  }
+                  w="100%"
+                />
+              )}
+            />
+            <Controller
+              name="provider"
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  w="100%"
+                  required
+                  radius="md"
+                  disabled={mode === 'VIEW'}
+                  label="Nhà cung cấp"
+                  data={transformSelectData(providerData || [])}
+                  searchable
+                  onSearchChange={(value) => {
+                    setSearchProvider(value);
+                  }}
+                  error={
+                    errors.provider
+                      ? errors.provider.type === 'required'
+                        ? 'Nhà cung cấp phẩm không được để trống'
+                        : errors.provider.message
+                      : false
+                  }
+                />
+              )}
+            />
+            <Controller
+              name="invoiceNumber"
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <TextInput
+                  w="100%"
+                  {...field}
+                  disabled={mode === 'VIEW'}
+                  required
+                  label="Số hóa đơn"
+                  radius="md"
+                  error={
+                    errors.invoiceNumber ? errors.invoiceNumber.message : false
+                  }
+                />
+              )}
+            />
+            <Controller
+              name="importTime"
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <DateTimePicker
+                  w="100%"
+                  {...field}
+                  disabled={mode === 'VIEW'}
+                  required
+                  label="Ngày nhập"
+                  radius="md"
+                  error={errors.importTime ? errors.importTime.message : false}
+                  dropdownType="modal"
+                />
+              )}
+            />
+          </Flex>
+          {importData !== undefined && (
+            <ImportDetails
+              control={control}
+              importFields={importFields}
+              errors={errors}
+              importDetails={importData?.importDetails}
+              unitData={[]}
+              appendImport={appendImport}
+              removeImport={removeImport}
+              mode={mode}
+              watch={watch}
+              setValue={setValue}
+            />
+          )}
+        </div>
 
-      {mode !== 'VIEW' && (
-        <Flex justify="flex-end" align="center" my="xs">
-          <Button
-            mx="xs"
-            styles={(theme) => ({
-              root: {
-                backgroundColor: theme.colors.munsellBlue[0],
-                ...theme.fn.hover({
-                  backgroundColor: theme.fn.darken(
-                    theme.colors.munsellBlue[0],
-                    0.1,
-                  ),
-                }),
-              },
-            })}
-            type="submit"
-          >
-            Lưu
-          </Button>
-          <Button
-            variant="outline"
-            styles={(theme) => ({
-              root: {
-                color: theme.colors.munsellBlue[0],
-                ...theme.fn.hover({
-                  color: theme.fn.darken(theme.colors.munsellBlue[0], 0.1),
-                }),
-              },
-            })}
-            onClick={onClose}
-          >
-            Hủy
-          </Button>
-        </Flex>
-      )}
-      {/* </Flex> */}
-    </form>
+        {mode !== 'VIEW' && (
+          <Flex justify="flex-end" align="center" my="xs">
+            <Button
+              mx="xs"
+              styles={(theme) => ({
+                root: {
+                  backgroundColor: theme.colors.munsellBlue[0],
+                  ...theme.fn.hover({
+                    backgroundColor: theme.fn.darken(
+                      theme.colors.munsellBlue[0],
+                      0.1,
+                    ),
+                  }),
+                },
+              })}
+              type="submit"
+            >
+              Lưu
+            </Button>
+            <Button
+              variant="outline"
+              styles={(theme) => ({
+                root: {
+                  color: theme.colors.munsellBlue[0],
+                  ...theme.fn.hover({
+                    color: theme.fn.darken(theme.colors.munsellBlue[0], 0.1),
+                  }),
+                },
+              })}
+              onClick={onClose}
+            >
+              Hủy
+            </Button>
+          </Flex>
+        )}
+        {/* </Flex> */}
+      </form>
+    )
   );
   // providerData !== undefined ? (
 

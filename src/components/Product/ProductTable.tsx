@@ -33,8 +33,8 @@ const ProductTable: React.FC<{
       <td>{startIndex !== undefined ? startIndex + index + 1 : ''}</td>
       <td onClick={() => handleView(element.id)}>{element.name}</td>
       <td>{element.categoryName}</td>
-      <td>{element.importPrice}</td>
-      <td>{element.salePrice}</td>
+      <td>{element.importPrice.toLocaleString('vi-VN')} VNĐ</td>
+      <td>{element.salePrice.toLocaleString('vi-VN')} VNĐ</td>
       <td>
         <IconEdit
           className="edit-button"

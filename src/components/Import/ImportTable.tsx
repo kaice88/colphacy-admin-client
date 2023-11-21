@@ -6,6 +6,7 @@ import {
   IconSelector,
   IconTrashX,
 } from '@tabler/icons-react';
+
 import { deleteModal } from '../../utils/deleteModal';
 
 const ImportTable: React.FC<{
@@ -14,12 +15,21 @@ const ImportTable: React.FC<{
   handleView: (Id: number) => void;
   handleDelete: (Id: number) => void;
 }> = ({ data, startIndex, handleEdit, handleView, handleDelete }) => {
+  const formattedDate = (date) =>
+    new Intl.DateTimeFormat('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(date);
+
   const rows = (data || []).map((element, index) => (
     <tr key={element.id}>
       <td>{startIndex !== undefined ? startIndex + index + 1 : ''}</td>
       <td onClick={() => handleView(element.id)}>{element.invoiceNumber}</td>
-      <td>{element.importTime}</td>
-      <td>{element.total}</td>
+      <td>{formattedDate(new Date(element.importTime))}</td>
+      <td>{element.total.toLocaleString('vi-VN')} VNĐ</td>
       <td>{element.employee}</td>
       <td>
         <IconEdit
@@ -27,16 +37,6 @@ const ImportTable: React.FC<{
           strokeWidth="1.8"
           size="22px"
           onClick={() => handleEdit(element.id)}
-        />
-        <IconTrashX
-          className="delete-button"
-          strokeWidth="1.8"
-          size="22px"
-          onClick={() => {
-            deleteModal('sản phẩm', element.name, () =>
-              handleDelete(element.id),
-            );
-          }}
         />
       </td>
     </tr>

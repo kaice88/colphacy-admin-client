@@ -25,6 +25,8 @@ export interface Product {
     importPrice?: number;
     defaultUnit: boolean;
   }[];
+  shortDescription: string;
+  fullDescription: string;
 }
 
 export interface ProductData {

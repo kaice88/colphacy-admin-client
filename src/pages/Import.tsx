@@ -14,25 +14,23 @@ import ImportTable from '../components/Import/ImportTable';
 import { useRef, useState } from 'react';
 import ImportForm from '../components/Import/ImportForm';
 import useImport from '../hooks/useImport';
+import { notificationShow } from '../components/Notification';
+import { DatePickerInput, DatesProvider } from '@mantine/dates';
 
 const LIMIT = 10;
 
 export default function Import() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [importId, setImportId] = useState<number | null>(null);
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [keyword, setKeyWord] = useState<string>('');
-  // const [sortBy, setSortBy] = useState<'salePrice' | 'importPrice' | null>(
-  //   null,
-  // );
-  // const [order, setOrder] = useState<'desc' | 'asc' | null>(null);
   const [opened, { open, close }] = useDisclosure(false);
   const [mode, setMode] = useState<'ADD' | 'EDIT' | 'VIEW'>('EDIT');
   const theme = useMantineTheme();
-  const { importData, loading, fetchImport } = useImport(
-    (currentPage - 1) * LIMIT,
-    keyword,
-  );
+  const { importData, loading, fetchImport, onSubmitDeleteImportForm } =
+    useImport((currentPage - 1) * LIMIT, keyword, startDate, endDate);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const keyword = e.target.value.trim();
     setKeyWord(keyword);
@@ -46,10 +44,10 @@ export default function Import() {
   };
 
   const handleDelete = (Id: number) => {
-    // onSubmitDeleteImportForm(Id, () => {
-    //   notificationShow('success', 'Success!', 'Xóa đơn nhập hàng thành công!');
-    //   fetchImport.refetch();
-    // });
+    onSubmitDeleteImportForm(Id, () => {
+      notificationShow('success', 'Success!', 'Xóa đơn nhập hàng thành công!');
+      fetchImport.refetch();
+    });
   };
 
   const handleView = (Id: number) => {
@@ -69,7 +67,26 @@ export default function Import() {
         Danh sách đơn nhập hàng
       </Title>
       <Flex justify="space-between" align="center" py="lg">
-        <div className="search">
+        <Flex align="center" gap="sm">
+          <DatesProvider settings={{ locale: 'vn' }}>
+            <DatePickerInput
+              placeholder="Ngày bắt đầu"
+              value={startDate}
+              valueFormat="DD/MM/YYYY"
+              onChange={setStartDate}
+              clearable
+            />
+          </DatesProvider>
+          đến
+          <DatePickerInput
+            placeholder="Ngày kết thúc"
+            value={endDate}
+            valueFormat="DD/MM/YYYY"
+            onChange={setEndDate}
+            clearable
+          />
+        </Flex>
+        {/* <div className="search">
           <input
             ref={inputRef}
             value={keyword}
@@ -83,7 +100,7 @@ export default function Import() {
           >
             <IconSearch size="1.3rem"></IconSearch>
           </button>
-        </div>
+        </div> */}
         <Button
           leftIcon={<IconPlus size="15px" />}
           styles={(theme) => ({
@@ -106,6 +123,7 @@ export default function Import() {
           Thêm đơn nhập hàng
         </Button>
       </Flex>
+
       <Modal
         size="100%"
         opened={opened}
@@ -125,7 +143,11 @@ export default function Import() {
           },
         })}
       >
-        <ImportForm onClose={handleCloseModal} mode={mode} importId={null} />
+        <ImportForm
+          onClose={handleCloseModal}
+          mode={mode}
+          importId={importId}
+        />
       </Modal>
       <div className="branch-table">
         <ImportTable

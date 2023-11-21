@@ -16,16 +16,32 @@ interface ApiResponse {
   } | null;
 }
 
-function useImport(offset?: number, keyword?: string) {
+function useImport(
+  offset?: number,
+  keyword?: string,
+  startDate?: Date,
+  endDate?: Date,
+) {
   const fetchImport = useQuery<ApiResponse>({
     queryKey: ['get-Imports'],
     queryFn: () => {
-      const params: { [key: string]: number | string } = {};
+      const params: { [key: string]: number | string | Date } = {};
       if (offset) {
         params.offset = offset;
       }
       if (keyword) {
         params.keyword = keyword;
+      }
+      if (startDate) {
+        params.startDate = new Date(startDate.getTime() + 7 * 60 * 60 * 1000)
+          .toJSON()
+          .slice(0, 10);
+      }
+      if (endDate) {
+        console.log(endDate.getTimezoneOffset());
+        params.endDate = new Date(endDate.getTime() + 7 * 60 * 60 * 1000)
+          .toJSON()
+          .slice(0, 10);
       }
       return axios.get('/imports', { params });
     },
@@ -35,14 +51,14 @@ function useImport(offset?: number, keyword?: string) {
     },
   });
 
-  const handleDeleteProduct = useMutation({
-    mutationKey: ['delete-product'],
+  const handleDeleteImport = useMutation({
+    mutationKey: ['delete-import'],
     mutationFn: (id: number) => {
-      return axios.delete(`${REQUEST_PRODUCTS}/${id}`);
+      return axios.delete(`/imports/${id}`);
     },
   });
-  const onSubmitDeleteProductForm = (id: number, onSuccess: () => void) => {
-    handleDeleteProduct.mutate(id, {
+  const onSubmitDeleteImportForm = (id: number, onSuccess: () => void) => {
+    handleDeleteImport.mutate(id, {
       onSuccess: onSuccess,
       onError: (error) => {
         handleGlobalException(error, () => {
@@ -58,12 +74,12 @@ function useImport(offset?: number, keyword?: string) {
   };
   useEffect(() => {
     fetchImport.refetch();
-  }, [offset, keyword]);
+  }, [offset, keyword, startDate, endDate]);
 
   return {
     loading: fetchImport.isLoading,
     importData: fetchImport.data?.data,
-    // onSubmitDeleteProductForm,
+    onSubmitDeleteImportForm,
     fetchImport,
   };
 }

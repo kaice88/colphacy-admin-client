@@ -96,7 +96,13 @@ const UnitTable: FC<{
               disabled={mode === 'VIEW'}
               required
               min={1000}
-              step={1000}
+              step={10000}
+              parser={(value) => value.replace(/[^\d.]/g, '')}
+              formatter={(value) =>
+                !Number.isNaN(parseFloat(value))
+                  ? `${value}`.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',')
+                  : ''
+              }
               error={
                 errors?.productUnits?.[index]?.salePrice
                   ? errors.productUnits?.[index]?.salePrice?.message

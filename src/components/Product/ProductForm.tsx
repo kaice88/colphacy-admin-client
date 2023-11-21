@@ -57,6 +57,8 @@ const ProductForm: React.FC<{
       notes: '',
       usage: '',
       status: 'FOR_SALE',
+      shortDescription: '',
+      fullDescription: '',
       images: [],
       productUnits: [
         {
@@ -249,6 +251,15 @@ const ProductForm: React.FC<{
                         w="100%"
                         precision={2}
                         min={0.01}
+                        parser={(value) => value.replace(/[^\d.]/g, '')}
+                        formatter={(value) =>
+                          !Number.isNaN(parseFloat(value))
+                            ? `${value} (mg)`.replace(
+                                /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,
+                                ',',
+                              )
+                            : 'mg'
+                        }
                         required
                         error={
                           errors?.ingredients?.[index]?.amount
@@ -365,11 +376,10 @@ const ProductForm: React.FC<{
         <Controller
           name="indications"
           control={control}
-          rules={{ required: true }}
+          rules={{ required: false }}
           render={({ field }) => (
             <TextInput
               {...field}
-              required
               disabled={mode === 'VIEW'}
               label="Chỉ định"
               radius="md"
@@ -395,6 +405,55 @@ const ProductForm: React.FC<{
                   : false
               }
               className="product-input"
+            />
+          )}
+        />
+        <Controller
+          name="shortDescription"
+          control={control}
+          rules={{ required: false }}
+          render={({ field }) => (
+            <Textarea
+              {...field}
+              radius="md"
+              disabled={mode === 'VIEW'}
+              label="Mô tả ngắn"
+              autosize
+              minRows={1}
+              maxRows={2}
+              className="product-input"
+              error={
+                errors.shortDescription
+                  ? errors.shortDescription.message
+                  : false
+              }
+              style={
+                mode === 'VIEW'
+                  ? {
+                      pointerEvents: 'none',
+                    }
+                  : {}
+              }
+            />
+          )}
+        />
+        <Controller
+          name="fullDescription"
+          control={control}
+          rules={{ required: false }}
+          render={({ field }) => (
+            <Textarea
+              {...field}
+              radius="md"
+              disabled={mode === 'VIEW'}
+              label="Mô tả đầy đủ"
+              autosize
+              minRows={2}
+              maxRows={6}
+              className="product-input"
+              error={
+                errors.fullDescription ? errors.fullDescription.message : false
+              }
             />
           )}
         />
