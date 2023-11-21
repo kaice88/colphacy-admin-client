@@ -127,7 +127,7 @@ const ImportForm: React.FC<{
     branchData !== undefined &&
     providerData !== undefined && (
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div style={{ height: '100%', minHeight: '300px' }}>
+        <div>
           <Flex justify="space-between" py="lg" gap="lg">
             <Controller
               name="branch"
