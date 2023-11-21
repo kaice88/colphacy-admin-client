@@ -215,13 +215,23 @@ const Item = ({
           )}
         />
       </td>
-      <td>
-        <NumberInput
-          disabled={true}
+      <td
+        style={{
+          fontWeight: 'normal',
+        }}
+      >
+        {(
+          watch(`importDetails.${index}.importPrice`) *
+          watch(`importDetails.${index}.quantity`)
+        ).toLocaleString('vi-VN')}{' '}
+        VNĐ
+        {/* <Input
+          style={{
+            pointerEvents: 'none',
+          }}
           required
           min={1000}
           step={10000}
-          parser={(value) => value.replace(/[^\d.]/g, '')}
           formatter={(value) =>
             !Number.isNaN(parseFloat(value))
               ? `${value}`.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',')
@@ -231,7 +241,7 @@ const Item = ({
             watch(`importDetails.${index}.importPrice`) *
             watch(`importDetails.${index}.quantity`)
           }
-        />
+        /> */}
       </td>
       {mode !== 'VIEW' && (
         <td>
