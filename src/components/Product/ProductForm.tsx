@@ -487,13 +487,6 @@ const ProductForm: React.FC<{
                   ? errors.shortDescription.message
                   : false
               }
-              style={
-                mode === 'VIEW'
-                  ? {
-                      pointerEvents: 'none',
-                    }
-                  : {}
-              }
             />
           )}
         />
