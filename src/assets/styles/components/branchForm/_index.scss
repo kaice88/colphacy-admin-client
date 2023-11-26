@@ -1,0 +1,14 @@
+.row {
+  Select {
+    padding: 0 0.5rem;
+  }
+}
+
+.cancel {
+  border: 2px solid $munsellBlue;
+  background-color: #fff;
+  color: $munsellBlue;
+  :hover {
+    opacity: 0.9;
+  }
+}

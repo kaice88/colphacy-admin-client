@@ -1,0 +1,11 @@
+.listTable {
+    tr td,th {
+        padding: 10px 20px !important;
+        max-width: 200px !important;
+        width: 200px; /* Set the width or max-width of your element */
+        white-space: nowrap; /* Prevent text from wrapping */
+        overflow: hidden; /* Hide overflowed text */
+        text-overflow: ellipsis; /* Show ellipsis (...) when text overflows */
+    } 
+  
+}
