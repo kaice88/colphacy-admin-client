@@ -1,17 +1,21 @@
-import { Button, Flex, Tabs, Title, useMantineTheme } from '@mantine/core';
-import { DatePickerInput, DatesProvider } from '@mantine/dates';
-import { IconPlus, IconSearch } from '@tabler/icons-react';
-import { useRef, useState } from 'react';
-import { OrderStatus } from '../enums/Order';
-import OrderTable from '../components/Order/OrderTable';
+import { Button, Flex, Tabs, Title, useMantineTheme } from "@mantine/core";
+import { DatePickerInput, DatesProvider } from "@mantine/dates";
+import { IconPlus, IconSearch } from "@tabler/icons-react";
+import { useRef, useState } from "react";
+import { OrderStatus } from "../enums/Order";
+import OrderTable from "../components/Order/OrderTable";
+import useOrder from "../hooks/useOrder";
+const LIMIT = 10;
 
 const Order: React.FC = () => {
   const [startDate, setStartDate] = useState<Date | null>(null);
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const [endDate, setEndDate] = useState<Date | null>(null);
+  const [status, setStatus] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const [keyword, setKeyWord] = useState<string>('');
+  const [keyword, setKeyWord] = useState<string>("");
   const theme = useMantineTheme();
-
+  const { importData, handleChangeStatusOrder } = useOrder((currentPage - 1) * LIMIT, keyword, startDate, endDate, status);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const keyword = e.target.value.trim();
     setKeyWord(keyword);
@@ -39,7 +43,7 @@ const Order: React.FC = () => {
           </button>
         </div>
         <Flex align="center" gap="sm">
-          <DatesProvider settings={{ locale: 'vn' }}>
+          <DatesProvider settings={{ locale: "vn" }}>
             <DatePickerInput
               placeholder="Ngày bắt đầu"
               value={startDate}
@@ -65,7 +69,7 @@ const Order: React.FC = () => {
               ...theme.fn.hover({
                 backgroundColor: theme.fn.darken(
                   theme.colors.munsellBlue[0],
-                  0.1,
+                  0.1
                 ),
               }),
             },
@@ -75,7 +79,7 @@ const Order: React.FC = () => {
           Thêm đơn hàng
         </Button>
       </Flex>
-      <Tabs defaultValue="PENDING">
+      <Tabs defaultValue="PENDING" onTabChange={setStatus}>
         <Tabs.List grow>
           {Object.keys(OrderStatus).map((item) => (
             <Tabs.Tab key={item} value={item}>
@@ -87,9 +91,12 @@ const Order: React.FC = () => {
           <Tabs.Panel key={item} value={item} pt="xs">
             <OrderTable
               startIndex={0}
-              sortBy={'order_time'}
-              order={'asc'}
-              time={'Thời gian đặt'}
+              sortBy={"order_time"}
+              order={"asc"}
+              time={"Thời gian đặt"}
+              orders={importData}
+              status={item}
+              changeStatusOrder = {handleChangeStatusOrder}
             />
           </Tabs.Panel>
         ))}
