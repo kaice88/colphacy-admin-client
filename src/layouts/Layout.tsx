@@ -12,7 +12,7 @@ const Layout: React.FC = () => {
   const location = useLocation();
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate(LOGIN);
+      navigate(LOGIN, { state: { from: location.pathname } });
     }
     if (location?.state?.from) {
       navigate(location?.state?.from);

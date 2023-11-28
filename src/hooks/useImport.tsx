@@ -38,7 +38,6 @@ function useImport(
           .slice(0, 10);
       }
       if (endDate) {
-        console.log(endDate.getTimezoneOffset());
         params.endDate = new Date(endDate.getTime() + 7 * 60 * 60 * 1000)
           .toJSON()
           .slice(0, 10);
