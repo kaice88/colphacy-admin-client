@@ -1,24 +1,23 @@
 import { FC, useState } from "react";
-import { Button, Center, Flex, Modal, Table, Text } from "@mantine/core";
+import { Button, Center, Flex, Modal, Table } from "@mantine/core";
 import {
   IconChevronDown,
   IconChevronUp,
   IconSelector,
 } from "@tabler/icons-react";
 import { OrderItem } from "./type";
-import { deleteModal } from "../../utils/deleteModal";
 import { modals } from "@mantine/modals";
 import { useDisclosure } from "@mantine/hooks";
 import OrderDetailModal from "./OrderDetailModal";
 interface OrderTableProps {
   startIndex: number;
   sortBy:
-    | "order_time"
-    | "confirm_time"
-    | "ship_time"
-    | "deliver_time"
-    | "cancel_time"
-    | "total";
+  | "order_time"
+  | "confirm_time"
+  | "ship_time"
+  | "deliver_time"
+  | "cancel_time"
+  | "total";
   order: "asc" | "desc";
   time: string;
   orders: OrderItem[] | undefined;
@@ -26,7 +25,7 @@ interface OrderTableProps {
   changeStatusOrder: (data: {
     id: number;
     toStatus: string | null;
-}) => void
+  }) => void;
 }
 
 const OrderTable: FC<OrderTableProps> = ({
@@ -40,13 +39,13 @@ const OrderTable: FC<OrderTableProps> = ({
 }) => {
   const changeStatusModal = (id: number, toStatus: string) =>
     modals.openConfirmModal({
-      title: toStatus != "CANCELLED"? <b>Xác nhận đơn hàng</b>: <b>Hủy đơn hàng</b>,
-      children: toStatus != "CANCELLED"? "Bạn có chắc chắn muốn xác nhận đơn hàng":"Bạn có chắc chắn muốn hủy đơn hàng",
+      title: toStatus != "CANCELLED" ? <b>Xác nhận đơn hàng</b> : <b>Hủy đơn hàng</b>,
+      children: toStatus != "CANCELLED" ? "Bạn có chắc chắn muốn xác nhận đơn hàng" : "Bạn có chắc chắn muốn hủy đơn hàng",
       centered: true,
       confirmProps: { color: "blue" },
       labels: { confirm: "Xác nhận", cancel: "Hủy" },
-      onCancel: () => {},
-      onConfirm: () => changeStatusOrder({ id: id , toStatus: toStatus!="CANCELLED"?toStatus:null }),
+      onCancel: () => { },
+      onConfirm: () => changeStatusOrder({ id: id, toStatus: toStatus != "CANCELLED" ? toStatus : null }),
     });
   const formattedDate = (date: Date) =>
     new Intl.DateTimeFormat("en-GB", {
@@ -57,7 +56,9 @@ const OrderTable: FC<OrderTableProps> = ({
       minute: "2-digit",
     }).format(date);
   const [opened, { open, close }] = useDisclosure(false);
-  const [detailOrder, setDetailOrder] = useState<OrderItem>();
+  const [sender, setSender] = useState("")
+  const [total, setTotal] = useState(0)
+  const [idDetailOrder, setIdDetailOrder] = useState<number>()
   const rows = orders?.map((element, index) => (
     <tr key={index}>
       <td>{startIndex + index + 1}</td>
@@ -81,8 +82,10 @@ const OrderTable: FC<OrderTableProps> = ({
               },
             })}
             onClick={() => {
-              open();
-              setDetailOrder(element);
+              setIdDetailOrder(element.id)
+              setSender(element.customer)
+              setTotal(element.total)
+              open()
             }}
           >
             Xem chi tiết
@@ -90,30 +93,30 @@ const OrderTable: FC<OrderTableProps> = ({
           {(status == "PENDING" ||
             status == "CONFIRMED" ||
             status == "SHIPPING") && (
-            <>
-              <Button
-                m={5}
-                size="xs"
-                styles={(theme) => ({
-                  root: {
-                    backgroundColor: theme.colors.munsellBlue[0],
-                    ...theme.fn.hover({
-                      backgroundColor: theme.fn.darken(
-                        theme.colors.munsellBlue[0],
-                        0.1
-                      ),
-                    }),
-                  },
-                })}
-                onClick={() => changeStatusModal(element.id, status)}
-              >
-                Xác nhận
-              </Button>
-              <Button m={5} color="red" size="xs" onClick={() => changeStatusModal(element.id, "CANCELLED")}>
-                Hủy đơn
-              </Button>
-            </>
-          )}
+              <>
+                <Button
+                  m={5}
+                  size="xs"
+                  styles={(theme) => ({
+                    root: {
+                      backgroundColor: theme.colors.munsellBlue[0],
+                      ...theme.fn.hover({
+                        backgroundColor: theme.fn.darken(
+                          theme.colors.munsellBlue[0],
+                          0.1
+                        ),
+                      }),
+                    },
+                  })}
+                  onClick={() => changeStatusModal(element.id, status)}
+                >
+                  Xác nhận
+                </Button>
+                <Button m={5} color="red" size="xs" onClick={() => changeStatusModal(element.id, "CANCELLED")}>
+                  Hủy đơn
+                </Button>
+              </>
+            )}
         </Flex>
       </td>
     </tr>
@@ -132,17 +135,17 @@ const OrderTable: FC<OrderTableProps> = ({
                 {sortBy !== "order_time" ? (
                   <IconSelector
                     size="1rem"
-                    // onClick={() => handleSortData('importPrice')}
+                  // onClick={() => handleSortData('importPrice')}
                   />
                 ) : order === "asc" ? (
                   <IconChevronUp
                     size="1rem"
-                    // onClick={() => handleSortData('importPrice')}
+                  // onClick={() => handleSortData('importPrice')}
                   />
                 ) : (
                   <IconChevronDown
                     size="1rem"
-                    // onClick={() => handleSortData('importPrice')}
+                  // onClick={() => handleSortData('importPrice')}
                   />
                 )}
               </Center>
@@ -170,11 +173,10 @@ const OrderTable: FC<OrderTableProps> = ({
           })}
         >
           <OrderDetailModal
-            onClose={() => {
-              close();
-            }}
-            detailOrder={detailOrder}
+            senderName={sender}
             status={status}
+            idDetailOrder={idDetailOrder}
+            total={total}
           />
         </Modal>
       </tbody>

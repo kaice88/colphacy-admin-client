@@ -1,9 +1,8 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { handleGlobalException } from "../utils/error";
-import { OrderItem } from "../components/Order/type";
+import { DetailOrderItem, OrderItem } from "../components/Order/type";
 import { useEffect } from "react";
 import axios from "../settings/axios";
-import { notificationShow } from "../components/Notification";
 
 interface ApiResponse {
   data: {
@@ -16,11 +15,11 @@ interface ApiResponse {
 }
 
 export default function useOrder(
-  offset?: number,
-  keyword?: string,
-  startDate?: Date,
-  endDate?: Date,
-  status: string
+  offset?: number|undefined,
+  keyword?: string|undefined,
+  startDate?: Date|undefined,
+  endDate?: Date|undefined,
+  status: string|undefined
 ) {
   const fetchOrder = useQuery<ApiResponse>({
     queryKey: ["get-orders"],
@@ -54,23 +53,19 @@ export default function useOrder(
     },
   });
   const changeStatusOrder = useMutation({
-    mutationKey: ['update-status-order'],
-    mutationFn: (data: {id: number, toStatus: string|null}) => {
+    mutationKey: ["update-status-order"],
+    mutationFn: (data: { id: number; toStatus: string | null }) => {
       return axios.put(`/orders`, data);
     },
   });
-  const handleChangeStatusOrder = (data: {id: number, toStatus: string|null}) => {
+  const handleChangeStatusOrder = (data: {
+    id: number;
+    toStatus: string | null;
+  }) => {
     changeStatusOrder.mutate(data, {
       onSuccess: () => {},
       onError: (error) => {
-        handleGlobalException(error, () => {
-          if (error.response.status === 400) {
-            const data = error.response.data;
-            Object.keys(data).forEach((key) => {
-              notificationShow('error', 'Error!', data[key]);
-            });
-          }
-        });
+        handleGlobalException(error, () => {});
       },
     });
   };
@@ -80,6 +75,16 @@ export default function useOrder(
   return {
     importData: fetchOrder.data?.data?.items,
     fetchOrder,
-    handleChangeStatusOrder
+    handleChangeStatusOrder,
   };
+}
+
+export function useDetailOrder(id:number|undefined){
+  const fetchDetailOrder = useQuery({
+    queryKey: ["get-detail-order"],
+    queryFn: () => {
+      return axios.get(`/orders/${id}`);
+    },
+  });
+  return{fetchDetailOrder}
 }
