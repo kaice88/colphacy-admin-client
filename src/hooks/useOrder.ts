@@ -3,6 +3,8 @@ import { handleGlobalException } from "../utils/error";
 import { DetailOrderItem, OrderItem } from "../components/Order/type";
 import { useEffect } from "react";
 import axios from "../settings/axios";
+import { ErrorObject } from "../types/error";
+import { notificationShow } from "../components/Notification";
 
 interface ApiResponse {
   data: {
@@ -15,11 +17,11 @@ interface ApiResponse {
 }
 
 export default function useOrder(
-  offset?: number|undefined,
-  keyword?: string|undefined,
-  startDate?: Date|undefined,
-  endDate?: Date|undefined,
-  status: string|undefined
+  offset?: number | undefined,
+  keyword?: string | undefined,
+  startDate?: Date | undefined,
+  endDate?: Date | undefined,
+  status: string | undefined
 ) {
   const fetchOrder = useQuery<ApiResponse>({
     queryKey: ["get-orders"],
@@ -63,9 +65,18 @@ export default function useOrder(
     toStatus: string | null;
   }) => {
     changeStatusOrder.mutate(data, {
-      onSuccess: () => {},
+      onSuccess: () => {
+        fetchOrder.refetch();
+      },
       onError: (error) => {
-        handleGlobalException(error, () => {});
+        const newError = error as ErrorObject;
+        handleGlobalException(newError, () => {
+          if (newError.response.status === 400) {
+            const data = newError.response.data;
+            console.log(data);
+            notificationShow("error", "Error!", data["toStatus"]);
+          }
+        });
       },
     });
   };
@@ -79,12 +90,12 @@ export default function useOrder(
   };
 }
 
-export function useDetailOrder(id:number|undefined){
+export function useDetailOrder(id: number | undefined) {
   const fetchDetailOrder = useQuery({
     queryKey: ["get-detail-order"],
     queryFn: () => {
       return axios.get(`/orders/${id}`);
     },
   });
-  return{fetchDetailOrder}
+  return { fetchDetailOrder };
 }
