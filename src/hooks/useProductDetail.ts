@@ -34,7 +34,7 @@ function useProductDetail(productId: number | null) {
     mutationFn: (data: Product) => {
       const transformData = {
         ...data,
-        categoryId: Number(data.categoryId),
+        category: { id: Number(data.categoryId) },
         images: data.images.map((item) => item.url),
         productUnits: data.productUnits.map((item) => ({
           ...item,
