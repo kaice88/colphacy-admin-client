@@ -64,7 +64,7 @@ const OrderTable: FC<OrderTableProps> = ({
       <td>{startIndex + index + 1}</td>
       <td>{element.customer}</td>
       <td>{formattedDate(new Date(element.orderTime))}</td>
-      <td>{element.total}</td>
+      <td>{element.total.toLocaleString('vi-VN')}</td>
       <td style={{ width: "10px" }}>
         <Flex align="center">
           <Button
@@ -176,7 +176,7 @@ const OrderTable: FC<OrderTableProps> = ({
             senderName={sender}
             status={status}
             idDetailOrder={idDetailOrder}
-            total={total}
+            total={total.toLocaleString('vi-VN')}
           />
         </Modal>
       </tbody>

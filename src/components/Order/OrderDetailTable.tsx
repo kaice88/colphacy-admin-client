@@ -26,8 +26,8 @@ const OrderDetailTable: FC<OrderTableProps> = ({ startIndex, products }) => {
       <td>{element.product.name}</td>
       <td>{element.unit.name}</td>
       <td>{element.quantity}</td>
-      <td>{element.price}</td>
-      <td>{element.quantity*element.price}</td>
+      <td>{element.price.toLocaleString('vi-VN')}</td>
+      <td>{(element.quantity * element.price).toLocaleString('vi-VN')}</td>
     </tr>
   ));
 

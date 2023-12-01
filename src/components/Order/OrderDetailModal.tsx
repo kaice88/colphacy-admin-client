@@ -9,7 +9,7 @@ const OrderDetailModal: React.FC<{
   senderName: string | undefined;
   status: string,
   idDetailOrder: number | undefined
-  total: number
+  total: string
 }> = ({ senderName, status, idDetailOrder, total }) => {
   const formattedDate = (date) =>
     new Intl.DateTimeFormat("en-GB", {
@@ -20,7 +20,6 @@ const OrderDetailModal: React.FC<{
       minute: "2-digit",
     }).format(date);
   const [detailOrder, setDetailOrder] = useState<DetailOrderItem>()
-  const [totalPrice, setTotalPrice] = useState(0)
   const { fetchDetailOrder } = useDetailOrder(idDetailOrder)
   useEffect(() => {
     if (idDetailOrder) {
@@ -28,11 +27,6 @@ const OrderDetailModal: React.FC<{
         const data = await fetchDetailOrder.refetch();
         if (data.isSuccess) {
           setDetailOrder(data.data.data);
-          if(detailOrder){
-            let total = 0
-            detailOrder.orderItems.map(order => {total = total + order.price*order.quantity})
-            setTotalPrice(total)
-          }
         } else if (data.isError) {
           const error = data.error;
           handleGlobalException(error, () => { });
