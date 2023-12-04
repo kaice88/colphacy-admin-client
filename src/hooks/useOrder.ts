@@ -1,8 +1,10 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { handleGlobalException } from "../utils/error";
-import { DetailOrderItem, OrderItem } from "../components/Order/type";
-import { useEffect } from "react";
+import { Order, OrderItem } from "../components/Order/type";
+import { useEffect, useState } from "react";
 import axios from "../settings/axios";
+import { useBranch } from "./useBranch";
+import { REQUEST_CUSTOMER_SEARCH_KEY } from "../constants/apis";
 
 interface ApiResponse {
   data: {
@@ -15,11 +17,11 @@ interface ApiResponse {
 }
 
 export default function useOrder(
-  offset?: number|undefined,
-  keyword?: string|undefined,
-  startDate?: Date|undefined,
-  endDate?: Date|undefined,
-  status: string|undefined
+  offset?: number | undefined,
+  keyword?: string | undefined,
+  startDate?: Date | undefined,
+  endDate?: Date | undefined,
+  status: string | undefined
 ) {
   const fetchOrder = useQuery<ApiResponse>({
     queryKey: ["get-orders"],
@@ -73,18 +75,133 @@ export default function useOrder(
     fetchOrder.refetch();
   }, [status, startDate, endDate, keyword]);
   return {
-    importData: fetchOrder.data?.data?.items,
+    OrderData: fetchOrder.data?.data?.items,
     fetchOrder,
     handleChangeStatusOrder,
   };
 }
 
-export function useDetailOrder(id:number|undefined){
+export function useDetailOrder(id: number) {
   const fetchDetailOrder = useQuery({
     queryKey: ["get-detail-order"],
     queryFn: () => {
       return axios.get(`/orders/${id}`);
     },
   });
-  return{fetchDetailOrder}
+  return { fetchDetailOrder };
+}
+
+export function useAddOrder(
+  searchBranch?: string,
+  searchProduct?: string,
+  searchCustomer?: string
+) {
+  const [branchData, setBranchData] = useState();
+  const [productData, setProductData] = useState();
+  const [customerData, setCustomerData] = useState();
+  const searchObjBranch = { offset: 0, limit: 20, keyword: searchBranch };
+  const { fetchBranchSearchKeywork } = useBranch(searchObjBranch);
+
+  const fetchCustomerSearchKeywork = useQuery({
+    queryKey: ["customer_search_keywork"],
+    queryFn: () =>
+      axios.get(REQUEST_CUSTOMER_SEARCH_KEY(searchCustomer, 0, 20)),
+    enabled: false,
+  });
+
+  async function fetchBranchSearchData() {
+    try {
+      if (searchBranch) {
+        const branchData = await fetchBranchSearchKeywork.refetch();
+        setBranchData(branchData?.data?.data.items);
+      } else {
+        setBranchData(null);
+      }
+    } catch (error) {
+      handleGlobalException(error, () => {});
+    }
+  }
+  async function fetchCustomerSearchData() {
+    try {
+      if (searchCustomer) {
+        const customers = await fetchCustomerSearchKeywork.refetch();
+        setCustomerData(customers?.data?.data.items);
+      } else {
+        setCustomerData(null);
+      }
+    } catch (error) {
+      handleGlobalException(error, () => {});
+    }
+  }
+  const fetchProductSearchKeywork = useQuery({
+    queryKey: ["product_search_keywork"],
+    queryFn: () =>
+      axios.get("/products/customers", {
+        params: {
+          keyword: searchProduct,
+          sortBy: "SALE_PRICE",
+        },
+      }),
+    enabled: false,
+  });
+  async function fetchProductSearchData() {
+    try {
+      if (searchProduct) {
+        const productData = await fetchProductSearchKeywork.refetch();
+        setProductData(productData?.data?.data.items);
+      } else {
+        setProductData(null);
+      }
+    } catch (error) {
+      handleGlobalException(error, () => {});
+    }
+  }
+  const handleSubmitOrderForm = useMutation({
+    mutationKey: ["add-order"],
+    mutationFn: (data) => {
+      const transformData = {
+        ...data,
+        branchId: Number(data.branchId),
+        customerId: Number(data.customerId),
+        orderTime: new Date(data.orderTime.getTime() + 7 * 60 * 60 * 1000),
+        items: data.items.map((item) => ({
+          productId: Number(item.productId),
+          unitId: Number(item.unitId),
+          quantity: Number(item.quantity),
+          salePrice: Number(item.salePrice),
+        })),
+      };
+      return axios.post("/orders", transformData);
+    },
+  });
+
+  const onSubmitAddOrderForm = (
+    data,
+    onError: (error: object) => void,
+    onSuccess: () => void
+  ) => {
+    handleSubmitOrderForm.mutate(data, {
+      onSuccess: onSuccess,
+      onError: (error) => onError(error),
+    });
+  };
+
+  useEffect(() => {
+    fetchBranchSearchData();
+  }, [searchBranch]);
+
+  useEffect(() => {
+    fetchProductSearchData();
+  }, [searchProduct]);
+
+  useEffect(() => {
+    fetchCustomerSearchData();
+  }, [searchCustomer]);
+
+  return {
+    branchData,
+    productData,
+    customerData,
+    onSubmitAddOrderForm,
+  };
 }

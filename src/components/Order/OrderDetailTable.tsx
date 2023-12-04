@@ -1,24 +1,11 @@
 import { FC } from "react";
 import { Table } from "@mantine/core";
+import { ProductOrderItem } from "./type";
 
 interface OrderTableProps {
   startIndex: number;
-  products: [{
-    product: {
-      id: number;
-      name: string;
-      image: string;
-    };
-    unit: {
-      id: number;
-      name: string;
-    };
-    price: number;
-    expirationDate: Date;
-    quantity: number;
-  }]
+  products: ProductOrderItem[]
 }
-
 const OrderDetailTable: FC<OrderTableProps> = ({ startIndex, products }) => {
   const rows = products.map((element, index) => (
     <tr key={index}>

@@ -8,7 +8,7 @@ import {
   UseFieldArrayAppend,
   UseFieldArrayRemove,
 } from 'react-hook-form';
-import { transformSelectData } from '../../utils/helper';
+import { transformSelectData, transformSelectUnitData } from '../../utils/helper';
 import { IconTrashX } from '@tabler/icons-react';
 import { DatePickerInput, DateTimePicker } from '@mantine/dates';
 import { useDebouncedValue } from '@mantine/hooks';
@@ -115,7 +115,7 @@ const Item = ({
               }
               required
               radius="md"
-              data={transformSelectData(unitData)}
+              data={transformSelectUnitData (unitData)}
               error={
                 errors.importDetails?.[index]?.unitId
                   ? errors.importDetails?.[index]?.unitId?.type === 'required'

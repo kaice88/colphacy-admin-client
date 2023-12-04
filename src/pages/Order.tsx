@@ -1,10 +1,12 @@
-import { Button, Flex, Tabs, Title, useMantineTheme } from "@mantine/core";
+import { Button, Flex, Modal, Tabs, Title, useMantineTheme } from "@mantine/core";
 import { DatePickerInput, DatesProvider } from "@mantine/dates";
 import { IconPlus, IconSearch } from "@tabler/icons-react";
 import { useRef, useState } from "react";
 import { OrderStatus } from "../enums/Order";
 import OrderTable from "../components/Order/OrderTable";
 import useOrder from "../hooks/useOrder";
+import { useDisclosure } from "@mantine/hooks";
+import AddOrderForm from "../components/Order/AddOrderForm";
 const LIMIT = 10;
 
 const Order: React.FC = () => {
@@ -14,12 +16,19 @@ const Order: React.FC = () => {
   const [status, setStatus] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [keyword, setKeyWord] = useState<string>("");
+
+
   const theme = useMantineTheme();
-  const { importData, handleChangeStatusOrder } = useOrder((currentPage - 1) * LIMIT, keyword, startDate, endDate, status);
+  const { OrderData, handleChangeStatusOrder } = useOrder((currentPage - 1) * LIMIT, keyword, startDate, endDate, status);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const keyword = e.target.value.trim();
     setKeyWord(keyword);
     // setCurrentPage(1);
+  };
+  const [opened, { open, close }] = useDisclosure(false);
+  const handleCloseModal = () => {
+    close();
+    // fetchImport.refetch();
   };
   return (
     <div className="branch-ctn">
@@ -74,7 +83,10 @@ const Order: React.FC = () => {
               }),
             },
           })}
-          onClick={() => {}}
+          onClick={()=>{
+            open()
+          }
+          }
         >
           Thêm đơn hàng
         </Button>
@@ -94,13 +106,31 @@ const Order: React.FC = () => {
               sortBy={"order_time"}
               order={"asc"}
               time={"Thời gian đặt"}
-              orders={importData}
+              orders={OrderData}
               status={item}
-              changeStatusOrder = {handleChangeStatusOrder}
+              changeStatusOrder={handleChangeStatusOrder}
             />
           </Tabs.Panel>
         ))}
       </Tabs>
+      <Modal
+        size="100%"
+        opened={opened}
+        onClose={close}
+        centered
+        m="20"
+        title="Thêm đơn hàng"
+        styles={() => ({
+          title: {
+            fontWeight: 'bold',
+          },
+        })}
+      >
+        <AddOrderForm
+          onClose={handleCloseModal}
+          orderId={null}
+        />
+      </Modal>
     </div>
   );
 };
