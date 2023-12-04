@@ -45,7 +45,7 @@ const OrderTable: FC<OrderTableProps> = ({
       confirmProps: { color: "blue" },
       labels: { confirm: "Xác nhận", cancel: "Hủy" },
       onCancel: () => { },
-      onConfirm: () => changeStatusOrder({ id: id, toStatus: toStatus != "CANCELLED" ? toStatus : null }),
+      onConfirm: () => changeStatusOrder({ id: id, toStatus: toStatus }),
     });
   const formattedDate = (date: Date) =>
     new Intl.DateTimeFormat("en-GB", {
@@ -91,8 +91,8 @@ const OrderTable: FC<OrderTableProps> = ({
             Xem chi tiết
           </Button>
           {(status == "PENDING" ||
-            status == "CONFIRMED" ||
-            status == "SHIPPING") && (
+            status == "CONFIRMED"
+          ) && (
               <>
                 <Button
                   m={5}

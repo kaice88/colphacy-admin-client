@@ -1,11 +1,12 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { handleGlobalException } from "../utils/error";
-import { Order, OrderItem } from "../components/Order/type";
+import { OrderItem } from "../components/Order/type";
 import { useEffect, useState } from "react";
 import axios from "../settings/axios";
+import { ErrorObject } from "../types/error";
+import { notificationShow } from "../components/Notification";
 import { useBranch } from "./useBranch";
 import { REQUEST_CUSTOMER_SEARCH_KEY } from "../constants/apis";
-
 interface ApiResponse {
   data: {
     items: OrderItem[];
@@ -65,9 +66,18 @@ export default function useOrder(
     toStatus: string | null;
   }) => {
     changeStatusOrder.mutate(data, {
-      onSuccess: () => {},
+      onSuccess: () => {
+        fetchOrder.refetch();
+      },
       onError: (error) => {
-        handleGlobalException(error, () => {});
+        const newError = error as ErrorObject;
+        handleGlobalException(newError, () => {
+          if (newError.response.status === 400) {
+            const data = newError.response.data;
+            console.log(data);
+            notificationShow("error", "Error!", data["toStatus"]);
+          }
+        });
       },
     });
   };
