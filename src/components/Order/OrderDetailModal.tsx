@@ -39,12 +39,12 @@ const OrderDetailModal: React.FC<{
   // console.log(detailOrder?.orderTime);
   return (
     detailOrder && (<Flex direction="column">
-      <Flex w="60vw" p="lg">
-        <Flex direction="column" w="50%">
+      <Flex w="80vw" p="lg">
+        <Flex direction="column" w="30vw">
           <Text fz="md">Tên khách hàng</Text>
           <Text>{senderName}</Text>
         </Flex>
-        <Flex direction="column">
+        <Flex direction="column" w='50%'>
           <Text fz="md">Địa chỉ nhận hàng</Text>
           <Text>Tên người nhận: {detailOrder?.receiver.name}</Text>
           <Text>Sđt: {detailOrder?.receiver.phone}</Text>
@@ -52,17 +52,17 @@ const OrderDetailModal: React.FC<{
         </Flex>
       </Flex>
       <OrderDetailTable startIndex={0} products={detailOrder.orderItems} />
-      <Flex w="60vw" p="lg">
-        <Flex direction="column" w="50%">
-          <Text>Thời gian đặt hàng :{formattedDate(new Date(detailOrder?.orderTime))}</Text>
-          {status == "CONFIRMED" && <Text>Thời gian xác nhận đơn hàng:{formattedDate(new Date(detailOrder?.confirmTime))}</Text>}
-          {status == "SHIPPING" && <Text>Thời gian giao hàng :{formattedDate(new Date(detailOrder?.shipTime))}</Text>}
-          {status == "DELIVERED" && <Text>Thời gian nhận hàng :{formattedDate(new Date(detailOrder?.deliverTime))}</Text>}
-          {status == "CANCELLED" && <Text>Thời gian hủy :{formattedDate(new Date(detailOrder?.cancelTime))}</Text>}
+      <Flex p="lg">
+        <Flex direction="column" w="30vw">
+          <Text>Thời gian đặt hàng :  {formattedDate(new Date(detailOrder?.orderTime))}</Text>
+          {status == "CONFIRMED" && <Text>Thời gian xác nhận đơn hàng: {formattedDate(new Date(detailOrder?.confirmTime))}</Text>}
+          {status == "SHIPPING" && <Text>Thời gian giao hàng : {formattedDate(new Date(detailOrder?.shipTime))}</Text>}
+          {status == "DELIVERED" && <Text>Thời gian nhận hàng : {formattedDate(new Date(detailOrder?.deliverTime))}</Text>}
+          {status == "CANCELLED" && <Text>Thời gian hủy : {formattedDate(new Date(detailOrder?.cancelTime))}</Text>}
         </Flex>
-        <Flex w='50%'>
-          <Text fz="md">Tổng tiền hàng</Text>
-          <Text ml='auto' p={3}>{total}</Text>
+        <Flex>
+          <Text fz={'md'}>Tổng tiền hàng</Text>
+          <Text ml={'lg'} p={2}>{total} VNĐ</Text>
         </Flex>
       </Flex>
     </Flex>)

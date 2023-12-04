@@ -7,8 +7,8 @@ import { DateTimePicker } from '@mantine/dates';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { transformSelectCustomerData, transformSelectData } from '../../utils/helper';
 import { useState } from 'react';
-import { useDebouncedState, useDebouncedValue } from '@mantine/hooks';
-import {  useAddOrder } from '../../hooks/useOrder';
+import { useDebouncedValue } from '@mantine/hooks';
+import { useAddOrder } from '../../hooks/useOrder';
 import { Order } from './type';
 import OrderDetails from './OrderDetail';
 import { handleGlobalException } from '../../utils/error';
@@ -16,22 +16,21 @@ import { notificationShow } from '../Notification';
 
 const AddOrderForm: React.FC<{
     onClose: () => void;
-    orderId: number | null;
-}> = ({ onClose, orderId }) => {
+    setStatus: React.Dispatch<React.SetStateAction<string | null>>
+}> = ({ onClose, setStatus }) => {
     const {
         control,
         handleSubmit,
         watch,
         setError,
         setValue,
-        getValues,
         register,
         formState: { errors },
     } = useForm({
         defaultValues: {
             branchId: "",
             customerId: "",
-            orderTime: new Date(),  
+            orderTime: new Date(),
             items: [
                 {
                     productId: "",
@@ -56,8 +55,7 @@ const AddOrderForm: React.FC<{
     const [customerDebounced] = useDebouncedValue(searchCustomer, 100);
     const { branchData, productData, customerData, onSubmitAddOrderForm } =
         useAddOrder(branchDebounced, undefined, customerDebounced);
-    // const { orderData } = useDetailOrder(undefined)
-    const [orderData, setOrderData] = useState<Order|null>(null)
+    const [orderData, setOrderData] = useState<Order | null>(null)
     const onSubmit = (data) => {
         onSubmitAddOrderForm(
             data,
@@ -78,35 +76,10 @@ const AddOrderForm: React.FC<{
                     'Thêm đơn hàng mới thành công!'
                 );
                 onClose();
+                setStatus("PENDING")
             },
         );
     };
-
-    // useEffect(() => {
-    //     if (orderData) {
-    //         const transformData = {
-    //             ...orderData,
-    //             orderTime: new Date(orderData.orderTime),
-    //             branch: orderData.branch.id.toString(),
-    //             customer: orderData.receiver.id.toString(),
-    //             orderItems: orderData.orderItems.map((item) => ({
-    //                 ...item,
-    //                 product: item.product.id.toString(),
-    //                 expirationDate: new Date(item.expirationDate),
-    //                 unitId: item.unitId.toString(),
-    //             })),
-    //             setSearchCustomer(orderData.receiver.name);
-    //             setSearchBranch(orderData.branch.address);
-    //         };
-    //         type TransformDataKeys = keyof typeof transformData;
-
-    //         (Object.keys(transformData) as TransformDataKeys[]).map(
-    //             (item: TransformDataKeys) => {
-    //                 setValue(item, transformData[item]);
-    //             },
-    //         );
-    //     }
-    // }, [orderData]);
     return (
         branchData !== undefined &&
         productData !== undefined &&
@@ -188,7 +161,7 @@ const AddOrderForm: React.FC<{
                         control={control}
                         orderFields={orderFields}
                         errors={errors}
-                        items= {orderData}
+                        items={orderData}
                         unitData={[]}
                         appendOrder={appendOrder}
                         removeOrder={removeOrder}

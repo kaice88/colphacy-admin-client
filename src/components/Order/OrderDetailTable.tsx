@@ -10,11 +10,11 @@ const OrderDetailTable: FC<OrderTableProps> = ({ startIndex, products }) => {
   const rows = products.map((element, index) => (
     <tr key={index}>
       <td>{startIndex + index + 1}</td>
-      <td>{element.product.name}</td>
+      <td width={"40%"}>{element.product.name}</td>
       <td>{element.unit.name}</td>
       <td>{element.quantity}</td>
-      <td>{element.price.toLocaleString('vi-VN')}</td>
-      <td>{(element.quantity * element.price).toLocaleString('vi-VN')}</td>
+      <td>{element.price.toLocaleString('vi-VN')+' VNĐ'}</td>
+      <td>{(element.quantity * element.price).toLocaleString('vi-VN')+' VNĐ'}</td>
     </tr>
   ));
 
