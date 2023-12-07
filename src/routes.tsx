@@ -11,6 +11,7 @@ import ChangePassword from './pages/ChangePassword';
 import CategoryPage from './pages/CategoryPage';
 import ProviderPage from './pages/ProviderPage';
 import Import from './pages/Import';
+import Order from './pages/Order';
 
 export const router = createBrowserRouter([
   {
@@ -58,6 +59,10 @@ export const router = createBrowserRouter([
       {
         path: 'import-management',
         element: <Import />,
+      },
+      {
+        path: 'order-management',
+        element: <Order />,
       },
     ],
   },
