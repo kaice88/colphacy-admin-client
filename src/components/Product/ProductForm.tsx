@@ -145,7 +145,7 @@ const ProductForm: React.FC<{
     if (productData && mode !== 'ADD') {
       const transformData = {
         ...productData,
-        categoryId: productData.categoryId.toString(),
+        categoryId: productData.category.id.toString(),
         images: productData.images.map((item) => ({ url: item })),
         productUnits: productData.productUnits.map((item) => ({
           ...item,
@@ -486,13 +486,6 @@ const ProductForm: React.FC<{
                 errors.shortDescription
                   ? errors.shortDescription.message
                   : false
-              }
-              style={
-                mode === 'VIEW'
-                  ? {
-                      pointerEvents: 'none',
-                    }
-                  : {}
               }
             />
           )}
