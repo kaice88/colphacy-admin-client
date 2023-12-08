@@ -62,7 +62,7 @@ const OrderDetailModal: React.FC<{
         </Flex>
         <Flex>
           <Text fz={'md'}>Tổng tiền hàng</Text>
-          <Text ml={'lg'} p={2}>{total} VNĐ</Text>
+          <Text ml={'lg'} p={2}>{total} đ</Text>
         </Flex>
       </Flex>
     </Flex>)
