@@ -1,4 +1,4 @@
-import { Button, Flex, Tabs, Title, useMantineTheme } from "@mantine/core";
+import { Button, Flex, Pagination, Tabs, Title, useMantineTheme } from "@mantine/core";
 import { DatePickerInput, DatesProvider } from "@mantine/dates";
 import { IconPlus, IconSearch } from "@tabler/icons-react";
 import { useRef, useState } from "react";
@@ -11,7 +11,7 @@ const Order: React.FC = () => {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const [status, setStatus] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>("PENDING");
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [keyword, setKeyWord] = useState<string>("");
   const theme = useMantineTheme();
@@ -19,7 +19,7 @@ const Order: React.FC = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const keyword = e.target.value.trim();
     setKeyWord(keyword);
-    // setCurrentPage(1);
+    setCurrentPage(1);
   };
   return (
     <div className="branch-ctn">
@@ -90,14 +90,46 @@ const Order: React.FC = () => {
         {Object.keys(OrderStatus).map((item) => (
           <Tabs.Panel key={item} value={item} pt="xs">
             <OrderTable
-              startIndex={0}
+              startIndex={importData?.offset}
               sortBy={"order_time"}
               order={"asc"}
               time={"Thời gian đặt"}
-              orders={importData}
+              orders={importData?.items}
               status={item}
               changeStatusOrder = {handleChangeStatusOrder}
             />
+            { importData && (
+              <Flex justify="space-between" align="center" py="lg">
+                <div>
+                  {importData?.totalItems === 0 ? (
+                    <div>Không tìm thấy kết quả nào.</div>
+                  ) : importData?.totalItems === 1 ? (
+                    <div>Tìm thấy 1 kết quả.</div>
+                  ) : (
+                    <div>
+                      Hiển thị {importData?.items.length} kết quả từ{' '}
+                      {importData?.offset + 1} -{' '}
+                      {importData?.offset + importData?.items.length} trong tổng{' '}
+                      {importData?.totalItems} kết quả
+                    </div>
+                  )}
+                </div>
+                <Pagination
+                  value={currentPage}
+                  total={importData?.numPages}
+                  onChange={setCurrentPage}
+                  position="center"
+                  styles={(theme) => ({
+                    control: {
+                      '&[data-active]': {
+                        backgroundColor: theme.colors.munsellBlue[0],
+                        border: 0,
+                      },
+                    },
+                  })}
+                />
+              </Flex>
+            )}
           </Tabs.Panel>
         ))}
       </Tabs>

@@ -82,9 +82,9 @@ export default function useOrder(
   };
   useEffect(() => {
     fetchOrder.refetch();
-  }, [status, startDate, endDate, keyword]);
+  }, [status, startDate, endDate, keyword, offset]);
   return {
-    importData: fetchOrder.data?.data?.items,
+    importData: fetchOrder.data?.data,
     fetchOrder,
     handleChangeStatusOrder,
   };
