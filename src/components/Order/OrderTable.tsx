@@ -90,7 +90,9 @@ const OrderTable: FC<OrderTableProps> = ({
           >
             Xem chi tiết
           </Button>
-          {(status == "PENDING"
+          {(status == "PENDING" ||
+            status == "CONFIRMED" ||
+            status == "SHIPPING"
           ) && (
               <>
                 <Button
