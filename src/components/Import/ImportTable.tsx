@@ -29,7 +29,7 @@ const ImportTable: React.FC<{
       <td>{startIndex !== undefined ? startIndex + index + 1 : ''}</td>
       <td onClick={() => handleView(element.id)}>{element.invoiceNumber}</td>
       <td>{formattedDate(new Date(element.importTime))}</td>
-      <td>{element.total.toLocaleString('vi-VN')} VNĐ</td>
+      <td>{element.total.toLocaleString('vi-VN')} đ</td>
       <td>{element.employee}</td>
       <td>
         <IconEdit

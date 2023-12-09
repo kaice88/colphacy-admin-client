@@ -188,7 +188,7 @@ const Item = ({
                     watch(`items.${index}.salePrice`) *
                     watch(`items.${index}.quantity`)
                 ).toLocaleString('vi-VN')}{' '}
-                VNĐ
+                đ
             </td>
             <td
                 style={{
@@ -291,7 +291,7 @@ const OrderDetail: FC<{
                                             fontWeight: 'normal',
                                         }}
                                     >
-                                        {calTotal().toLocaleString('vi-VN')} VNĐ
+                                        {calTotal().toLocaleString('vi-VN')} đ
                                     </th>
                                 </tfoot>
                             </Table>

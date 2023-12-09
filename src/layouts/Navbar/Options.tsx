@@ -55,4 +55,10 @@ export const options: Option[] = [
     label: 'Quản lý đơn hàng',
     links: [],
   },
+  {
+    icon: <IconTruckDelivery size="1rem"></IconTruckDelivery>,
+    url: 'stock-management',
+    label: 'Quản lý tồn kho',
+    links: [],
+  },
 ];

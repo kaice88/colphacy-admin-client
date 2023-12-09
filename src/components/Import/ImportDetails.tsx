@@ -43,7 +43,7 @@ const Item = ({
         setUnitData(unitData?.data);
       }
     } catch (error) {
-      handleGlobalException(error, () => {});
+      handleGlobalException(error, () => { });
     }
   }
   useEffect(() => {
@@ -73,8 +73,8 @@ const Item = ({
               style={
                 mode === 'VIEW'
                   ? {
-                      pointerEvents: 'none',
-                    }
+                    pointerEvents: 'none',
+                  }
                   : {}
               }
               data={transformSelectData(productData || [])}
@@ -109,13 +109,13 @@ const Item = ({
               style={
                 mode === 'VIEW'
                   ? {
-                      pointerEvents: 'none',
-                    }
+                    pointerEvents: 'none',
+                  }
                   : {}
               }
               required
               radius="md"
-              data={transformSelectUnitData (unitData)}
+              data={transformSelectUnitData(unitData)}
               error={
                 errors.importDetails?.[index]?.unitId
                   ? errors.importDetails?.[index]?.unitId?.type === 'required'
@@ -140,8 +140,8 @@ const Item = ({
               style={
                 mode === 'VIEW'
                   ? {
-                      pointerEvents: 'none',
-                    }
+                    pointerEvents: 'none',
+                  }
                   : {}
               }
               required
@@ -167,8 +167,8 @@ const Item = ({
               style={
                 mode === 'VIEW'
                   ? {
-                      pointerEvents: 'none',
-                    }
+                    pointerEvents: 'none',
+                  }
                   : {}
               }
               required
@@ -193,8 +193,8 @@ const Item = ({
               style={
                 mode === 'VIEW'
                   ? {
-                      pointerEvents: 'none',
-                    }
+                    pointerEvents: 'none',
+                  }
                   : {}
               }
               required
@@ -224,7 +224,7 @@ const Item = ({
           watch(`importDetails.${index}.importPrice`) *
           watch(`importDetails.${index}.quantity`)
         ).toLocaleString('vi-VN')}{' '}
-        VNĐ
+        đ
         {/* <Input
           style={{
             pointerEvents: 'none',
@@ -277,122 +277,122 @@ const ImportDetails: FC<{
   watch,
   setValue,
 }) => {
-  const rows = importFields.map((importField, index) => (
-    <Item
-      key={importField.id}
-      index={index}
-      importField={importField}
-      control={control}
-      errors={errors}
-      removeImport={removeImport}
-      mode={mode}
-      watch={watch}
-      importDetail={importDetails?.[index]}
-      setValue={setValue}
-    ></Item>
-  ));
-
-  const calTotal = () => {
-    return importFields.reduce(
-      (accumulator, currentValue, currentIndex) =>
-        accumulator +
-        watch(`importDetails.${currentIndex}.importPrice`) *
-          watch(`importDetails.${currentIndex}.quantity`),
-      0,
-    );
-  };
-  return (
-    <div style={{ height: '70%', paddingBottom: '10px' }}>
-      <Controller
-        name="importDetails"
+    const rows = importFields.map((importField, index) => (
+      <Item
+        key={importField.id}
+        index={index}
+        importField={importField}
         control={control}
-        render={() => (
-          <Input.Wrapper required error={errors.importDetails?.message}>
-            <Table
-              horizontalSpacing="xl"
-              striped
-              highlightOnHover
-              withBorder
-              my="5px"
-            >
-              <thead>
-                <tr className="importDetailsHead">
-                  {/* <th>STT</th> */}
-                  <th>Tên sản phẩm</th>
-                  <th>Đơn vị tính</th>
-                  <th>Hạn dùng</th>
-                  <th>Số lượng</th>
-                  <th>Giá nhập</th>
-                  <th>Tổng tiền</th>
-                  {mode !== 'VIEW' && <th></th>}
-                </tr>
-              </thead>
-              <tbody>{rows}</tbody>
+        errors={errors}
+        removeImport={removeImport}
+        mode={mode}
+        watch={watch}
+        importDetail={importDetails?.[index]}
+        setValue={setValue}
+      ></Item>
+    ));
 
-              <tfoot
-                style={{
-                  height: '35px',
-                }}
+    const calTotal = () => {
+      return importFields.reduce(
+        (accumulator, currentValue, currentIndex) =>
+          accumulator +
+          watch(`importDetails.${currentIndex}.importPrice`) *
+          watch(`importDetails.${currentIndex}.quantity`),
+        0,
+      );
+    };
+    return (
+      <div style={{ height: '70%', paddingBottom: '10px' }}>
+        <Controller
+          name="importDetails"
+          control={control}
+          render={() => (
+            <Input.Wrapper required error={errors.importDetails?.message}>
+              <Table
+                horizontalSpacing="xl"
+                striped
+                highlightOnHover
+                withBorder
+                my="5px"
               >
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                {mode !== 'VIEW' && <th></th>}
-                <th>Tổng tiền</th>
-                <th
+                <thead>
+                  <tr className="importDetailsHead">
+                    {/* <th>STT</th> */}
+                    <th>Tên sản phẩm</th>
+                    <th>Đơn vị tính</th>
+                    <th>Hạn dùng</th>
+                    <th>Số lượng</th>
+                    <th>Giá nhập</th>
+                    <th>Tổng tiền</th>
+                    {mode !== 'VIEW' && <th></th>}
+                  </tr>
+                </thead>
+                <tbody>{rows}</tbody>
+
+                <tfoot
                   style={{
-                    fontWeight: 'normal',
+                    height: '35px',
                   }}
                 >
-                  {calTotal().toLocaleString('vi-VN')} VNĐ
-                </th>
-              </tfoot>
-            </Table>
-          </Input.Wrapper>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  {mode !== 'VIEW' && <th></th>}
+                  <th>Tổng tiền</th>
+                  <th
+                    style={{
+                      fontWeight: 'normal',
+                    }}
+                  >
+                    {calTotal().toLocaleString('vi-VN')} đ
+                  </th>
+                </tfoot>
+              </Table>
+            </Input.Wrapper>
+          )}
+        ></Controller>
+        {mode !== 'VIEW' && (
+          <Flex justify="flex-end">
+            <Button
+              my="xs"
+              onClick={() =>
+                appendImport({
+                  product: '',
+                  unitId: '',
+                  expirationDate: new Date(),
+                  quantity: 1,
+                  importPrice: 1000,
+                })
+              }
+              variant="default"
+              styles={(theme) => ({
+                root: {
+                  textAlign: 'center',
+                  width: '10%',
+                  minWidth: '70px',
+                  height: '30px',
+                  padding: 0,
+                  border: '0px',
+                  backgroundColor: theme.fn.lighten(
+                    theme.colors.flashWhite[0],
+                    0.3,
+                  ),
+                  ...theme.fn.hover({
+                    backgroundColor: theme.colors.flashWhite[0],
+                  }),
+                },
+                label: {
+                  fontWeight: 500,
+                },
+              })}
+            >
+              + Thêm
+            </Button>
+          </Flex>
         )}
-      ></Controller>
-      {mode !== 'VIEW' && (
-        <Flex justify="flex-end">
-          <Button
-            my="xs"
-            onClick={() =>
-              appendImport({
-                product: '',
-                unitId: '',
-                expirationDate: new Date(),
-                quantity: 1,
-                importPrice: 1000,
-              })
-            }
-            variant="default"
-            styles={(theme) => ({
-              root: {
-                textAlign: 'center',
-                width: '10%',
-                minWidth: '70px',
-                height: '30px',
-                padding: 0,
-                border: '0px',
-                backgroundColor: theme.fn.lighten(
-                  theme.colors.flashWhite[0],
-                  0.3,
-                ),
-                ...theme.fn.hover({
-                  backgroundColor: theme.colors.flashWhite[0],
-                }),
-              },
-              label: {
-                fontWeight: 500,
-              },
-            })}
-          >
-            + Thêm
-          </Button>
-        </Flex>
-      )}
-    </div>
-  );
-};
+      </div>
+    );
+  };
 
 export default ImportDetails;
