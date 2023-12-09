@@ -74,7 +74,6 @@ export default function useOrder(
         handleGlobalException(newError, () => {
           if (newError.response.status === 400) {
             const data = newError.response.data;
-            console.log(data);
             notificationShow("error", "Error!", data["toStatus"]);
           }
         });

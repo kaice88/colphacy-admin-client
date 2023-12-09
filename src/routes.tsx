@@ -12,6 +12,7 @@ import CategoryPage from './pages/CategoryPage';
 import ProviderPage from './pages/ProviderPage';
 import Import from './pages/Import';
 import Order from './pages/Order';
+import Review from './pages/Review';
 
 export const router = createBrowserRouter([
   {
@@ -63,6 +64,10 @@ export const router = createBrowserRouter([
       {
         path: 'order-management',
         element: <Order />,
+      },
+      {
+        path: 'review-management',
+        element: <Review />,
       },
     ],
   },

@@ -3,6 +3,7 @@ import {
   IconBrandAppgallery,
   IconBuildingStore,
   IconPackages,
+  IconStar,
   IconTruckDelivery,
 } from '@tabler/icons-react';
 
@@ -53,6 +54,12 @@ export const options: Option[] = [
     icon: <IconTruckDelivery size="1rem"></IconTruckDelivery>,
     url: 'order-management',
     label: 'Quản lý đơn hàng',
+    links: [],
+  },
+  {
+    icon: <IconStar size="1rem"></IconStar>,
+    url: 'review-management',
+    label: 'Quản lý đánh giá',
     links: [],
   },
 ];

@@ -36,7 +36,6 @@ const OrderDetailModal: React.FC<{
     }
 
   }, []);
-  // console.log(detailOrder?.orderTime);
   return (
     detailOrder && (<Flex direction="column">
       <Flex w="80vw" p="lg">
