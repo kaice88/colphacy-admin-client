@@ -11,11 +11,17 @@
 
 @import "components/branch/branchItem";
 
+@import "components/branch/branchTable";
+
 @import "components/branchForm/index";
 
 @import "components/map/map";
 
 @import "components/popper/popper";
+
+@import "components/product/productForm";
+
+@import "components/table/_table";
 
 // pages
 @import "pages/example";

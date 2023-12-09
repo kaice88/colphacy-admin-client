@@ -1,5 +1,10 @@
 import type { ReactElement } from 'react';
-import { IconBrandAppgallery, IconBuildingStore, IconListDetails, IconMapPins } from '@tabler/icons-react';
+import {
+  IconBrandAppgallery,
+  IconBuildingStore,
+  IconPackages,
+  IconTruckDelivery,
+} from '@tabler/icons-react';
 
 export interface Option {
   icon: ReactElement;
@@ -9,12 +14,6 @@ export interface Option {
 }
 
 export const options: Option[] = [
-  {
-    icon: <IconListDetails size="1rem"></IconListDetails>,
-    url: 'store-management',
-    label: 'Quản lý kho',
-    links: [],
-  },
   {
     icon: <IconBuildingStore size="1rem"></IconBuildingStore>,
     url: 'branch-management',
@@ -34,6 +33,32 @@ export const options: Option[] = [
         url: 'product-management',
         label: 'Sản phẩm',
       },
+      {
+        url: 'category-management',
+        label: 'Danh mục',
+      },
+      {
+        url: 'provider-management',
+        label: 'Nhà cung cấp',
+      },
     ],
+  },
+  {
+    icon: <IconPackages size="1rem"></IconPackages>,
+    url: 'import-management',
+    label: 'Quản lý nhập hàng',
+    links: [],
+  },
+  {
+    icon: <IconTruckDelivery size="1rem"></IconTruckDelivery>,
+    url: 'order-management',
+    label: 'Quản lý đơn hàng',
+    links: [],
+  },
+  {
+    icon: <IconTruckDelivery size="1rem"></IconTruckDelivery>,
+    url: 'stock-management',
+    label: 'Quản lý tồn kho',
+    links: [],
   },
 ];

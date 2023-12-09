@@ -1,14 +1,15 @@
-import { FC } from "react";
-import { Table, useMantineTheme } from "@mantine/core";
-import { IconEdit, IconTrashX } from "@tabler/icons-react";
-import { Unit } from "./UnitForm";
-import { deleteModal } from "../../utils/deleteModal";
-import useUnit from "../../hooks/useUnit";
+import { FC } from 'react';
+import { Table } from '@mantine/core';
+import { IconEdit, IconTrashX } from '@tabler/icons-react';
+import { Unit } from './UnitForm';
+import { deleteModal } from '../../utils/deleteModal';
+
 interface UnitTableProps {
   startIndex: number;
   endIndex: number;
   allUnites: AllUnitesProps;
   handleEdit: (unit: Unit) => void;
+  handleDeleteUnit: (data: { id: number }) => void;
 }
 interface AllUnitesProps {
   items: Unit[];
@@ -20,44 +21,37 @@ interface AllUnitesProps {
 
 const UnitTable: FC<UnitTableProps> = ({
   startIndex,
-  endIndex,
   allUnites,
   handleEdit,
+  handleDeleteUnit,
 }) => {
-
   const rows = allUnites.items.map((element, index) => (
     <tr key={element.id}>
       <td>{startIndex + index + 1}</td>
       <td>{element.name}</td>
       <td align="right">
         <IconEdit
-          className="delete-edit"
+          className="edit-button"
           strokeWidth="1.8"
           size="22px"
-
           onClick={() => {
             handleEdit(element);
           }}
-
         />
         <IconTrashX
-          className="delete-edit"
+          className="delete-button"
           strokeWidth="1.8"
           size="22px"
-
-          color="red"
           onClick={() => {
-            deleteModal("đơn vị tính", element.name, () => handleDeleteUnit({ id: element.id as number }));
+            deleteModal('đơn vị tính', element.name, () =>
+              handleDeleteUnit({ id: element.id as number }),
+            );
           }}
-
         />
       </td>
     </tr>
   ));
-  const { onSubmitDeleteUnitForm } = useUnit()
-  const handleDeleteUnit = (data: { id: number }) => {
-    onSubmitDeleteUnitForm(data)
-  }
+
   return (
     <Table horizontalSpacing="xl" striped highlightOnHover withBorder>
       <thead>

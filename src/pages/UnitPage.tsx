@@ -1,14 +1,22 @@
-import { Button, Flex, Group, Modal, Pagination, useMantineTheme, Title } from "@mantine/core";
-import { IconPlus, IconSearch } from "@tabler/icons-react";
-import { useEffect, useRef, useState } from "react";
-import { useDisclosure } from "@mantine/hooks";
-import UnitTable from "../components/Unit/UnitTable";
-import UnitForm, { Unit } from "../components/Unit/UnitForm";
-import { useUnitExceptAdd } from "../hooks/useUnit";
-import { handleGlobalException } from "../utils/error";
-import { notificationShow } from "../components/Notification";
-import { useForm } from "react-hook-form";
-
+import {
+  Button,
+  Flex,
+  Group,
+  Modal,
+  Pagination,
+  useMantineTheme,
+  Title,
+} from '@mantine/core';
+import { IconPlus, IconSearch } from '@tabler/icons-react';
+import { useEffect, useRef, useState } from 'react';
+import { useDisclosure } from '@mantine/hooks';
+import UnitTable from '../components/Unit/UnitTable';
+import UnitForm, { Unit } from '../components/Unit/UnitForm';
+import useUnit, { useUnitExceptAdd } from '../hooks/useUnit';
+import { handleGlobalException } from '../utils/error';
+import { notificationShow } from '../components/Notification';
+import { useForm } from 'react-hook-form';
+import { ErrorObject } from '../types/error';
 export interface AllUnitsProps {
   items: ItemsProps[];
   numPages: number;
@@ -21,11 +29,11 @@ interface ItemsProps {
   name: string;
 }
 export default function UnitPage() {
-  const theme = useMantineTheme()
-  const [action, setAction] = useState("add");
+  const theme = useMantineTheme();
+  const [action, setAction] = useState('add');
   const [opened, { open, close }] = useDisclosure(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [unit, setUnit] = useState<Unit>();
   const [allUnits, setAllUnits] = useState<AllUnitsProps>({
@@ -41,7 +49,7 @@ export default function UnitPage() {
   const totalUnits = allUnits.totalItems;
   const totalPages = allUnits.numPages;
   const limitInit = 10;
-  const offset = currentPage - 1;
+  const offset = currentPage *10 - 10;
   const search = {
     offset: offset,
     limit: 10,
@@ -55,12 +63,19 @@ export default function UnitPage() {
 
   const { fetchUnit, fetchUnitSearchKeywork } = useUnitExceptAdd(
     search,
-    filter
+    filter,
   );
+  const { onSubmitDeleteUnitForm } = useUnit();
+  const handleDeleteUnit = (data: { id: number }) => {
+    onSubmitDeleteUnitForm(data, () => {
+      notificationShow('success', 'Success!', 'Xóa đơn vị thành công!');
+      fetchUnitData();
+    });
+  };
   const { setError } = useForm({
     defaultValues: {
-      offset: "",
-      limit: "",
+      offset: '',
+      limit: '',
     },
   });
   async function fetchUnitData() {
@@ -73,7 +88,7 @@ export default function UnitPage() {
         if (error.response.status === 400) {
           const data = error.response.data;
           Object.keys(data).forEach((key) => {
-            notificationShow("error", "Error!", data[key]);
+            notificationShow('error', 'Error!', data[key]);
           });
         }
       });
@@ -84,14 +99,14 @@ export default function UnitPage() {
     if (data.isSuccess) {
       setAllUnits(data.data.data);
     } else if (data.isError) {
-      const error = data.error;
+      const error = data.error as ErrorObject;
       handleGlobalException(error, () => {
-        setError("offset", {
-          type: "manual",
+        setError('offset', {
+          type: 'manual',
           message: error.response.data.offset,
         });
-        setError("limit", {
-          type: "manual",
+        setError('limit', {
+          type: 'manual',
           message: error.response.data.limit,
         });
       });
@@ -118,53 +133,61 @@ export default function UnitPage() {
   };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchValue = e.target.value;
-    if (!searchValue.startsWith(" ")) {
+    if (!searchValue.startsWith(' ')) {
       setSearchValue(searchValue);
       setCurrentPage(1);
     }
   };
   const handleEdit = (unit: Unit) => {
-    setAction("update");
+    setAction('update');
     open();
     setUnit(unit);
   };
   return (
     <div className="unit-ctn">
-      <Title size="h5" color={theme.colors.cobaltBlue[0]}>Danh sách đơn vị tính</Title>
-      <Flex>
-        <div className="search-field">
-          <div className="search">
-            <input
-              ref={inputRef}
-              value={searchValue}
-              placeholder="Tìm kiếm..."
-              spellCheck={false}
-              onChange={handleChange}
-            />
-            <button
-              className="search-btn"
-              onMouseDown={(e) => e.preventDefault()}
-            >
-              <IconSearch size="1.3rem"></IconSearch>
-            </button>
-          </div>
+      <Title size="h5" color={theme.colors.cobaltBlue[0]}>
+        Danh sách đơn vị tính
+      </Title>
+      <Flex py="lg">
+        <div className="search">
+          <input
+            ref={inputRef}
+            value={searchValue}
+            placeholder="Tìm kiếm..."
+            spellCheck={false}
+            onChange={handleChange}
+          />
+          <button
+            className="search-btn"
+            onMouseDown={(e) => e.preventDefault()}
+          >
+            <IconSearch size="1.3rem"></IconSearch>
+          </button>
         </div>
         <Modal
           opened={opened}
-          onClose={close}
+          onClose={() => {
+            fetchUnitData();
+            close();
+          }}
           size="60"
           centered
           m={20}
-          title={action === "add" ? "Thêm đơn vị tính" : "Sửa đơn vị tính"}
+          title={action === 'add' ? 'Thêm đơn vị tính' : 'Sửa đơn vị tính'}
           styles={() => ({
             title: {
-              fontWeight: "bold",
+              fontWeight: 'bold',
             },
           })}
         >
-
-          <UnitForm title={action} onClose={close} unit={unit} />
-
+          <UnitForm
+            title={action}
+            onClose={() => {
+              fetchUnitData();
+              close();
+            }}
+            unit={unit}
+          />
         </Modal>
         <Group ml="auto">
           <Button
@@ -175,13 +198,13 @@ export default function UnitPage() {
                 ...theme.fn.hover({
                   backgroundColor: theme.fn.darken(
                     theme.colors.munsellBlue[0],
-                    0.1
+                    0.1,
                   ),
                 }),
               },
             })}
             onClick={() => {
-              setAction("add");
+              setAction('add');
               open();
             }}
           >
@@ -191,10 +214,11 @@ export default function UnitPage() {
       </Flex>
       <div className="unit-table">
         <UnitTable
-          startIndex={startIndex * limitInit}
+          startIndex={startIndex}
           endIndex={endIndex}
           allUnites={allUnits}
           handleEdit={handleEdit}
+          handleDeleteUnit={handleDeleteUnit}
         />
       </div>
       <br />
@@ -205,10 +229,10 @@ export default function UnitPage() {
           <div>Tìm thấy 1 kết quả.</div>
         ) : (
           <div>
-            Hiển thị{" "}
-            {endIndex <= totalUnits ? itemsPerPage : totalUnits % itemsPerPage}{" "}
-            kết quả từ {startIndex + 1} -{" "}
-            {endIndex <= totalUnits ? endIndex : totalUnits} trong tổng{" "}
+            Hiển thị{' '}
+            {endIndex <= totalUnits ? itemsPerPage : totalUnits % itemsPerPage}{' '}
+            kết quả từ {startIndex + 1} -{' '}
+            {endIndex <= totalUnits ? endIndex : totalUnits} trong tổng{' '}
             {totalUnits} kết quả
           </div>
         )}
@@ -219,7 +243,7 @@ export default function UnitPage() {
           position="center"
           styles={(theme) => ({
             control: {
-              "&[data-active]": {
+              '&[data-active]': {
                 backgroundColor: theme.colors.munsellBlue[0],
                 border: 0,
               },

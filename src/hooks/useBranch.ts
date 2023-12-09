@@ -1,5 +1,5 @@
-import { Branch } from "../components/BranchForm";
-import axios from "../settings/axios";
+import { Branch } from '../components/Branch/type';
+import axios from '../settings/axios';
 import {
   REQUEST_BRANCHES,
   REQUEST_BRANCHES_PROVINCES,
@@ -8,18 +8,20 @@ import {
   REQUEST_ADD_BRANCHES_PROVINCES,
   REQUEST_ADD_BRANCHES_DISTRICTS,
   REQUEST_ADD_BRANCHES_WARDS,
-} from "./../constants/apis";
-import { useMutation, useQuery } from "@tanstack/react-query";
+  REQUEST_VIEW_DETAIL_BRANCHES,
+  REQUEST_BRANCHES_STATUSES,
+} from './../constants/apis';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 export function useBranch(
   search: { offset: number; limit: number; keyword: string },
-  filter: {
+  filter?: {
     offset: number;
     limit: number;
     province?: string;
     district?: string;
   },
-  provinceSlug: string
+  provinceSlug?: string,
 ) {
   const buildParams = () => {
     const params: Record<string, any> = {};
@@ -43,17 +45,17 @@ export function useBranch(
     return params;
   };
   const fetchBranchProvinces = useQuery({
-    queryKey: ["branch_provinces"],
+    queryKey: ['branch_provinces'],
     queryFn: () => axios.get(REQUEST_BRANCHES_PROVINCES),
     enabled: false,
   });
   const fetchBranchDistricts = useQuery({
-    queryKey: ["branch_districts"],
+    queryKey: ['branch_districts'],
     queryFn: () => axios.get(REQUEST_BRANCHES_DISTRICTS(provinceSlug)),
     enabled: false,
   });
   const fetchBranch = useQuery({
-    queryKey: ["all_branch"],
+    queryKey: ['all_branch'],
     queryFn: () => {
       const params = buildParams();
 
@@ -64,10 +66,14 @@ export function useBranch(
     enabled: false,
   });
   const fetchBranchSearchKeywork = useQuery({
-    queryKey: ["branch_search_keywork"],
+    queryKey: ['branch_search_keywork'],
     queryFn: () =>
       axios.get(
-        REQUEST_BRANCHES_SEARCH_KEY(search.keyword, search.offset, search.limit)
+        REQUEST_BRANCHES_SEARCH_KEY(
+          search.keyword,
+          search.offset,
+          search.limit,
+        ),
       ),
     enabled: false,
   });
@@ -79,25 +85,28 @@ export function useBranch(
     fetchBranchSearchKeywork,
   };
 }
-export function useAddBranch(provinceId: number, districtId: number) {
+export function useAddBranch(provinceId: string, districtId: string) {
   const fetchAddBranchProvinces = useQuery({
-    queryKey: ["add_branch_provinces"],
-    queryFn: () => axios.get(REQUEST_ADD_BRANCHES_PROVINCES),
+    queryKey: ['add_branch_provinces'],
+    queryFn: () => {
+      return axios.get(REQUEST_ADD_BRANCHES_PROVINCES);
+    },
     enabled: false,
   });
+
   const fetchAddBranchDistricts = useQuery({
-    queryKey: ["add_branch_districts"],
+    queryKey: ['add_branch_districts'],
     queryFn: () => axios.get(REQUEST_ADD_BRANCHES_DISTRICTS(provinceId)),
     enabled: false,
   });
   const fetchAddBranchWards = useQuery({
-    queryKey: ["add_branch_wards"],
+    queryKey: ['add_branch_wards'],
     queryFn: () => axios.get(REQUEST_ADD_BRANCHES_WARDS(districtId)),
     enabled: false,
   });
 
   const handleAddBranch = useMutation({
-    mutationKey: ["add_new_branch"],
+    mutationKey: ['add_new_branch'],
     mutationFn: (data: Branch) => {
       return axios.post(REQUEST_BRANCHES, data);
     },
@@ -106,7 +115,7 @@ export function useAddBranch(provinceId: number, districtId: number) {
   const onSubmitAddBranchForm = (
     data: Branch,
     onSuccess: () => void,
-    onError: (error: object) => void
+    onError: (error: object) => void,
   ) => {
     handleAddBranch.mutate(data, {
       onSuccess: onSuccess,
@@ -120,5 +129,50 @@ export function useAddBranch(provinceId: number, districtId: number) {
     fetchAddBranchWards,
     handleAddBranch,
     onSubmitAddBranchForm,
+  };
+}
+export function useViewDetailBranch(id: number) {
+  const fetchBranchStatuses = useQuery({
+    queryKey: ['branch_statuses'],
+    queryFn: () => {
+      return axios.get(REQUEST_BRANCHES_STATUSES);
+    },
+    enabled: false,
+  });
+
+  const fetchViewDetailBranch = useQuery({
+    queryKey: ['view_detail_branch'],
+    queryFn: () => axios.get(REQUEST_VIEW_DETAIL_BRANCHES(id)),
+    enabled: false,
+  });
+
+  return {
+    fetchBranchStatuses,
+    fetchViewDetailBranch,
+  };
+}
+
+export function useEditBranch() {
+  const handleEditBranch = useMutation({
+    mutationKey: ['edit_branch'],
+    mutationFn: (data: Branch) => {
+      return axios.put(REQUEST_BRANCHES, data);
+    },
+  });
+
+  const onSubmitEditBranchForm = (
+    data: Branch,
+    onSuccess: () => void,
+    onError: (error: object) => void,
+  ) => {
+    handleEditBranch.mutate(data, {
+      onSuccess: onSuccess,
+      onError: (error) => onError(error),
+    });
+  };
+
+  return {
+    handleEditBranch,
+    onSubmitEditBranchForm,
   };
 }

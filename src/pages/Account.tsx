@@ -1,20 +1,20 @@
-import { useEffect, useState } from "react";
-import useEmployeeProfile from "../hooks/useEmployeeProfile";
+import { useEffect, useState } from 'react';
+import useEmployeeProfile from '../hooks/useEmployeeProfile';
 import {
   Button,
   Flex,
   Select,
   Text,
   TextInput,
+  Title,
   useMantineTheme,
-} from "@mantine/core";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { IconPencil } from "@tabler/icons-react";
-import { notificationShow } from "../components/Notification";
-import { useLocation, useNavigate } from "react-router-dom";
-import { isEmpty } from "lodash";
-import { handleGlobalException } from "../utils/error";
-import Title from "../components/Title/Title";
+} from '@mantine/core';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { IconPencil } from '@tabler/icons-react';
+import { notificationShow } from '../components/Notification';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { isEmpty } from 'lodash';
+import { handleGlobalException } from '../utils/error';
 export interface Account {
   id: number;
   fullName: string;
@@ -51,7 +51,7 @@ export default function Account() {
         if (error.response.status === 400) {
           const data = error.response.data;
           Object.keys(data).forEach((key) => {
-            notificationShow("error", "Error!", data[key]);
+            notificationShow('error', 'Error!', data[key]);
           });
         }
       });
@@ -73,12 +73,12 @@ export default function Account() {
   } = useForm({
     defaultValues: {
       id: -1,
-      fullName: "",
-      username: "",
-      phone: "",
-      gender: "",
-      role: "",
-      branch: "",
+      fullName: '',
+      username: '',
+      phone: '',
+      gender: '',
+      role: '',
+      branch: '',
       active: false,
     },
   });
@@ -89,28 +89,30 @@ export default function Account() {
       () => {
         fetchData();
         notificationShow(
-          "success",
-          "Success!",
-          "Cập nhật thông tin thành công!"
+          'success',
+          'Success!',
+          'Cập nhật thông tin thành công!',
         );
-        navigate("/", { state: { from: location.pathname } });
+        navigate('/', { state: { from: location.pathname } });
       },
       (error) => {
         handleGlobalException(error, () => {
           Object.keys(error.response.data).forEach((key) => {
             setError(key, {
-              type: "manual",
+              type: 'manual',
               message: error.response.data[key],
             });
           });
         });
-      }
+      },
     );
   };
 
   return (
     <>
-      <Title title="Thông tin nhân viên" />
+      <Title size="h5" color={theme.colors.cobaltBlue[0]}>
+        Thông tin cá nhân
+      </Title>
       {!isEmpty(data) && (
         <form
           className="employee-account-form"
@@ -119,7 +121,7 @@ export default function Account() {
           <Flex
             direction="column"
             gap="md"
-            style={{ width: "30vw", margin: "auto", marginTop: "3%" }}
+            style={{ width: '30vw', margin: 'auto', marginTop: '3%' }}
           >
             <Controller
               name="fullName"
@@ -151,8 +153,8 @@ export default function Account() {
                   }}
                   error={
                     errors.username
-                      ? errors.username.type === "minLength"
-                        ? "Tên tài khoản có độ dài ít nhất 6 kí tự"
+                      ? errors.username.type === 'minLength'
+                        ? 'Tên tài khoản có độ dài ít nhất 6 kí tự'
                         : errors.username.message
                       : false
                   }
@@ -182,8 +184,8 @@ export default function Account() {
                           color: theme.colors.munsellBlue[0],
                           backgroundColor: theme.white,
                         }),
-                        marginTop: "20px",
-                        paddingLeft: "5px",
+                        marginTop: '20px',
+                        paddingLeft: '5px',
                       },
                     })}
                     onClick={changePassword}
@@ -200,7 +202,7 @@ export default function Account() {
                 <Select
                   {...field}
                   label="Giới tính"
-                  data={["MALE", "FEMALE", "OTHER"]}
+                  data={['MALE', 'FEMALE', 'OTHER']}
                   onChange={(value) => {
                     field.onChange(value);
                   }}
@@ -230,9 +232,9 @@ export default function Account() {
               ></Controller>
             )}
             <Flex
-              direction={{ base: "column", sm: "row" }}
-              gap={{ base: "sm", sm: "lg" }}
-              justify={{ sm: "center" }}
+              direction={{ base: 'column', sm: 'row' }}
+              gap={{ base: 'sm', sm: 'lg' }}
+              justify={{ sm: 'center' }}
             >
               <Button
                 loading={handleUpdateProfile.isLoading}
@@ -242,7 +244,7 @@ export default function Account() {
                     ...theme.fn.hover({
                       backgroundColor: theme.fn.darken(
                         theme.colors.munsellBlue[0],
-                        0.1
+                        0.1,
                       ),
                     }),
                   },

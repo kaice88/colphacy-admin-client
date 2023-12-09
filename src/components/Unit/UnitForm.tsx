@@ -1,21 +1,19 @@
-import { Button, Flex, TextInput } from "@mantine/core";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import useUnit from "../../hooks/useUnit";
-import { handleGlobalException } from "../../utils/error";
-import { notificationShow } from "../Notification";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Button, Flex, TextInput } from '@mantine/core';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import useUnit from '../../hooks/useUnit';
+import { handleGlobalException } from '../../utils/error';
+import { notificationShow } from '../Notification';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export interface Unit {
   id: number | undefined;
-  name: string | "";
+  name: string | '';
 }
 const UnitForm: React.FC<{
   onClose: () => void;
   title: string;
   unit: Unit | undefined;
 }> = ({ title, onClose, unit }) => {
-  const location = useLocation();
-  const navigate = useNavigate();
   const {
     handleSubmit,
     control,
@@ -23,8 +21,8 @@ const UnitForm: React.FC<{
     setError,
   } = useForm({
     defaultValues: {
-      id: unit ? unit.id : "",
-      name: unit ? unit.name : "",
+      id: unit ? unit.id : '',
+      name: unit ? unit.name : '',
     },
   });
   const {
@@ -35,14 +33,14 @@ const UnitForm: React.FC<{
   } = useUnit();
 
   const onSubmit: SubmitHandler<Unit> = (data) => {
-    if (title === "add") {
+    if (title === 'add') {
       onSubmitAddUnitForm(
         { name: data.name },
         (error) => {
           handleGlobalException(error, () => {
             Object.keys(error.response.data).forEach((key) => {
               setError(key, {
-                type: "manual",
+                type: 'manual',
                 message: error.response.data[key],
               });
             });
@@ -50,9 +48,8 @@ const UnitForm: React.FC<{
         },
         () => {
           onClose();
-          notificationShow("success", "Success!", "Thêm đơn vị thành công!");
-          navigate("/", { state: { from: location.pathname } });
-        }
+          notificationShow('success', 'Success!', 'Thêm đơn vị thành công!');
+        },
       );
     } else {
       onSubmitUpdateUnitForm(
@@ -61,7 +58,7 @@ const UnitForm: React.FC<{
           handleGlobalException(error, () => {
             Object.keys(error.response.data).forEach((key) => {
               setError(key, {
-                type: "manual",
+                type: 'manual',
                 message: error.response.data[key],
               });
             });
@@ -69,16 +66,15 @@ const UnitForm: React.FC<{
         },
         () => {
           onClose();
-          notificationShow("success", "Success!", "Sửa đơn vị thành công!");
-          navigate("/", { state: { from: location.pathname } });
-        }
+          notificationShow('success', 'Success!', 'Sửa đơn vị thành công!');
+        },
       );
     }
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      {title !== "delete" && (
+      {title !== 'delete' && (
         <Controller
           name="name"
           control={control}
@@ -104,7 +100,7 @@ const UnitForm: React.FC<{
               ...theme.fn.hover({
                 backgroundColor: theme.fn.darken(
                   theme.colors.munsellBlue[0],
-                  0.1
+                  0.1,
                 ),
               }),
             },
@@ -126,7 +122,7 @@ const UnitForm: React.FC<{
           })}
           onClick={onClose}
         >
-          {" "}
+          {' '}
           Hủy
         </Button>
       </Flex>

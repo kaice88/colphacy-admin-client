@@ -32,7 +32,15 @@
       width: 5rem;
       padding: 0;
     }
-    .delete-edit {
+    .delete-button {
+      margin: 0 0.5rem;
+
+      &:hover {
+        color: red;
+        cursor: pointer;
+      }
+    }
+    .edit-button {
       margin: 0 0.5rem;
 
       &:hover {
@@ -57,7 +65,6 @@
   display: flex;
   align-items: center;
   border-radius: 10px;
-  width: 400px;
   button {
     outline: none;
     border: none;
