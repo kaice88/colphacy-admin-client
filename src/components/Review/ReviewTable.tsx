@@ -82,7 +82,7 @@ const ReviewTable: React.FC<{
               onClick={(event) => {
                 event.stopPropagation();
                 setIsView(false);
-                open();
+                handleView(element);
               }}
             />
           )}
