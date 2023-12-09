@@ -42,7 +42,7 @@ const OrderTable: FC<OrderTableProps> = ({
       title: toStatus != "CANCELLED" ? <b>Xác nhận đơn hàng</b> : <b>Hủy đơn hàng</b>,
       children: toStatus != "CANCELLED" ? "Bạn có chắc chắn muốn xác nhận đơn hàng" : "Bạn có chắc chắn muốn hủy đơn hàng",
       centered: true,
-      confirmProps: { color: "blue" },
+      confirmProps: { color: "red" },
       labels: { confirm: "Xác nhận", cancel: "Hủy" },
       onCancel: () => { },
       onConfirm: () => changeStatusOrder({ id: id, toStatus: toStatus }),
@@ -166,7 +166,7 @@ const OrderTable: FC<OrderTableProps> = ({
           size="60"
           centered
           m={20}
-          title={"Chi tiết sản phẩm"}
+          title={"Chi tiết đơn hàng"}
           styles={() => ({
             title: {
               fontWeight: "bold",

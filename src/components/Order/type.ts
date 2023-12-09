@@ -31,9 +31,9 @@ export interface DetailOrderItem {
     };
     isPrimary: boolean;
   };
-  orderTime: Date ;
-  confirmTime: Date ;
-  shipTime: Date ;
+  orderTime: Date;
+  confirmTime: Date;
+  shipTime: Date;
   deliverTime: Date | undefined;
   cancelTime: Date | undefined;
   status: string;
@@ -69,4 +69,31 @@ export interface DetailOrderItem {
     status: string;
     employees: [];
   };
+}
+
+export interface ProductOrderItem {
+  product: {
+    id: number;
+    name: string;
+    image: string;
+  };
+  unit: {
+    id: number;
+    name: string;
+  };
+  price: number;
+  expirationDate: Date;
+  quantity: number;
+}
+
+export interface Order {
+  branchId: string;
+  customerId: string;
+  orderTime: Date;
+  items: {
+    productId: string;
+    quantity: number;
+    unitId: string;
+    salePrice: number;
+  }[];
 }

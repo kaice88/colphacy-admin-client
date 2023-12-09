@@ -145,7 +145,7 @@ export default function ProviderPage() {
             <input
               ref={inputRef}
               value={searchValue}
-              placeholder="Tìm kiếm..."
+              placeholder="Tìm kiếm theo tên, địa chỉ, sđt, email"
               spellCheck={false}
               onChange={handleChange}
             />
