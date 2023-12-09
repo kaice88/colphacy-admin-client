@@ -125,7 +125,7 @@ function Branch() {
         setAllBranches(data.data.data);
       } else if (data.isError) {
         const error = data.error;
-        handleGlobalException(error, () => {});
+        handleGlobalException(error, () => { });
       }
     }
     fetchBranchData();
@@ -161,7 +161,7 @@ function Branch() {
         setBranchesProvinces(data.data.data);
       } else if (data.isError) {
         const error = data.error;
-        handleGlobalException(error, () => {});
+        handleGlobalException(error, () => { });
       }
     }
     fetchProvincesData();
@@ -171,7 +171,7 @@ function Branch() {
         setBranchesDistricts(data.data.data);
       } else if (data.isError) {
         const error = data.error;
-        handleGlobalException(error, () => {});
+        handleGlobalException(error, () => { });
       }
     }
     if (provinceSlug) {
@@ -227,7 +227,7 @@ function Branch() {
             <input
               ref={inputRef}
               value={searchValue}
-              placeholder="Tìm bằng tên đường và tỉnh thành..."
+              placeholder="Tìm bằng tên đường hoặc tỉnh thành..."
               spellCheck={false}
               onChange={handleChange}
             />

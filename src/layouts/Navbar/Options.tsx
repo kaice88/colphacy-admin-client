@@ -2,6 +2,7 @@ import type { ReactElement } from 'react';
 import {
   IconBrandAppgallery,
   IconBuildingStore,
+  IconBuildingWarehouse,
   IconPackages,
   IconStar,
   IconTruckDelivery,
@@ -54,6 +55,12 @@ export const options: Option[] = [
     icon: <IconTruckDelivery size="1rem"></IconTruckDelivery>,
     url: 'order-management',
     label: 'Quản lý đơn hàng',
+    links: [],
+  },
+  {
+    icon: <IconBuildingWarehouse size="1rem"></IconBuildingWarehouse>,
+    url: 'stock-management',
+    label: 'Quản lý tồn kho',
     links: [],
   },
   {
