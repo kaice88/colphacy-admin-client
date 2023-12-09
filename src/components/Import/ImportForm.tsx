@@ -52,13 +52,13 @@ const ImportForm: React.FC<{
     },
   });
 
-  // const [searchProvider, setSearchProvider] = useState('');
-  // const [providerDebounced] = useDebouncedValue(searchProvider, 100);
-  const [searchProvider, setSearchProvider] = useDebouncedState('', 200);
+  const [searchProvider, setSearchProvider] = useState('');
+  const [providerDebounced] = useDebouncedValue(searchProvider, 100);
+  // const [searchProvider, setSearchProvider] = useDebouncedState('', 200);
   const [searchBranch, setSearchBranch] = useState('');
   const [branchDebounced] = useDebouncedValue(searchBranch, 100);
   const { providerData, branchData, onSubmitImportForm, importData } =
-    useImportDetail(importId, searchProvider, branchDebounced);
+    useImportDetail(importId, providerDebounced, branchDebounced);
 
   const {
     fields: importFields,
@@ -86,10 +86,9 @@ const ImportForm: React.FC<{
         notificationShow(
           'success',
           'Success!',
-          `${
-            !importId
-              ? 'Thêm sản phẩm mới thành công!'
-              : 'Cập nhật sản phẩm thành công!'
+          `${!importId
+            ? 'Thêm sản phẩm mới thành công!'
+            : 'Cập nhật sản phẩm thành công!'
           } `,
         );
         onClose();
@@ -141,8 +140,8 @@ const ImportForm: React.FC<{
                   style={
                     mode === 'VIEW'
                       ? {
-                          pointerEvents: 'none',
-                        }
+                        pointerEvents: 'none',
+                      }
                       : {}
                   }
                   label="Chi nhánh"
@@ -175,8 +174,8 @@ const ImportForm: React.FC<{
                   style={
                     mode === 'VIEW'
                       ? {
-                          pointerEvents: 'none',
-                        }
+                        pointerEvents: 'none',
+                      }
                       : {}
                   }
                   label="Nhà cung cấp"
@@ -206,8 +205,8 @@ const ImportForm: React.FC<{
                   style={
                     mode === 'VIEW'
                       ? {
-                          pointerEvents: 'none',
-                        }
+                        pointerEvents: 'none',
+                      }
                       : {}
                   }
                   required
@@ -230,8 +229,8 @@ const ImportForm: React.FC<{
                   style={
                     mode === 'VIEW'
                       ? {
-                          pointerEvents: 'none',
-                        }
+                        pointerEvents: 'none',
+                      }
                       : {}
                   }
                   required
