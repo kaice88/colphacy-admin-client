@@ -74,7 +74,6 @@ export default function useOrder(
         handleGlobalException(newError, () => {
           if (newError.response.status === 400) {
             const data = newError.response.data;
-            console.log(data);
             notificationShow("error", "Error!", data["toStatus"]);
           }
         });
@@ -83,9 +82,9 @@ export default function useOrder(
   };
   useEffect(() => {
     fetchOrder.refetch();
-  }, [status, startDate, endDate, keyword]);
+  }, [status, startDate, endDate, keyword, offset]);
   return {
-    OrderData: fetchOrder.data?.data?.items,
+    OrderData: fetchOrder.data?.data,
     fetchOrder,
     handleChangeStatusOrder,
   };

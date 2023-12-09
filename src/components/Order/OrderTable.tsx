@@ -90,7 +90,9 @@ const OrderTable: FC<OrderTableProps> = ({
           >
             Xem chi tiết
           </Button>
-          {(status == "PENDING"
+          {(status == "PENDING" ||
+            status == "CONFIRMED" ||
+            status == "SHIPPING"
           ) && (
               <>
                 <Button
@@ -164,7 +166,7 @@ const OrderTable: FC<OrderTableProps> = ({
           size="60"
           centered
           m={20}
-          title={"Chi tiết sản phẩm"}
+          title={"Chi tiết đơn hàng"}
           styles={() => ({
             title: {
               fontWeight: "bold",

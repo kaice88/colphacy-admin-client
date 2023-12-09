@@ -98,7 +98,7 @@ const StockTable = ({ stockData, startIndex, isLoading, result }) => {
         }),
         mantineTableContainerProps: ({ table }) => ({
             sx: {
-                maxHeight: '500px',
+                // maxHeight: '500px',
                 padding: '3px',
             },
             className: 'table-view-expandable',

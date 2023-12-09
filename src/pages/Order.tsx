@@ -1,4 +1,4 @@
-import { Button, Flex, Modal, Tabs, Title, useMantineTheme } from "@mantine/core";
+import { Button, Flex, Modal, Pagination, Tabs, Title, useMantineTheme } from "@mantine/core";
 import { DatePickerInput, DatesProvider } from "@mantine/dates";
 import { IconPlus, IconSearch } from "@tabler/icons-react";
 import { useRef, useState } from "react";
@@ -13,7 +13,7 @@ const Order: React.FC = () => {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const [status, setStatus] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>("PENDING");
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [keyword, setKeyWord] = useState<string>("");
 
@@ -21,16 +21,15 @@ const Order: React.FC = () => {
   const theme = useMantineTheme();
   const { OrderData, handleChangeStatusOrder } = useOrder((currentPage - 1) * LIMIT, keyword, startDate, endDate, status);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const keyword = e.target.value.trim();
+    const keyword = e.target.value;
     setKeyWord(keyword);
-    // setCurrentPage(1);
+    setCurrentPage(1);
   };
   const [opened, { open, close }] = useDisclosure(false);
   const handleCloseModal = () => {
     close();
     // fetchImport.refetch();
   };
-  console.log(status);
   return (
     <div className="branch-ctn">
       <Title size="h5" color={theme.colors.cobaltBlue[0]}>
@@ -41,7 +40,7 @@ const Order: React.FC = () => {
           <input
             ref={inputRef}
             value={keyword}
-            placeholder="Tìm kiếm..."
+            placeholder="Tìm kiếm theo tên sản phẩm, tên, sđt khách hàng, ..."
             spellCheck={false}
             onChange={handleChange}
           />
@@ -55,7 +54,7 @@ const Order: React.FC = () => {
         <Flex align="center" gap="sm">
           <DatesProvider settings={{ locale: "vn" }}>
             <DatePickerInput
-              placeholder="Ngày bắt đầu"
+              placeholder="Thời gian đặt từ"
               value={startDate}
               valueFormat="DD/MM/YYYY"
               onChange={setStartDate}
@@ -64,7 +63,7 @@ const Order: React.FC = () => {
           </DatesProvider>
           đến
           <DatePickerInput
-            placeholder="Ngày kết thúc"
+            placeholder="ngày"
             value={endDate}
             valueFormat="DD/MM/YYYY"
             onChange={setEndDate}
@@ -84,7 +83,7 @@ const Order: React.FC = () => {
               }),
             },
           })}
-          onClick={()=>{
+          onClick={() => {
             open()
           }
           }
@@ -103,14 +102,46 @@ const Order: React.FC = () => {
         {Object.keys(OrderStatus).map((item) => (
           <Tabs.Panel key={item} value={item} pt="xs">
             <OrderTable
-              startIndex={0}
+              startIndex={OrderData?.offset}
               sortBy={"order_time"}
               order={"asc"}
               time={"Thời gian đặt"}
-              orders={OrderData}
+              orders={OrderData?.items}
               status={item}
               changeStatusOrder={handleChangeStatusOrder}
             />
+            { OrderData && (
+              <Flex justify="space-between" align="center" py="lg">
+                <div>
+                  {OrderData?.totalItems === 0 ? (
+                    <div>Không tìm thấy kết quả nào.</div>
+                  ) : OrderData?.totalItems === 1 ? (
+                    <div>Tìm thấy 1 kết quả.</div>
+                  ) : (
+                    <div>
+                      Hiển thị {OrderData?.items.length} kết quả từ{' '}
+                      {OrderData?.offset + 1} -{' '}
+                      {OrderData?.offset + OrderData?.items.length} trong tổng{' '}
+                      {OrderData?.totalItems} kết quả
+                    </div>
+                  )}
+                </div>
+                <Pagination
+                  value={currentPage}
+                  total={OrderData?.numPages}
+                  onChange={setCurrentPage}
+                  position="center"
+                  styles={(theme) => ({
+                    control: {
+                      '&[data-active]': {
+                        backgroundColor: theme.colors.munsellBlue[0],
+                        border: 0,
+                      },
+                    },
+                  })}
+                />
+              </Flex>
+            )}
           </Tabs.Panel>
         ))}
       </Tabs>

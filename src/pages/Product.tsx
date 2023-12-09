@@ -31,7 +31,7 @@ export default function Product() {
   const { productData, loading, onSubmitDeleteProductForm, fetchProduct } =
     useProduct((currentPage - 1) * LIMIT, keyword, sortBy, order);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const keyword = e.target.value.trim();
+    const keyword = e.target.value;
     setKeyWord(keyword);
     setCurrentPage(1);
   };
@@ -79,7 +79,7 @@ export default function Product() {
           <input
             ref={inputRef}
             value={keyword}
-            placeholder="Tìm bằng..."
+            placeholder="Tìm kiếm theo tên sản phẩm"
             spellCheck={false}
             onChange={handleChange}
           />
@@ -122,8 +122,8 @@ export default function Product() {
           mode === 'ADD'
             ? 'Thêm sản phẩm'
             : mode === 'EDIT'
-            ? 'Sửa sản phẩm'
-            : 'Xem sản phẩm'
+              ? 'Sửa sản phẩm'
+              : 'Xem sản phẩm'
         }
         styles={() => ({
           title: {

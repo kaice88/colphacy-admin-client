@@ -11,7 +11,7 @@ function Stock() {
     const theme = useMantineTheme();
     const [keyword, setKeyWord] = useState<string>('');
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const keyword = e.target.value.trim();
+        const keyword = e.target.value;
         setKeyWord(keyword);
         setCurrentPage(1);
     };
@@ -47,14 +47,14 @@ function Stock() {
     return (stockData !== undefined &&
         <div className="branch-ctn">
             <Title size="h5" color={theme.colors.cobaltBlue[0]}>
-                Danh sách sản phẩm
+                Danh sách tồn kho
             </Title>
             <Flex justify="space-between" align="center" py="lg">
                 <div className="search">
                     <input
                         ref={inputRef}
                         value={keyword}
-                        placeholder="Tìm bằng..."
+                        placeholder="Tìm kiếm theo tên"
                         spellCheck={false}
                         onChange={handleChange}
                     />
