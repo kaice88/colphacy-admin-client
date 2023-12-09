@@ -41,7 +41,7 @@ const Order: React.FC = () => {
           <input
             ref={inputRef}
             value={keyword}
-            placeholder="Tìm kiếm..."
+            placeholder="Tìm kiếm theo tên sản phẩm, tên, sđt khách hàng, ..."
             spellCheck={false}
             onChange={handleChange}
           />
@@ -55,7 +55,7 @@ const Order: React.FC = () => {
         <Flex align="center" gap="sm">
           <DatesProvider settings={{ locale: "vn" }}>
             <DatePickerInput
-              placeholder="Ngày bắt đầu"
+              placeholder="Thời gian đặt từ"
               value={startDate}
               valueFormat="DD/MM/YYYY"
               onChange={setStartDate}
@@ -64,7 +64,7 @@ const Order: React.FC = () => {
           </DatesProvider>
           đến
           <DatePickerInput
-            placeholder="Ngày kết thúc"
+            placeholder="ngày"
             value={endDate}
             valueFormat="DD/MM/YYYY"
             onChange={setEndDate}

@@ -79,7 +79,7 @@ export default function Product() {
           <input
             ref={inputRef}
             value={keyword}
-            placeholder="Tìm kiếm theo tên"
+            placeholder="Tìm kiếm theo tên sản phẩm"
             spellCheck={false}
             onChange={handleChange}
           />
