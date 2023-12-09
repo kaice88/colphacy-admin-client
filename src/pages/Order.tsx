@@ -21,7 +21,7 @@ const Order: React.FC = () => {
   const theme = useMantineTheme();
   const { OrderData, handleChangeStatusOrder } = useOrder((currentPage - 1) * LIMIT, keyword, startDate, endDate, status);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const keyword = e.target.value.trim();
+    const keyword = e.target.value;
     setKeyWord(keyword);
     // setCurrentPage(1);
   };
@@ -84,7 +84,7 @@ const Order: React.FC = () => {
               }),
             },
           })}
-          onClick={()=>{
+          onClick={() => {
             open()
           }
           }

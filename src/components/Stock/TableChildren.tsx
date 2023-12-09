@@ -26,8 +26,9 @@ const ChildTable: FC<UnitTableProps> = ({
     const rows = data.map((element, index) => (
         <tr key={index}>
             <td >{element.unitName}</td>
-            <td>{element.quantity}</td>
+
             <td>{element.expirationDate || "Chưa nhập"}</td>
+            <td>{element.quantity}</td>
         </tr>
     ));
 
@@ -37,8 +38,9 @@ const ChildTable: FC<UnitTableProps> = ({
             <thead>
                 <tr>
                     <th style={{ textAlign: 'center' }}>Đơn vị tính</th>
-                    <th style={{ textAlign: 'center' }}>Số lượng</th>
+
                     <th style={{ textAlign: 'center' }}>Ngày hết hạn</th>
+                    <th style={{ textAlign: 'center' }}>Số lượng</th>
                 </tr>
 
             </thead>

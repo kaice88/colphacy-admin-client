@@ -32,7 +32,7 @@ export default function Import() {
   const { importData, loading, fetchImport, onSubmitDeleteImportForm } =
     useImport((currentPage - 1) * LIMIT, keyword, startDate, endDate);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const keyword = e.target.value.trim();
+    const keyword = e.target.value;
     setKeyWord(keyword);
     setCurrentPage(1);
   };
@@ -134,8 +134,8 @@ export default function Import() {
           mode === 'ADD'
             ? 'Thêm đơn nhập hàng'
             : mode === 'EDIT'
-            ? 'Sửa đơn nhập hàng'
-            : 'Xem đơn nhập hàng'
+              ? 'Sửa đơn nhập hàng'
+              : 'Xem đơn nhập hàng'
         }
         styles={() => ({
           title: {
