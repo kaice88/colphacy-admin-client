@@ -4,6 +4,7 @@ import {
   IconBuildingStore,
   IconBuildingWarehouse,
   IconPackages,
+  IconStar,
   IconTruckDelivery,
 } from '@tabler/icons-react';
 
@@ -60,6 +61,12 @@ export const options: Option[] = [
     icon: <IconBuildingWarehouse size="1rem"></IconBuildingWarehouse>,
     url: 'stock-management',
     label: 'Quản lý tồn kho',
+    links: [],
+  },
+  {
+    icon: <IconStar size="1rem"></IconStar>,
+    url: 'review-management',
+    label: 'Quản lý đánh giá',
     links: [],
   },
 ];

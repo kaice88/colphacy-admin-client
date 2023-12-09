@@ -52,7 +52,6 @@ const Item = ({
         }
     }
     const getPriceByUnitProduct = (unitId: number) => {
-        console.log(unitId);
         const unit = unitData.filter(unit => unit.unitId == unitId);
         setValue(`items.${index}.salePrice`, unit[0] ? unit[0].salePrice : '');
     }

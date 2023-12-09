@@ -12,6 +12,7 @@ import CategoryPage from './pages/CategoryPage';
 import ProviderPage from './pages/ProviderPage';
 import Import from './pages/Import';
 import Order from './pages/Order';
+import Review from './pages/Review';
 import Stock from './pages/Stock';
 
 export const router = createBrowserRouter([
@@ -68,6 +69,10 @@ export const router = createBrowserRouter([
       {
         path: 'stock-management',
         element: <Stock />,
+      },
+      {
+        path: 'review-management',
+        element: <Review />,
       },
     ],
   },

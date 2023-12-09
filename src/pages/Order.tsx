@@ -30,7 +30,6 @@ const Order: React.FC = () => {
     close();
     // fetchImport.refetch();
   };
-  console.log(status);
   return (
     <div className="branch-ctn">
       <Title size="h5" color={theme.colors.cobaltBlue[0]}>
