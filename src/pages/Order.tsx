@@ -1,4 +1,4 @@
-import { Button, Flex, Pagination, Tabs, Title, useMantineTheme } from "@mantine/core";
+import { Button, Flex, Modal, Pagination, Tabs, Title, useMantineTheme } from "@mantine/core";
 import { DatePickerInput, DatesProvider } from "@mantine/dates";
 import { IconPlus, IconSearch } from "@tabler/icons-react";
 import { useRef, useState } from "react";
@@ -103,33 +103,33 @@ const Order: React.FC = () => {
         {Object.keys(OrderStatus).map((item) => (
           <Tabs.Panel key={item} value={item} pt="xs">
             <OrderTable
-              startIndex={importData?.offset}
+              startIndex={OrderData?.offset}
               sortBy={"order_time"}
               order={"asc"}
               time={"Thời gian đặt"}
-              orders={importData?.items}
+              orders={OrderData?.items}
               status={item}
               changeStatusOrder={handleChangeStatusOrder}
             />
-            { importData && (
+            { OrderData && (
               <Flex justify="space-between" align="center" py="lg">
                 <div>
-                  {importData?.totalItems === 0 ? (
+                  {OrderData?.totalItems === 0 ? (
                     <div>Không tìm thấy kết quả nào.</div>
-                  ) : importData?.totalItems === 1 ? (
+                  ) : OrderData?.totalItems === 1 ? (
                     <div>Tìm thấy 1 kết quả.</div>
                   ) : (
                     <div>
-                      Hiển thị {importData?.items.length} kết quả từ{' '}
-                      {importData?.offset + 1} -{' '}
-                      {importData?.offset + importData?.items.length} trong tổng{' '}
-                      {importData?.totalItems} kết quả
+                      Hiển thị {OrderData?.items.length} kết quả từ{' '}
+                      {OrderData?.offset + 1} -{' '}
+                      {OrderData?.offset + OrderData?.items.length} trong tổng{' '}
+                      {OrderData?.totalItems} kết quả
                     </div>
                   )}
                 </div>
                 <Pagination
                   value={currentPage}
-                  total={importData?.numPages}
+                  total={OrderData?.numPages}
                   onChange={setCurrentPage}
                   position="center"
                   styles={(theme) => ({
