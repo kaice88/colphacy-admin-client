@@ -38,15 +38,11 @@ export default function useOrder(
         params.keyword = keyword;
       }
       if (startDate) {
-        params.startDate = new Date(startDate.getTime() + 7 * 60 * 60 * 1000)
-          .toJSON()
-          .slice(0, 10);
+        params.startDate = new Date(startDate).toISOString().slice(0, 10);
       }
       if (endDate) {
-        console.log(endDate.getTimezoneOffset());
-        params.endDate = new Date(endDate.getTime() + 7 * 60 * 60 * 1000)
-          .toJSON()
-          .slice(0, 10);
+        params.endDate = new Date(endDate).toISOString().slice(0, 10)
+
       }
       return axios.get("/orders", { params });
     },
@@ -172,7 +168,7 @@ export function useAddOrder(
         ...data,
         branchId: Number(data.branchId),
         customerId: Number(data.customerId),
-        orderTime: new Date(data.orderTime.getTime() + 7 * 60 * 60 * 1000),
+        orderTime: new Date(data.orderTime).toISOString(),
         items: data.items.map((item) => ({
           productId: Number(item.productId),
           unitId: Number(item.unitId),

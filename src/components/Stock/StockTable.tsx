@@ -7,27 +7,7 @@ import ChildTable from './TableChildren';
 
 
 const StockTable = ({ stockData, startIndex, isLoading, result }) => {
-    // const collapsedData = {};
-    // let index = 0
-    // for (let i = stockData.length - 1; i >= 0; i--) {
 
-    //     const { productId, productName, quantity } = stockData[i];
-    //     if (collapsedData[productId]) {
-    //         collapsedData[productId].totalQuantity += quantity;
-    //     } else {
-    //         index++
-    //         collapsedData[productId] = {
-    //             no: startIndex !== undefined ? startIndex + index : '',
-    //             productName,
-    //             totalQuantity: quantity,
-    //             id: productId,
-    //         };
-    //     }
-    // }
-
-
-    // const result = Object.values(collapsedData);
-    // console.log(result, "day");
 
     const columns = useMemo(
         () => [

@@ -19,34 +19,7 @@ function useImportDetail(
   const searchObjBranch = { offset: 0, limit: 20, keyword: searchBranch };
   const { fetchProvidersSearchKeywork } = useProvider(searchObjProvider);
   const { fetchBranchSearchKeywork } = useBranch(searchObjBranch);
-  //   const handleSubmitProductForm = useMutation({
-  //     mutationKey: ['add-product'],
-  //     mutationFn: (data: Product) => {
-  //       const transformData = {
-  //         ...data,
-  //         categoryId: Number(data.categoryId),
-  //         images: data.images.map((item) => item.url),
-  //         productUnits: data.productUnits.map((item) => ({
-  //           ...item,
-  //           unitId: Number(item.unitId),
-  //         })),
-  //       };
-  //       return !productId
-  //         ? axios.post(REQUEST_PRODUCTS, transformData)
-  //         : axios.put(REQUEST_PRODUCTS, transformData);
-  //     },
-  //   });
 
-  //   const onSubmitProductForm = (
-  //     data: Product,
-  //     onError: (error: object) => void,
-  //     onSuccess: () => void,
-  //   ) => {
-  //     handleSubmitProductForm.mutate(data, {
-  //       onSuccess: onSuccess,
-  //       onError: (error) => onError(error),
-  //     });
-  //   };
   const handleSubmitImportForm = useMutation({
     mutationKey: ['add-product'],
     mutationFn: (data) => {
@@ -54,14 +27,14 @@ function useImportDetail(
         ...data,
         branch: { id: Number(data.branch) },
         provider: { id: Number(data.provider) },
-        importTime: new Date(data.importTime.getTime() + 7 * 60 * 60 * 1000),
+        importTime: new Date(data.importTime).toISOString(),
         importDetails: data.importDetails.map((item) => ({
           ...item,
           product: { id: Number(item.product) },
           unitId: Number(item.unitId),
           expirationDate: new Date(
-            item.expirationDate.getTime() + 7 * 60 * 60 * 1000,
-          ),
+            item.expirationDate,
+          ).toISOString(),
         })),
       };
 

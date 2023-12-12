@@ -29,7 +29,6 @@ export function useStock(offset?: number, keyword?: string) {
     });
 
     useEffect(() => {
-        console.log("day")
         fetchStock()
     }, [offset, keyword])
 

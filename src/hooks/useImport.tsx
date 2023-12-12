@@ -33,20 +33,17 @@ function useImport(
         params.keyword = keyword;
       }
       if (startDate) {
-        params.startDate = new Date(startDate.getTime() + 7 * 60 * 60 * 1000)
-          .toJSON()
-          .slice(0, 10);
+        params.startDate = new Date(startDate).toISOString().slice(0, 10);
       }
       if (endDate) {
-        params.endDate = new Date(endDate.getTime() + 7 * 60 * 60 * 1000)
-          .toJSON()
-          .slice(0, 10);
+        params.endDate = new Date(endDate).toISOString().slice(0, 10)
+
       }
       return axios.get('/imports', { params });
     },
     enabled: false,
     onError: (error) => {
-      handleGlobalException(error, () => {});
+      handleGlobalException(error, () => { });
     },
   });
 

@@ -40,7 +40,6 @@ function Stock() {
             }
         }
 
-        // console.log(result, "day");
         return Object.values(collapsedData);
     }
 
