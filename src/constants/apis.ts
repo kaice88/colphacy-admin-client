@@ -69,3 +69,5 @@ export const REQUEST_CUSTOMER_SEARCH_KEY = (
   offset: number,
   limit: number
 ) => `/customers/customers?keyword=${keyword}&offset=${offset}&limit=${limit}`;
+
+export const REQUEST_EMPLOYEES = `/employees`;

@@ -6,6 +6,7 @@ import {
   IconPackages,
   IconStar,
   IconTruckDelivery,
+  IconUsers,
 } from '@tabler/icons-react';
 
 export interface Option {
@@ -67,6 +68,12 @@ export const options: Option[] = [
     icon: <IconStar size="1rem"></IconStar>,
     url: 'review-management',
     label: 'Quản lý đánh giá',
+    links: [],
+  },
+  {
+    icon: <IconUsers size="1rem"></IconUsers>,
+    url: 'employee-management',
+    label: 'Quản lý nhân viên',
     links: [],
   },
 ];
