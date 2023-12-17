@@ -14,6 +14,7 @@ import Import from './pages/Import';
 import Order from './pages/Order';
 import Review from './pages/Review';
 import Stock from './pages/Stock';
+import Dashboard from './pages/Dashboard';
 
 export const router = createBrowserRouter([
   {
@@ -73,6 +74,10 @@ export const router = createBrowserRouter([
       {
         path: 'review-management',
         element: <Review />,
+      },
+      {
+        path: '/dashboard',
+        element: <Dashboard />,
       },
     ],
   },
