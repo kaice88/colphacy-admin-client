@@ -29,7 +29,7 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Navigate to="/branch-management" />,
+        element: <Navigate to="/dashboard" />,
       },
       {
         path: '/profile',

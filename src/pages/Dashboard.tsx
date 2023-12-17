@@ -185,7 +185,9 @@ export default function Dashboard() {
             >
               <Text color="dimmed">Doanh thu</Text>
               <Flex align="center" gap="xs">
-                <Title order={3}>{statisticsData.data.orders.revenue}</Title>
+                <Title order={3}>
+                  {statisticsData.data.orders.revenue.toLocaleString('vi-VN')} đ
+                </Title>
                 {statisticsData.data.orders.revenueChangePercent < 0 ? (
                   <IconTrendingDown size="1rem" color="red" />
                 ) : (
@@ -268,29 +270,19 @@ export default function Dashboard() {
                     boxShadow: 'rgba(100, 100, 111, 0.2) 0px 7px 29px 0px',
                   }}
                   h="50%"
-                  bg="pink.1"
+                  bg="indigo.1"
                 >
-                  <Flex direction={'column'} h="100%" justify="space-between">
-                    <Title style={{ fontSize: '120px' }} color="pink.4">
+                  <Flex direction={'column'} h="100%" justify="space-around">
+                    <Title style={{ fontSize: '8rem' }} color="blue.5">
                       {statisticsProductData?.data.inStock}
                     </Title>
                     <Title order={4} style={{ fontWeight: 'normal' }}>
                       Sản phẩm tồn kho
                     </Title>
                   </Flex>
-
-                  {/* <Flex align="center" gap="xs">
-                   
-                    <ActionIcon color="indigo" variant="transparent">
-                      <IconTrendingUp size="1rem" />
-                    </ActionIcon>
-                    <Badge radius="sm" size="xs" color="indigo">
-                      20%
-                    </Badge>
-                  </Flex> */}
                 </Paper>
                 <Paper
-                  bg="indigo.1"
+                  bg="pink.1"
                   radius="md"
                   p="md"
                   style={{
@@ -298,8 +290,8 @@ export default function Dashboard() {
                   }}
                   h="50%"
                 >
-                  <Flex direction={'column'} h="100%" justify="space-between">
-                    <Title style={{ fontSize: '120px' }} color="blue.5">
+                  <Flex direction={'column'} h="100%" justify="space-around">
+                    <Title style={{ fontSize: '8rem' }} color="pink.5">
                       {statisticsProductData?.data.nearDated}
                     </Title>
                     <Title order={4} style={{ fontWeight: 'normal' }}>
