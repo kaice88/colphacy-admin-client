@@ -12,11 +12,10 @@ import { useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
 import ReviewForm from "./ReviewForm";
 import ReplyReviewForm from "./ReplyReviewForm";
+import { convertDateTime } from "../../utils/helper";
 
 const ReviewTable: React.FC<{
   startIndex: number | undefined;
-  //   handleEdit: (Id: number) => void;
-  //   handleView: (Id: number) => void;
   handleFetchReview: () => void;
   handleDelete: (Id: number) => void;
   data: ReviewListItem[] | undefined;
@@ -60,11 +59,18 @@ const ReviewTable: React.FC<{
       <td>{element.product.name}</td>
       <td>{element.customerName}</td>
       <td>
-        <Rating readOnly defaultValue={element.rating} />
-        <br />
-        {element.content}
+        <Flex
+          gap="xs"
+          justify="center"
+          align="flex-start"
+          direction="column"
+          wrap="wrap"
+        >
+          <Rating readOnly defaultValue={element.rating} />
+          {element.content}
+        </Flex>
       </td>
-      <td>{element.createdTime}</td>
+      <td>{convertDateTime(element.createdTime)}</td>
       <td>
         {element.repliedReview ? (
           <Badge color="green">Đã phản hồi</Badge>
@@ -220,7 +226,7 @@ const ReviewTable: React.FC<{
         <tbody>{rows}</tbody>
       </Table>
       <Modal
-        w="max-content"
+        size={552}
         opened={opened}
         onClose={close}
         centered

@@ -1,15 +1,11 @@
 import {
-  Button,
   Flex,
-  Modal,
   Pagination,
   Title,
   useMantineTheme,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import { IconSearch } from "@tabler/icons-react";
 import { useRef, useState } from "react";
-// import { notificationShow } from "../components/Notification";
 import ReviewTable from "../components/Review/ReviewTable";
 import useReview from "../hooks/useReview";
 import { notificationShow } from "../components/Notification";
@@ -55,7 +51,7 @@ export default function Review() {
       prev === "desc" ? "asc" : prev === "asc" ? null : "desc"
     );
   };
-
+  console.log("reviewData", reviewData);
   return (
     <div className="branch-ctn">
       <Title size="h5" color={theme.colors.cobaltBlue[0]}>
@@ -66,7 +62,7 @@ export default function Review() {
           <input
             ref={inputRef}
             value={keyword}
-            placeholder="Tìm bằng..."
+            placeholder="Tìm kiếm..."
             spellCheck={false}
             onChange={handleChange}
           />
