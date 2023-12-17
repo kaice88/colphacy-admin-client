@@ -1,7 +1,7 @@
 import { Review, ReviewListItem } from "./type";
 import ReviewForm from "./ReviewForm";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { Button, Textarea } from "@mantine/core";
+import { Button, Center, Textarea } from "@mantine/core";
 import useReview from "../../hooks/useReview";
 import { handleGlobalException } from "../../utils/error";
 import { notificationShow } from "../Notification";
@@ -12,7 +12,7 @@ const ReplyReviewForm: React.FC<{
   id: number;
   onSuccessSubmitAdd: () => void;
   onFailSubmitAdd: () => void;
-}> = ({ reviewDetail, id, onSuccessSubmitAdd, onFailSubmitAdd }) => {
+}> = ({ reviewDetail, id, onSuccessSubmitAdd }) => {
   const {
     handleSubmit,
     setError,
@@ -39,13 +39,10 @@ const ReplyReviewForm: React.FC<{
       (error) => {
         const newError = error as ErrorObject;
         handleGlobalException(newError, () => {
-          if (newError.response.status === 400) {
-            const data = newError.response.data;
-            Object.keys(data).forEach((key) => {
-              notificationShow("error", "Error!", data[key]);
-              onFailSubmitAdd();
-            });
-          }
+          setError("content", {
+            type: "manual",
+            message: newError.response.data.content,
+          });
         });
       }
     );
@@ -58,7 +55,7 @@ const ReplyReviewForm: React.FC<{
         <Controller
           name="content"
           control={control}
-          rules={{ required: false }}
+          rules={{ required: "Vui lòng nhập nội dung trả lời đánh giá" }}
           render={({ field }) => (
             <Textarea
               {...field}
@@ -69,24 +66,28 @@ const ReplyReviewForm: React.FC<{
             />
           )}
         ></Controller>
-        <Button
-          radius="xl"
-          fullWidth
-          styles={(theme) => ({
-            root: {
-              backgroundColor: theme.colors.munsellBlue[0],
-              ...theme.fn.hover({
-                backgroundColor: theme.fn.darken(
-                  theme.colors.munsellBlue[0],
-                  0.1
-                ),
-              }),
-            },
-          })}
-          type="submit"
-        >
-          Gửi
-        </Button>
+        <Center>
+          <Button
+            fullWidth
+            radius="4px"
+            mt={20}
+            mb={10}
+            styles={(theme) => ({
+              root: {
+                backgroundColor: theme.colors.munsellBlue[0],
+                ...theme.fn.hover({
+                  backgroundColor: theme.fn.darken(
+                    theme.colors.munsellBlue[0],
+                    0.1
+                  ),
+                }),
+              },
+            })}
+            type="submit"
+          >
+            Gửi
+          </Button>
+        </Center>
       </form>
     </>
   );
