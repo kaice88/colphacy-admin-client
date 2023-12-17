@@ -3,6 +3,7 @@ import {
   IconBrandAppgallery,
   IconBuildingStore,
   IconBuildingWarehouse,
+  IconLayoutDashboard,
   IconPackages,
   IconStar,
   IconTruckDelivery,
@@ -16,6 +17,12 @@ export interface Option {
 }
 
 export const options: Option[] = [
+  {
+    icon: <IconLayoutDashboard size="1rem"></IconLayoutDashboard>,
+    url: 'dashboard',
+    label: 'Thống kê',
+    links: [],
+  },
   {
     icon: <IconBuildingStore size="1rem"></IconBuildingStore>,
     url: 'branch-management',
@@ -69,4 +76,5 @@ export const options: Option[] = [
     label: 'Quản lý đánh giá',
     links: [],
   },
+ 
 ];
