@@ -51,7 +51,6 @@ export default function Review() {
       prev === "desc" ? "asc" : prev === "asc" ? null : "desc"
     );
   };
-  console.log("reviewData", reviewData);
   return (
     <div className="branch-ctn">
       <Title size="h5" color={theme.colors.cobaltBlue[0]}>
