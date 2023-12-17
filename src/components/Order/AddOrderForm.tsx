@@ -76,7 +76,7 @@ const AddOrderForm: React.FC<{
                     'Thêm đơn hàng mới thành công!'
                 );
                 onClose();
-                setStatus("PENDING")
+                setStatus("DELIVERED")
             },
         );
     };

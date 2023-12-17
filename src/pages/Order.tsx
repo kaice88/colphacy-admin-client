@@ -17,7 +17,7 @@ const Order: React.FC = () => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [keyword, setKeyWord] = useState<string>("");
 
-
+  console.log(status);
   const theme = useMantineTheme();
   const { OrderData, handleChangeStatusOrder } = useOrder((currentPage - 1) * LIMIT, keyword, startDate, endDate, status);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,7 +91,7 @@ const Order: React.FC = () => {
           Thêm đơn hàng
         </Button>
       </Flex>
-      <Tabs defaultValue="PENDING" onTabChange={setStatus}>
+      <Tabs value={status} onTabChange={setStatus}>
         <Tabs.List grow>
           {Object.keys(OrderStatus).map((item) => (
             <Tabs.Tab key={item} value={item}>
