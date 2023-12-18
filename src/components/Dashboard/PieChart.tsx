@@ -1,5 +1,7 @@
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
+import { Flex, Image, Text } from '@mantine/core';
+import emptyBox from '../../assets/images/emptyBox.svg';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -38,6 +40,7 @@ export default function PieChart({ pieData }) {
           pieData.SHIPPING,
           pieData.DELIVERED,
           pieData.CANCELLED,
+          // 0, 0, 0, 0, 0, 0,
         ],
         backgroundColor: [
           'rgba(54, 162, 235, 0.2)',
@@ -57,5 +60,24 @@ export default function PieChart({ pieData }) {
       },
     ],
   };
-  return <Pie data={data} options={options} />;
+  const total =
+    pieData.PENDING +
+    pieData.CONFIRMED +
+    pieData.SHIPPING +
+    pieData.DELIVERED +
+    pieData.CANCELLED;
+
+  return total ? (
+    <Pie data={data} options={options} />
+  ) : (
+    <Flex
+      w="80%"
+      style={{ margin: '2rem auto 0 auto' }}
+      direction="column"
+      align="center"
+    >
+      <Image src={emptyBox}></Image>
+      <Text>Không có đơn hàng</Text>
+    </Flex>
+  );
 }

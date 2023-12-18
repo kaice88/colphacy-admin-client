@@ -9,6 +9,7 @@ import {
   Image,
   Select,
   useMantineTheme,
+  Center,
 } from '@mantine/core';
 import LineChart from '../components/Dashboard/LineChart';
 import PieChart from '../components/Dashboard/PieChart';
@@ -22,6 +23,7 @@ import { useState } from 'react';
 import { useDebouncedValue } from '@mantine/hooks';
 import useStatistics from '../hooks/useStatistics';
 import { transformSelectData } from '../utils/helper';
+import emptyBox from '../assets/images/emptyBox.svg';
 
 export default function Dashboard() {
   const [searchBranch, setSearchBranch] = useState('');
@@ -244,6 +246,17 @@ export default function Dashboard() {
                 h="100%"
               >
                 <Title order={3}>Top sản phẩm bán chạy</Title>
+                {statisticsData.data.products.length === 0 && (
+                  <Flex
+                    w="30%"
+                    style={{ margin: '2rem auto 0 auto' }}
+                    direction="column"
+                    align="center"
+                  >
+                    <Image src={emptyBox}></Image>
+                    <Text>Không có sản phẩm</Text>
+                  </Flex>
+                )}
                 <Flex direction={'column'} gap="xs" mt="lg">
                   {statisticsData.data.products.map((item, index) => (
                     <Grid key={index}>
