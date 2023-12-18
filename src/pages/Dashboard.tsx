@@ -129,7 +129,7 @@ export default function Dashboard() {
             >
               <Text color="dimmed">Đơn hàng</Text>
               <Flex align="center" gap="xs">
-                <Title order={3}>
+                <Title order={4}>
                   {statisticsData.data.orders.totalNumOrders}
                 </Title>
                 {statisticsData.data.orders.orderChangePercent < 0 ? (
@@ -158,7 +158,7 @@ export default function Dashboard() {
             >
               <Text color="dimmed">Sản phẩm đã bán</Text>
               <Flex align="center" gap="xs">
-                <Title order={3}>
+                <Title order={4}>
                   {statisticsData.data.orders.soldProducts}
                 </Title>
                 {statisticsData.data.orders.soldProductChangePercent < 0 ? (
@@ -187,7 +187,7 @@ export default function Dashboard() {
             >
               <Text color="dimmed">Doanh thu</Text>
               <Flex align="center" gap="xs">
-                <Title order={3}>
+                <Title order={4}>
                   {statisticsData.data.orders.revenue.toLocaleString('vi-VN')} đ
                 </Title>
                 {statisticsData.data.orders.revenueChangePercent < 0 ? (
