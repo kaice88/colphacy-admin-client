@@ -146,7 +146,7 @@ export default function Dashboard() {
                       : 'blue'
                   }
                 >
-                  {statisticsData.data.orders.orderChangePercent}%
+                  {statisticsData.data.orders.orderChangePercent} đơn hàng
                 </Badge>
               </Flex>
             </Paper>
@@ -175,7 +175,7 @@ export default function Dashboard() {
                       : 'blue'
                   }
                 >
-                  {statisticsData.data.orders.soldProductChangePercent}%
+                  {statisticsData.data.orders.soldProductChangePercent} sản phẩm
                 </Badge>
               </Flex>
             </Paper>
@@ -204,7 +204,10 @@ export default function Dashboard() {
                       : 'blue'
                   }
                 >
-                  {statisticsData.data.orders.revenueChangePercent}%
+                  {statisticsData.data.orders.revenueChangePercent.toLocaleString(
+                    'vi-VN',
+                  )}{' '}
+                  đ
                 </Badge>
               </Flex>
             </Paper>
