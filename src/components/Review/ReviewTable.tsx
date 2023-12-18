@@ -98,7 +98,7 @@ const ReviewTable: React.FC<{
             size="22px"
             onClick={(event) => {
               event.stopPropagation();
-              deleteModal("sản phẩm", "đánh giá này", () =>
+              deleteModal("đánh giá", "đánh giá này", () =>
                 handleDelete(element.id)
               );
             }}
