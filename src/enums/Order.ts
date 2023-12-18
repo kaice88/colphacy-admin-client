@@ -3,6 +3,7 @@ export enum OrderStatus {
   CONFIRMED = 'Chờ vận chuyển',
   SHIPPING = 'Đang giao',
   DELIVERED = 'Đã giao',
+  COMPLETED = 'Hoàn thành',
   CANCELLED = 'Đã hủy',
 }
 
