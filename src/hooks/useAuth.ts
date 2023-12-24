@@ -40,10 +40,11 @@ function useAuth() {
   const handleLogout = useMutation({
     mutationKey: ["logout"],
     mutationFn: () => {
+      logout();
       return axios.post(REQUEST_AUTH_LOGOUT);
     },
     onSuccess: () => {
-      logout();
+      // logout();
     },
     onError: (error) => {
       notificationShow("error", "Error!", error.message);
