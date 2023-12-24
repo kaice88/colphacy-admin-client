@@ -50,7 +50,7 @@ const ProductForm: React.FC<{
       brandOrigin: '',
       indications: '',
       registrationNumber: '',
-      ingredients: [{ name: '', amount: 0.01 }],
+      ingredients: [{ name: '', amount:"" }],
       uses: '',
       sideEffects: '',
       storage: '',
@@ -261,9 +261,9 @@ const ProductForm: React.FC<{
                   <Controller
                     name={`ingredients.${index}.amount` as const}
                     control={control}
-                    rules={{ required: true, min: 0.01 }}
+                    rules={{ required: true }}
                     render={({ field }) => (
-                      <NumberInput
+                      <Input
                         {...field}
                         style={
                           mode === 'VIEW'
@@ -273,17 +273,7 @@ const ProductForm: React.FC<{
                             : {}
                         }
                         w="100%"
-                        precision={2}
-                        min={0.01}
-                        parser={(value) => value.replace(/[^\d.]/g, '')}
-                        formatter={(value) =>
-                          !Number.isNaN(parseFloat(value))
-                            ? `${value} (mg)`.replace(
-                                /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,
-                                ',',
-                              )
-                            : 'mg'
-                        }
+                        placeholder='10 (mg)'
                         required
                         error={
                           errors?.ingredients?.[index]?.amount
@@ -320,7 +310,7 @@ const ProductForm: React.FC<{
 
               <Button
                 onClick={() => {
-                  appendIngredient({ name: '', amount: 0.01 });
+                  appendIngredient({ name: '', amount: "" });
                 }}
                 variant="default"
                 styles={(theme) => ({

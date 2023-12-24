@@ -3,8 +3,9 @@ import { create } from "zustand";
 interface AuthStoreState {
   userProfile: object | null;
   accessToken: string | null;
-  setLocalStorage: (accessToken: string, userProfile: object) => void;
-  login: (accessToken: string, userProfile: object) => void;
+  // expirationTime: Date | null;
+  setLocalStorage: (accessToken: string, userProfile: object, expirationTime: string) => void;
+  login: (accessToken: string, userProfile: object, expirationTime: string) => void;
   logout: () => void;
   update: (userProfile: any) => void; 
 }
@@ -16,15 +17,20 @@ const useAuthStore = create<AuthStoreState>((set) => ({
   accessToken: localStorage.getItem("accessToken")
     ? localStorage.getItem("accessToken")
     : "",
+    // expirationTime: localStorage.getItem("expirationTime")
+    // ?  new Date(localStorage.getItem("expirationTime"))
+    // : null,
 
-  setLocalStorage: (accessToken, userProfile) => {
+  setLocalStorage: (accessToken, userProfile,expirationTime) => {
     localStorage.setItem("userProfile", JSON.stringify(userProfile));
     localStorage.setItem("accessToken", accessToken);
+    localStorage.setItem("expirationTime", expirationTime);
   },
 
-  login: (accessToken, userProfile) => {
+  login: (accessToken, userProfile,expirationTime) => {
     set((state) => {
-      state.setLocalStorage(accessToken, userProfile);
+      console.log("abi",expirationTime)
+      state.setLocalStorage(accessToken, userProfile,expirationTime);
       return {
         accessToken,
         userProfile,

@@ -44,7 +44,6 @@ export default function Dashboard() {
       Number(selectedMonth),
       Number(selectedYear),
     );
-  console.log(statisticsProductData);
 
   return (
     statisticsData !== undefined &&

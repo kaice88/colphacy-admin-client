@@ -9,7 +9,7 @@ export interface Product {
   registrationNumber: string;
   ingredients: {
     name: string;
-    amount: number;
+    amount: string;
   }[];
   uses: string;
   sideEffects: string;

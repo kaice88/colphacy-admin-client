@@ -30,7 +30,7 @@ function useAuth() {
   ) => {
     handleLoginPassword.mutate(data, {
       onSuccess: (data) => {
-        login(data.data.accessToken, data.data.userProfile);
+        login(data.data.accessToken, data.data.userProfile,data.data.expirationTime);
         navigate(HOME);
         notificationShow("success", "Success!", "Đăng nhập thành công!");
       },
@@ -50,6 +50,13 @@ function useAuth() {
     },
   });
 
+  const getTokenDuration = () => {
+    const expirationDate = new Date(localStorage.getItem('expirationTime') || Date.now());
+    const now = new Date()
+    const duration = expirationDate.getTime() - now.getTime()
+    return duration
+  }
+
   return {
     userProfile,
     isAuthenticated,
@@ -57,6 +64,7 @@ function useAuth() {
     handleLoginPassword,
     logout: handleLogout,
     updateUserProfile,
+    getTokenDuration
   };
 }
 export default useAuth;

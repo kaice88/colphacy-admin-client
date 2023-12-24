@@ -7,16 +7,31 @@ import useAuth from '../hooks/useAuth';
 import { LOGIN } from '../constants/routes';
 
 const Layout: React.FC = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, logout,getTokenDuration } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   useEffect(() => {
+    console.log("hi")
     if (!isAuthenticated) {
       navigate(LOGIN, { state: { from: location.pathname } });
     }
+    else {
+   
+      const tokenDuration = getTokenDuration()
+      console.log(tokenDuration)
+      const logoutTimeout = setTimeout(() => {
+        logout.mutate();
+      
+      }, tokenDuration)
+      return () => {
+        clearTimeout(logoutTimeout)
+      }
+    }
+
     if (location?.state?.from) {
       navigate(location?.state?.from);
     }
+
   }, [isAuthenticated, location?.state?.from]);
 
   return (
