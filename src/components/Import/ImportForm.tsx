@@ -54,7 +54,6 @@ const ImportForm: React.FC<{
 
   const [searchProvider, setSearchProvider] = useState('');
   const [providerDebounced] = useDebouncedValue(searchProvider, 100);
-  // const [searchProvider, setSearchProvider] = useDebouncedState('', 200);
   const [searchBranch, setSearchBranch] = useState('');
   const [branchDebounced] = useDebouncedValue(searchBranch, 100);
   const { providerData, branchData, onSubmitImportForm, importData } =
@@ -110,6 +109,7 @@ const ImportForm: React.FC<{
           unitId: item.unitId.toString(),
         })),
       };
+      console.log(importData.provider.name,"day")
       setSearchProvider(importData.provider.name);
       setSearchBranch(importData.branch.address);
       type TransformDataKeys = keyof typeof transformData;
@@ -121,13 +121,13 @@ const ImportForm: React.FC<{
       );
     }
   }, [importData]);
-
+ console.log(searchProvider,"ne")
   return (
     branchData !== undefined &&
     providerData !== undefined && (
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
-        {importData !== undefined &&
+        {importData !== undefined   &&
           <> <Flex justify="space-between" py="lg" gap="lg">
           <Controller
             name="branch"
