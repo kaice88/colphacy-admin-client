@@ -122,6 +122,7 @@ const ImportForm: React.FC<{
     }
   }, [importData]);
  console.log(searchProvider,"ne")
+ console.log(importData,"ne")
   return (
     branchData !== undefined &&
     providerData !== undefined && (
@@ -149,6 +150,7 @@ const ImportForm: React.FC<{
                 data={transformSelectData(branchData || [], true)}
                 searchable
                 onSearchChange={(value) => {
+                  console.log(value,"search")
                   setSearchBranch(value);
                 }}
                 searchValue={searchBranch}
