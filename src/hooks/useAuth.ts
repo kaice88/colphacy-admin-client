@@ -43,12 +43,7 @@ function useAuth() {
       logout();
       return axios.post(REQUEST_AUTH_LOGOUT);
     },
-    onSuccess: () => {
-      // logout();
-    },
-    onError: (error) => {
-      notificationShow("error", "Error!", error.message);
-    },
+   
   });
 
   const getTokenDuration = () => {

@@ -11,14 +11,12 @@ const Layout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   useEffect(() => {
-    console.log("hi")
     if (!isAuthenticated) {
       navigate(LOGIN, { state: { from: location.pathname } });
     }
     else {
    
       const tokenDuration = getTokenDuration()
-      console.log(tokenDuration)
       const logoutTimeout = setTimeout(() => {
         logout.mutate();
       

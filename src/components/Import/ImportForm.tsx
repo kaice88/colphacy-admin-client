@@ -109,7 +109,6 @@ const ImportForm: React.FC<{
           unitId: item.unitId.toString(),
         })),
       };
-      console.log(importData.provider.name,"day")
       setSearchProvider(importData.provider.name);
       setSearchBranch(importData.branch.address);
       type TransformDataKeys = keyof typeof transformData;
@@ -121,8 +120,7 @@ const ImportForm: React.FC<{
       );
     }
   }, [importData]);
- console.log(searchProvider,"ne")
- console.log(importData,"ne")
+
   return (
     branchData !== undefined &&
     providerData !== undefined && (
@@ -150,7 +148,6 @@ const ImportForm: React.FC<{
                 data={transformSelectData(branchData || [], true)}
                 searchable
                 onSearchChange={(value) => {
-                  console.log(value,"search")
                   setSearchBranch(value);
                 }}
                 searchValue={searchBranch}

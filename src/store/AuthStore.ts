@@ -29,7 +29,6 @@ const useAuthStore = create<AuthStoreState>((set) => ({
 
   login: (accessToken, userProfile,expirationTime) => {
     set((state) => {
-      console.log("abi",expirationTime)
       state.setLocalStorage(accessToken, userProfile,expirationTime);
       return {
         accessToken,
