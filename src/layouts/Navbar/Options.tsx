@@ -35,12 +35,12 @@ export const options: Option[] = [
     label: 'Quản lý sản phẩm',
     links: [
       {
-        url: 'unit-management',
-        label: 'Đơn vị',
-      },
-      {
         url: 'product-management',
         label: 'Sản phẩm',
+      },
+      {
+        url: 'unit-management',
+        label: 'Đơn vị',
       },
       {
         url: 'category-management',

@@ -1,10 +1,8 @@
 import axios from '../settings/axios';
 import { useEffect, useState } from 'react';
 import { handleGlobalException } from '../utils/error';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { REQUEST_PRODUCTS } from '../constants/apis';
-import { ProductListItem } from '../components/Product/type';
-import { notificationShow } from '../components/Notification';
+import { useQuery } from '@tanstack/react-query';
+
 import { useBranch } from './useBranch';
 
 // interface ApiResponse {

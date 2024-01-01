@@ -85,9 +85,10 @@ const ImportForm: React.FC<{
         notificationShow(
           'success',
           'Success!',
-          `${!importId
-            ? 'Thêm sản phẩm mới thành công!'
-            : 'Cập nhật sản phẩm thành công!'
+          `${
+            !importId
+              ? 'Thêm sản phẩm mới thành công!'
+              : 'Cập nhật sản phẩm thành công!'
           } `,
         );
         onClose();
@@ -126,138 +127,144 @@ const ImportForm: React.FC<{
     providerData !== undefined && (
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
-        {importData !== undefined   &&
-          <> <Flex justify="space-between" py="lg" gap="lg">
-          <Controller
-            name="branch"
-            control={control}
-            rules={{ required: true }}
-            render={({ field }) => (
-              <Select
-                {...field}
-                required
-                radius="md"
-                style={
-                  mode === 'VIEW'
-                    ? {
-                      pointerEvents: 'none',
-                    }
-                    : {}
-                }
-                label="Chi nhánh"
-                data={transformSelectData(branchData || [], true)}
-                searchable
-                onSearchChange={(value) => {
-                  setSearchBranch(value);
-                }}
-                searchValue={searchBranch}
-                error={
-                  errors.branch
-                    ? errors.branch.type === 'required'
-                      ? 'Chi nhánh không được để trống'
-                      : errors.branch.message
-                    : false
-                }
-                w="100%"
+          {importData !== undefined && (
+            <>
+              {' '}
+              <Flex justify="space-between" py="lg" gap="lg">
+                <Controller
+                  name="branch"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      required
+                      radius="md"
+                      style={
+                        mode === 'VIEW'
+                          ? {
+                              pointerEvents: 'none',
+                            }
+                          : {}
+                      }
+                      label="Chi nhánh"
+                      data={transformSelectData(branchData || [], true)}
+                      searchable
+                      onSearchChange={(value) => {
+                        setSearchBranch(value);
+                      }}
+                      searchValue={searchBranch}
+                      error={
+                        errors.branch
+                          ? errors.branch.type === 'required'
+                            ? 'Chi nhánh không được để trống'
+                            : errors.branch.message
+                          : false
+                      }
+                      w="100%"
+                    />
+                  )}
+                />
+                <Controller
+                  name="provider"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      w="100%"
+                      required
+                      radius="md"
+                      style={
+                        mode === 'VIEW'
+                          ? {
+                              pointerEvents: 'none',
+                            }
+                          : {}
+                      }
+                      label="Nhà cung cấp"
+                      data={transformSelectData(providerData || [])}
+                      searchable
+                      onSearchChange={(value) => {
+                        setSearchProvider(value);
+                      }}
+                      searchValue={searchProvider}
+                      error={
+                        errors.provider
+                          ? errors.provider.type === 'required'
+                            ? 'Nhà cung cấp phẩm không được để trống'
+                            : errors.provider.message
+                          : false
+                      }
+                    />
+                  )}
+                />
+                <Controller
+                  name="invoiceNumber"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <TextInput
+                      w="100%"
+                      {...field}
+                      style={
+                        mode === 'VIEW'
+                          ? {
+                              pointerEvents: 'none',
+                            }
+                          : {}
+                      }
+                      required
+                      label="Số hóa đơn"
+                      radius="md"
+                      error={
+                        errors.invoiceNumber
+                          ? errors.invoiceNumber.message
+                          : false
+                      }
+                    />
+                  )}
+                />
+                <Controller
+                  name="importTime"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <DateTimePicker
+                      w="100%"
+                      {...field}
+                      style={
+                        mode === 'VIEW'
+                          ? {
+                              pointerEvents: 'none',
+                            }
+                          : {}
+                      }
+                      required
+                      label="Ngày nhập"
+                      radius="md"
+                      error={
+                        errors.importTime ? errors.importTime.message : false
+                      }
+                      dropdownType="modal"
+                    />
+                  )}
+                />
+              </Flex>
+              <ImportDetails
+                control={control}
+                importFields={importFields}
+                errors={errors}
+                importDetails={importData?.importDetails}
+                unitData={[]}
+                appendImport={appendImport}
+                removeImport={removeImport}
+                mode={mode}
+                watch={watch}
+                setValue={setValue}
               />
-            )}
-          />
-          <Controller
-            name="provider"
-            control={control}
-            rules={{ required: true }}
-            render={({ field }) => (
-              <Select
-                {...field}
-                w="100%"
-                required
-                radius="md"
-                style={
-                  mode === 'VIEW'
-                    ? {
-                      pointerEvents: 'none',
-                    }
-                    : {}
-                }
-                label="Nhà cung cấp"
-                data={transformSelectData(providerData || [])}
-                searchable
-                onSearchChange={(value) => {
-                  setSearchProvider(value);
-                }}
-                searchValue={searchProvider}
-                error={
-                  errors.provider
-                    ? errors.provider.type === 'required'
-                      ? 'Nhà cung cấp phẩm không được để trống'
-                      : errors.provider.message
-                    : false
-                }
-              />
-            )}
-          />
-          <Controller
-            name="invoiceNumber"
-            control={control}
-            rules={{ required: true }}
-            render={({ field }) => (
-              <TextInput
-                w="100%"
-                {...field}
-                style={
-                  mode === 'VIEW'
-                    ? {
-                      pointerEvents: 'none',
-                    }
-                    : {}
-                }
-                required
-                label="Số hóa đơn"
-                radius="md"
-                error={
-                  errors.invoiceNumber ? errors.invoiceNumber.message : false
-                }
-              />
-            )}
-          />
-          <Controller
-            name="importTime"
-            control={control}
-            rules={{ required: true }}
-            render={({ field }) => (
-              <DateTimePicker
-                w="100%"
-                {...field}
-                style={
-                  mode === 'VIEW'
-                    ? {
-                      pointerEvents: 'none',
-                    }
-                    : {}
-                }
-                required
-                label="Ngày nhập"
-                radius="md"
-                error={errors.importTime ? errors.importTime.message : false}
-                dropdownType="modal"
-              />
-            )}
-          />
-        </Flex>
-         
-          <ImportDetails
-            control={control}
-            importFields={importFields}
-            errors={errors}
-            importDetails={importData?.importDetails}
-            unitData={[]}
-            appendImport={appendImport}
-            removeImport={removeImport}
-            mode={mode}
-            watch={watch}
-            setValue={setValue}
-          /></>
-          }
+            </>
+          )}
         </div>
 
         {mode !== 'VIEW' && (
@@ -298,7 +305,6 @@ const ImportForm: React.FC<{
       </form>
     )
   );
-
 };
 
 export default ImportForm;

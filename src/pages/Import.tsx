@@ -1,13 +1,15 @@
 import {
+  ActionIcon,
   Button,
   Flex,
   Modal,
   Pagination,
+  Select,
   Title,
   useMantineTheme,
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import { IconPlus, IconSearch } from '@tabler/icons-react';
+import { useDebouncedValue, useDisclosure } from '@mantine/hooks';
+import { IconBuildingStore, IconPlus, IconSearch } from '@tabler/icons-react';
 // import ImportForm from '../components/Import/ImportForm';
 import ImportTable from '../components/Import/ImportTable';
 // import useImport from '../hooks/useImport';
@@ -16,6 +18,8 @@ import ImportForm from '../components/Import/ImportForm';
 import useImport from '../hooks/useImport';
 import { notificationShow } from '../components/Notification';
 import { DatePickerInput, DatesProvider } from '@mantine/dates';
+import { transformSelectData } from '../utils/helper';
+import useAuth from '../hooks/useAuth';
 
 const LIMIT = 10;
 
@@ -24,19 +28,34 @@ export default function Import() {
   const [importId, setImportId] = useState<number | null>(null);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const inputRef = useRef<HTMLInputElement | null>(null);
   const [keyword, setKeyWord] = useState<string>('');
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const [opened, { open, close }] = useDisclosure(false);
   const [mode, setMode] = useState<'ADD' | 'EDIT' | 'VIEW'>('EDIT');
+  const { userProfile } = useAuth();
   const theme = useMantineTheme();
-  const { importData, loading, fetchImport, onSubmitDeleteImportForm } =
-    useImport((currentPage - 1) * LIMIT, keyword, startDate, endDate);
+  const [searchBranch, setSearchBranch] = useState('');
+  const [selectedBranch, setSelectedBranch] = useState(null);
+  const [branchDebounced] = useDebouncedValue(searchBranch, 100);
+  const {
+    importData,
+    loading,
+    fetchImport,
+    onSubmitDeleteImportForm,
+    branchData,
+  } = useImport(
+    branchDebounced,
+    Number(selectedBranch),
+    (currentPage - 1) * LIMIT,
+    keyword,
+    startDate,
+    endDate,
+  );
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const keyword = e.target.value;
     setKeyWord(keyword);
     setCurrentPage(1);
   };
-
   const handleEdit = (Id: number) => {
     setMode('EDIT');
     setImportId(Id);
@@ -67,30 +86,11 @@ export default function Import() {
         Danh sách đơn nhập hàng
       </Title>
       <Flex justify="space-between" align="center" py="lg">
-        <Flex align="center" gap="sm">
-          <DatesProvider settings={{ locale: 'vn' }}>
-            <DatePickerInput
-              placeholder="Ngày bắt đầu"
-              value={startDate}
-              valueFormat="DD/MM/YYYY"
-              onChange={setStartDate}
-              clearable
-            />
-          </DatesProvider>
-          đến
-          <DatePickerInput
-            placeholder="Ngày kết thúc"
-            value={endDate}
-            valueFormat="DD/MM/YYYY"
-            onChange={setEndDate}
-            clearable
-          />
-        </Flex>
-        {/* <div className="search">
+        <div className="search">
           <input
             ref={inputRef}
             value={keyword}
-            placeholder="Tìm bằng tên đơn nhập hàng..."
+            placeholder="Tìm kiếm theo tên sản phẩm"
             spellCheck={false}
             onChange={handleChange}
           />
@@ -100,7 +100,7 @@ export default function Import() {
           >
             <IconSearch size="1.3rem"></IconSearch>
           </button>
-        </div> */}
+        </div>
         <Button
           leftIcon={<IconPlus size="15px" />}
           styles={(theme) => ({
@@ -123,6 +123,45 @@ export default function Import() {
           Thêm đơn nhập hàng
         </Button>
       </Flex>
+      <Flex justify="flex-start" align="center" pb="lg" gap="lg">
+        <Flex align="center" gap="sm">
+          <DatesProvider settings={{ locale: 'vn' }}>
+            <DatePickerInput
+              placeholder="Ngày bắt đầu"
+              value={startDate}
+              valueFormat="DD/MM/YYYY"
+              onChange={setStartDate}
+              clearable
+            />
+          </DatesProvider>
+          đến
+          <DatePickerInput
+            placeholder="Ngày kết thúc"
+            value={endDate}
+            valueFormat="DD/MM/YYYY"
+            onChange={setEndDate}
+            clearable
+          />
+        </Flex>
+        {userProfile?.role === 'ADMIN' && (
+          <Select
+            radius="md"
+            data={transformSelectData(branchData || [], true)}
+            searchable
+            onSearchChange={(value) => {
+              setSearchBranch(value);
+            }}
+            onChange={(value) => setSelectedBranch(value)}
+            clearable
+            placeholder="Chọn chi nhánh"
+            icon={
+              <ActionIcon color="indigo" variant="light">
+                <IconBuildingStore size="1.125rem" />
+              </ActionIcon>
+            }
+          />
+        )}
+      </Flex>
 
       <Modal
         size="100%"
@@ -134,8 +173,8 @@ export default function Import() {
           mode === 'ADD'
             ? 'Thêm đơn nhập hàng'
             : mode === 'EDIT'
-              ? 'Sửa đơn nhập hàng'
-              : 'Xem đơn nhập hàng'
+            ? 'Sửa đơn nhập hàng'
+            : 'Xem đơn nhập hàng'
         }
         styles={() => ({
           title: {

@@ -26,8 +26,6 @@ import { transformSelectData } from '../utils/helper';
 import emptyBox from '../assets/images/emptyBox.svg';
 
 export default function Dashboard() {
-  const [searchBranch, setSearchBranch] = useState('');
-  const [selectedBranch, setSelectedBranch] = useState(null);
   const [selectedYear, setSelectedYear] = useState(
     new Date().getFullYear().toString(),
   );
@@ -35,7 +33,8 @@ export default function Dashboard() {
     (new Date().getMonth() + 1).toString(),
   );
   const theme = useMantineTheme();
-
+  const [searchBranch, setSearchBranch] = useState('');
+  const [selectedBranch, setSelectedBranch] = useState(null);
   const [branchDebounced] = useDebouncedValue(searchBranch, 100);
   const { statisticsData, yearData, branchData, statisticsProductData } =
     useStatistics(

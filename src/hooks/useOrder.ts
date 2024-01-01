@@ -1,12 +1,12 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { handleGlobalException } from "../utils/error";
-import { OrderItem } from "../components/Order/type";
-import { useEffect, useState } from "react";
-import axios from "../settings/axios";
-import { ErrorObject } from "../types/error";
-import { notificationShow } from "../components/Notification";
-import { useBranch } from "./useBranch";
-import { REQUEST_CUSTOMER_SEARCH_KEY } from "../constants/apis";
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { handleGlobalException } from '../utils/error';
+import { OrderItem } from '../components/Order/type';
+import { useEffect, useState } from 'react';
+import axios from '../settings/axios';
+import { ErrorObject } from '../types/error';
+import { notificationShow } from '../components/Notification';
+import { useBranch } from './useBranch';
+import { REQUEST_CUSTOMER_SEARCH_KEY } from '../constants/apis';
 interface ApiResponse {
   data: {
     items: OrderItem[];
@@ -22,10 +22,10 @@ export default function useOrder(
   keyword?: string | undefined,
   startDate?: Date | undefined,
   endDate?: Date | undefined,
-  status: string | undefined
+  status: string | undefined,
 ) {
   const fetchOrder = useQuery<ApiResponse>({
-    queryKey: ["get-orders"],
+    queryKey: ['get-orders'],
     queryFn: () => {
       const params: { [key: string]: number | string | Date } = {};
       if (offset) {
@@ -38,13 +38,12 @@ export default function useOrder(
         params.keyword = keyword;
       }
       if (startDate) {
-        params.startDate = new Date(startDate).toISOString().slice(0, 10);
+        params.startDate = new Date(startDate).toISOString();
       }
       if (endDate) {
-        params.endDate = new Date(endDate).toISOString().slice(0, 10)
-
+        params.endDate = new Date(endDate).toISOString();
       }
-      return axios.get("/orders", { params });
+      return axios.get('/orders', { params });
     },
     enabled: false,
     onError: (error) => {
@@ -52,7 +51,7 @@ export default function useOrder(
     },
   });
   const changeStatusOrder = useMutation({
-    mutationKey: ["update-status-order"],
+    mutationKey: ['update-status-order'],
     mutationFn: (data: { id: number; toStatus: string | null }) => {
       return axios.put(`/orders`, data);
     },
@@ -70,7 +69,7 @@ export default function useOrder(
         handleGlobalException(newError, () => {
           if (newError.response.status === 400) {
             const data = newError.response.data;
-            notificationShow("error", "Error!", data["toStatus"]);
+            notificationShow('error', 'Error!', data['toStatus']);
           }
         });
       },
@@ -88,7 +87,7 @@ export default function useOrder(
 
 export function useDetailOrder(id: number) {
   const fetchDetailOrder = useQuery({
-    queryKey: ["get-detail-order"],
+    queryKey: ['get-detail-order'],
     queryFn: () => {
       return axios.get(`/orders/${id}`);
     },
@@ -99,7 +98,7 @@ export function useDetailOrder(id: number) {
 export function useAddOrder(
   searchBranch?: string,
   searchProduct?: string,
-  searchCustomer?: string
+  searchCustomer?: string,
 ) {
   const [branchData, setBranchData] = useState();
   const [productData, setProductData] = useState();
@@ -108,7 +107,7 @@ export function useAddOrder(
   const { fetchBranchSearchKeywork } = useBranch(searchObjBranch);
 
   const fetchCustomerSearchKeywork = useQuery({
-    queryKey: ["customer_search_keywork"],
+    queryKey: ['customer_search_keywork'],
     queryFn: () =>
       axios.get(REQUEST_CUSTOMER_SEARCH_KEY(searchCustomer, 0, 20)),
     enabled: false,
@@ -139,12 +138,12 @@ export function useAddOrder(
     }
   }
   const fetchProductSearchKeywork = useQuery({
-    queryKey: ["product_search_keywork"],
+    queryKey: ['product_search_keywork'],
     queryFn: () =>
-      axios.get("/products/customers", {
+      axios.get('/products/customers', {
         params: {
           keyword: searchProduct,
-          sortBy: "SALE_PRICE",
+          sortBy: 'SALE_PRICE',
         },
       }),
     enabled: false,
@@ -162,7 +161,7 @@ export function useAddOrder(
     }
   }
   const handleSubmitOrderForm = useMutation({
-    mutationKey: ["add-order"],
+    mutationKey: ['add-order'],
     mutationFn: (data) => {
       const transformData = {
         ...data,
@@ -176,14 +175,14 @@ export function useAddOrder(
           salePrice: Number(item.salePrice),
         })),
       };
-      return axios.post("/orders", transformData);
+      return axios.post('/orders', transformData);
     },
   });
 
   const onSubmitAddOrderForm = (
     data,
     onError: (error: object) => void,
-    onSuccess: () => void
+    onSuccess: () => void,
   ) => {
     handleSubmitOrderForm.mutate(data, {
       onSuccess: onSuccess,
