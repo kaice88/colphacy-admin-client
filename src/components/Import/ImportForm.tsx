@@ -109,9 +109,7 @@ const ImportForm: React.FC<{
     }
   }, [importData]);
   console.log(searchBranch);
-  useEffect(() => {
-    console.log('mount');
-  }, []);
+  useEffect(() => {}, []);
 
   return (
     branchData !== undefined &&
@@ -180,7 +178,7 @@ const ImportForm: React.FC<{
                       onSearchChange={(value) => {
                         setSearchProvider(value);
                       }}
-                      searchValue={searchProvider}
+                      searchValue={searchProvider || importData?.provider?.name}
                       error={
                         errors.provider
                           ? errors.provider.type === 'required'

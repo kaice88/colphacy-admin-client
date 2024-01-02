@@ -35,7 +35,6 @@ export default function Import() {
   const [searchBranch, setSearchBranch] = useState('');
   const [selectedBranch, setSelectedBranch] = useState(null);
   const [branchDebounced] = useDebouncedValue(searchBranch, 100);
-  console.log('hi');
   const {
     importData,
     loading,
