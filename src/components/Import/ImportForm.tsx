@@ -109,6 +109,9 @@ const ImportForm: React.FC<{
     }
   }, [importData]);
   console.log(searchBranch);
+  useEffect(() => {
+    console.log('mount');
+  }, []);
 
   return (
     branchData !== undefined &&
