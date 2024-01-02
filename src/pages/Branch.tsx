@@ -7,15 +7,16 @@ import {
   Title,
   useMantineTheme,
   Flex,
-} from '@mantine/core';
-import BranchTable from '../components/Branch/BranchTable';
-import { IconPlus, IconSearch } from '@tabler/icons-react';
-import { useEffect, useRef, useState } from 'react';
-import { useBranch } from '../hooks/useBranch';
-import { handleGlobalException } from '../utils/error';
-import { useForm } from 'react-hook-form';
-import { useDisclosure } from '@mantine/hooks';
-import BranchForm from '../components/Branch/BranchForm';
+} from "@mantine/core";
+import { IconPlus, IconSearch } from "@tabler/icons-react";
+import { useEffect, useRef, useState } from "react";
+import { useBranch, useEditBranch } from "../hooks/useBranch";
+import { handleGlobalException } from "../utils/error";
+import { useForm } from "react-hook-form";
+import { useDisclosure } from "@mantine/hooks";
+import BranchForm from "../components/Branch/BranchForm";
+import { notificationShow } from "../components/Notification";
+import BranchTable from "../components/Branch/BranchTable";
 interface AllBranchesProps {
   items: ItemsProps[];
   numPages: number;
@@ -29,7 +30,7 @@ interface ItemsProps {
   phone: string;
 }
 function formatProvincesDistricts(
-  branchesProvinces: { slug: string; name: string }[],
+  branchesProvinces: { slug: string; name: string }[]
 ) {
   return branchesProvinces.map((province) => ({
     value: province.slug,
@@ -48,9 +49,9 @@ function Branch() {
     limit: 0,
     totalItems: 0,
   });
-  const [provinceSlug, setProvinceSlug] = useState('');
-  const [districtSlug, setDistrictSlug] = useState('');
-  const [searchValue, setSearchValue] = useState('');
+  const [provinceSlug, setProvinceSlug] = useState("");
+  const [districtSlug, setDistrictSlug] = useState("");
+  const [searchValue, setSearchValue] = useState("");
   const [isReloadata, setIsReloadata] = useState(false);
 
   const [branchesDistricts, setBranchesDistricts] = useState([]);
@@ -74,10 +75,12 @@ function Branch() {
     fetchBranchSearchKeywork,
   } = useBranch(search, filter, provinceSlug);
 
+  const { onSubmitDeleteBranchForm } = useEditBranch();
+
   const { setError } = useForm({
     defaultValues: {
-      offset: '',
-      limit: '',
+      offset: "",
+      limit: "",
     },
   });
 
@@ -91,13 +94,13 @@ function Branch() {
   };
   const handleProvincesChange = (value: string) => {
     setProvinceSlug(value);
-    setDistrictSlug('');
-    setSearchValue('');
+    setDistrictSlug("");
+    setSearchValue("");
     setCurrentPage(1);
   };
   const handleDistrictsChange = (value: string) => {
     setDistrictSlug(value);
-    setSearchValue('');
+    setSearchValue("");
     setCurrentPage(1);
   };
 
@@ -125,7 +128,7 @@ function Branch() {
         setAllBranches(data.data.data);
       } else if (data.isError) {
         const error = data.error;
-        handleGlobalException(error, () => { });
+        handleGlobalException(error, () => {});
       }
     }
     fetchBranchData();
@@ -136,12 +139,12 @@ function Branch() {
       } else if (data.isError) {
         const error = data.error;
         handleGlobalException(error, () => {
-          setError('offset', {
-            type: 'manual',
+          setError("offset", {
+            type: "manual",
             message: error.response.data.offset,
           });
-          setError('limit', {
-            type: 'manual',
+          setError("limit", {
+            type: "manual",
             message: error.response.data.limit,
           });
         });
@@ -161,7 +164,7 @@ function Branch() {
         setBranchesProvinces(data.data.data);
       } else if (data.isError) {
         const error = data.error;
-        handleGlobalException(error, () => { });
+        handleGlobalException(error, () => {});
       }
     }
     fetchProvincesData();
@@ -171,7 +174,7 @@ function Branch() {
         setBranchesDistricts(data.data.data);
       } else if (data.isError) {
         const error = data.error;
-        handleGlobalException(error, () => { });
+        handleGlobalException(error, () => {});
       }
     }
     if (provinceSlug) {
@@ -192,10 +195,10 @@ function Branch() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchValue = e.target.value;
-    if (!searchValue.startsWith(' ')) {
+    if (!searchValue.startsWith(" ")) {
       setSearchValue(searchValue);
-      setProvinceSlug('');
-      setDistrictSlug('');
+      setProvinceSlug("");
+      setDistrictSlug("");
       setBranchesDistricts([]);
       setCurrentPage(1);
     }
@@ -212,6 +215,13 @@ function Branch() {
     setIsReloadata(!isReloadata);
   };
 
+  const handleDelete = (Id: number) => {
+    onSubmitDeleteBranchForm(Id, () => {
+      notificationShow("success", "Success!", "Xóa chi nhánh thành công!");
+      setIsReloadata(!isReloadata);
+    });
+  };
+
   const handleCloseModal = () => {
     close();
   };
@@ -222,7 +232,7 @@ function Branch() {
         Danh sách chi nhánh
       </Title>
       <Flex justify="space-between" py="lg">
-        <Flex className="search-ctn" gap="xs" direction={'column'}>
+        <Flex className="search-ctn" gap="xs" direction={"column"}>
           <Flex className="search" justify="space-between">
             <input
               ref={inputRef}
@@ -261,6 +271,12 @@ function Branch() {
           styles={(theme) => ({
             root: {
               backgroundColor: theme.colors.munsellBlue[0],
+              ...theme.fn.hover({
+                backgroundColor: theme.fn.darken(
+                  theme.colors.munsellBlue[0],
+                  0.1,
+                ),
+              }),
             },
           })}
           onClick={open}
@@ -277,7 +293,7 @@ function Branch() {
         m={20}
         styles={() => ({
           title: {
-            fontWeight: 'bold',
+            fontWeight: "bold",
           },
         })}
       >
@@ -289,6 +305,7 @@ function Branch() {
       <div className="branch-table">
         <BranchTable
           handleSuccessEditSubmit={handleSuccessSubmitEdit}
+          handleDelete={handleDelete}
           startIndex={startIndex}
           endIndex={endIndex}
           allBranches={allBranches}
@@ -301,12 +318,12 @@ function Branch() {
           <div>Tìm thấy 1 kết quả.</div>
         ) : (
           <div>
-            Hiển thị{' '}
+            Hiển thị{" "}
             {endIndex <= totalBranches
               ? itemsPerPage
-              : totalBranches % itemsPerPage}{' '}
-            kết quả từ {startIndex + 1} -{' '}
-            {endIndex <= totalBranches ? endIndex : totalBranches} trong tổng{' '}
+              : totalBranches % itemsPerPage}{" "}
+            kết quả từ {startIndex + 1} -{" "}
+            {endIndex <= totalBranches ? endIndex : totalBranches} trong tổng{" "}
             {totalBranches} kết quả
           </div>
         )}
@@ -317,7 +334,7 @@ function Branch() {
           position="center"
           styles={(theme) => ({
             control: {
-              '&[data-active]': {
+              "&[data-active]": {
                 backgroundColor: theme.colors.munsellBlue[0],
                 border: 0,
               },

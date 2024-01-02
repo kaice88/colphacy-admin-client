@@ -1,14 +1,16 @@
-import { FC, useState } from 'react';
-import { Modal, Table } from '@mantine/core';
-import { IconEdit, IconTrashX } from '@tabler/icons-react';
-import BranchForm from './BranchForm';
-import { useDisclosure } from '@mantine/hooks';
-import React from 'react';
+import { FC, useState } from "react";
+import { Modal, Table } from "@mantine/core";
+import { IconEdit, IconTrashX } from "@tabler/icons-react";
+import BranchForm from "./BranchForm";
+import { useDisclosure } from "@mantine/hooks";
+import React from "react";
+import { deleteModal } from "../../utils/deleteModal";
 interface BranchTableProps {
   startIndex: number;
   endIndex: number;
   allBranches: AllBranchesProps;
   handleSuccessEditSubmit: () => void;
+  handleDelete: (Id: number) => void;
 }
 interface AllBranchesProps {
   items: ItemsProps[];
@@ -26,6 +28,7 @@ const BranchTable: FC<BranchTableProps> = ({
   startIndex,
   allBranches,
   handleSuccessEditSubmit,
+  handleDelete,
 }) => {
   const [opened, { open, close }] = useDisclosure(false);
   const handleSuccessSubmit = () => {
@@ -48,7 +51,7 @@ const BranchTable: FC<BranchTableProps> = ({
     <React.Fragment key={element.id}>
       {openedRowId === element.id && (
         <Modal
-          title={isEdit ? 'Sửa chi nhánh' : 'Xem chi nhánh'}
+          title={isEdit ? "Sửa chi nhánh" : "Xem chi nhánh"}
           opened={opened}
           onClose={close}
           size="60"
@@ -56,7 +59,7 @@ const BranchTable: FC<BranchTableProps> = ({
           m={20}
           styles={() => ({
             title: {
-              fontWeight: 'bold',
+              fontWeight: "bold",
             },
           })}
         >
@@ -82,7 +85,17 @@ const BranchTable: FC<BranchTableProps> = ({
               openModal(element.id, true);
             }}
           />
-          <IconTrashX className="delete-button" strokeWidth="1.8" size="22px" />
+          <IconTrashX
+            className="delete-button"
+            strokeWidth="1.8"
+            size="22px"
+            onClick={(event) => {
+              event.stopPropagation();
+              deleteModal("chi nhánh", "chi nhánh này", () =>
+                handleDelete(element.id)
+              );
+            }}
+          />
         </td>
       </tr>
     </React.Fragment>
@@ -94,7 +107,7 @@ const BranchTable: FC<BranchTableProps> = ({
       striped
       highlightOnHover
       withBorder
-      className="listTable"
+      className="listTableCustom"
     >
       <thead>
         <tr>

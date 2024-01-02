@@ -7,5 +7,13 @@
         overflow: hidden; /* Hide overflowed text */
         text-overflow: ellipsis; /* Show ellipsis (...) when text overflows */
     } 
-  
+}
+
+.listTableCustom {
+    tr td,th {
+        padding: 10px 20px !important;
+        white-space: nowrap; /* Prevent text from wrapping */
+        overflow: hidden; /* Hide overflowed text */
+        text-overflow: ellipsis; /* Show ellipsis (...) when text overflows */
+    } 
 }
