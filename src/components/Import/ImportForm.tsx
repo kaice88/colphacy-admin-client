@@ -145,7 +145,7 @@ const ImportForm: React.FC<{
                         console.log('onSearchChange', value);
                         setSearchBranch(value);
                       }}
-                      searchValue={searchBranch}
+                      // searchValue={searchBranch}
                       error={
                         errors.branch
                           ? errors.branch.type === 'required'
