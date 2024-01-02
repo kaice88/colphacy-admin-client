@@ -10,9 +10,7 @@ import {
 } from '@mantine/core';
 import { useDebouncedValue, useDisclosure } from '@mantine/hooks';
 import { IconBuildingStore, IconPlus, IconSearch } from '@tabler/icons-react';
-// import ImportForm from '../components/Import/ImportForm';
 import ImportTable from '../components/Import/ImportTable';
-// import useImport from '../hooks/useImport';
 import { useRef, useState } from 'react';
 import ImportForm from '../components/Import/ImportForm';
 import useImport from '../hooks/useImport';
@@ -37,6 +35,7 @@ export default function Import() {
   const [searchBranch, setSearchBranch] = useState('');
   const [selectedBranch, setSelectedBranch] = useState(null);
   const [branchDebounced] = useDebouncedValue(searchBranch, 100);
+  console.log('hi');
   const {
     importData,
     loading,

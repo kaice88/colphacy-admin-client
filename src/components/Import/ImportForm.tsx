@@ -1,22 +1,10 @@
-import {
-  Button,
-  FileButton,
-  Flex,
-  Input,
-  Loader,
-  NumberInput,
-  Select,
-  TextInput,
-  Textarea,
-} from '@mantine/core';
+import { Button, Flex, Select, TextInput } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
-import useProvider from '../../hooks/useProvider';
 import useImportDetail from '../../hooks/useImportDetail';
 import { transformSelectData } from '../../utils/helper';
-import { isEmpty } from 'lodash';
 import { useEffect, useState } from 'react';
-import { useDebouncedState, useDebouncedValue } from '@mantine/hooks';
+import { useDebouncedValue } from '@mantine/hooks';
 import ImportDetails from './ImportDetails';
 import { handleGlobalException } from '../../utils/error';
 import { notificationShow } from '../Notification';
@@ -32,7 +20,6 @@ const ImportForm: React.FC<{
     watch,
     setError,
     setValue,
-    getValues,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -121,6 +108,7 @@ const ImportForm: React.FC<{
       );
     }
   }, [importData]);
+  console.log(searchBranch);
 
   return (
     branchData !== undefined &&
@@ -151,6 +139,7 @@ const ImportForm: React.FC<{
                       data={transformSelectData(branchData || [], true)}
                       searchable
                       onSearchChange={(value) => {
+                        console.log('onSearchChange', value);
                         setSearchBranch(value);
                       }}
                       searchValue={searchBranch}
