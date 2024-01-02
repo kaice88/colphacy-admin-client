@@ -108,7 +108,6 @@ const ImportForm: React.FC<{
       );
     }
   }, [importData]);
-  console.log(searchBranch);
   useEffect(() => {}, []);
 
   return (
@@ -140,7 +139,6 @@ const ImportForm: React.FC<{
                       data={transformSelectData(branchData || [], true)}
                       searchable
                       onSearchChange={(value) => {
-                        console.log('onSearchChange', value);
                         setSearchBranch(value);
                       }}
                       searchValue={searchBranch || importData?.branch?.address}
