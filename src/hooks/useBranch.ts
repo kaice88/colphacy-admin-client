@@ -1,5 +1,7 @@
 import { Branch } from '../components/Branch/type';
+import { notificationShow } from '../components/Notification';
 import axios from '../settings/axios';
+import { handleGlobalException } from '../utils/error';
 import {
   REQUEST_BRANCHES,
   REQUEST_BRANCHES_PROVINCES,
@@ -148,7 +150,7 @@ export function useViewDetailBranch(id: number) {
 
   return {
     fetchBranchStatuses,
-    fetchViewDetailBranch,
+    fetchViewDetailBranch
   };
 }
 
@@ -171,8 +173,31 @@ export function useEditBranch() {
     });
   };
 
+  const handleDeleteBranch = useMutation({
+    mutationKey: ['delete-product'],
+    mutationFn: (id: number) => {
+      return axios.delete(`${REQUEST_BRANCHES}/${id}`);
+    },
+  });
+  const onSubmitDeleteBranchForm = (id: number, onSuccess: () => void) => {
+    handleDeleteBranch.mutate(id, {
+      onSuccess: onSuccess,
+      onError: (error) => {
+        handleGlobalException(error, () => {
+          if (error.response.status === 400) {
+            const data = error.response.data;
+            Object.keys(data).forEach((key) => {
+              notificationShow('error', 'Error!', data[key]);
+            });
+          }
+        });
+      },
+    });
+  };
+
   return {
     handleEditBranch,
     onSubmitEditBranchForm,
+    onSubmitDeleteBranchForm
   };
 }

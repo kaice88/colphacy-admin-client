@@ -335,7 +335,7 @@ const BranchForm: React.FC<{
       onSubmitAddBranchForm(
         data,
         () => {
-          handleSuccess('Thêm nhánh mới thành công!');
+          handleSuccess('Thêm chi nhánh mới thành công!');
         },
         handleError,
       );
@@ -343,7 +343,7 @@ const BranchForm: React.FC<{
       onSubmitEditBranchForm(
         data,
         () => {
-          handleSuccess('Chỉnh sửa nhánh thành công!');
+          handleSuccess('Chỉnh sửa chi nhánh thành công!');
         },
         handleError,
       );
