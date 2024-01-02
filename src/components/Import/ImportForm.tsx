@@ -74,8 +74,8 @@ const ImportForm: React.FC<{
           'Success!',
           `${
             !importId
-              ? 'Thêm sản phẩm mới thành công!'
-              : 'Cập nhật sản phẩm thành công!'
+              ? 'Thêm đơn nhập hàng mới thành công!'
+              : 'Cập nhật đơn nhập hàng thành công!'
           } `,
         );
         onClose();
@@ -145,7 +145,7 @@ const ImportForm: React.FC<{
                         console.log('onSearchChange', value);
                         setSearchBranch(value);
                       }}
-                      // searchValue={searchBranch}
+                      searchValue={searchBranch || importData?.branch?.address}
                       error={
                         errors.branch
                           ? errors.branch.type === 'required'
