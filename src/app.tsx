@@ -4,6 +4,7 @@ import { router } from "./routes";
 import { RouterProvider } from "react-router-dom";
 import { Notifications } from "@mantine/notifications";
 import { ModalsProvider } from "@mantine/modals";
+import NotificationPush from "./components/NotificationPush";
 
 export default function App() {
   // Create a client
@@ -25,7 +26,8 @@ export default function App() {
       >
         {" "}
         <ModalsProvider>
-          <Notifications position="top-right" zIndex={2077} />
+          <Notifications position="bottom-left" zIndex={2077} />
+          <NotificationPush />
           <RouterProvider router={router} />
         </ModalsProvider>
       </MantineProvider>
