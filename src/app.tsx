@@ -4,7 +4,7 @@ import { router } from "./routes";
 import { RouterProvider } from "react-router-dom";
 import { Notifications } from "@mantine/notifications";
 import { ModalsProvider } from "@mantine/modals";
-import NotificationPush from "./components/NotificationPush";
+import NotificationPush from "./components/Notifications/NotificationPush";
 
 export default function App() {
   // Create a client

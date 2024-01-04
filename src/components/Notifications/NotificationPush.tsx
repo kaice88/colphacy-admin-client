@@ -1,13 +1,37 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { Flex, Image, Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { convertDateTime } from "../utils/helper";
+import { convertDateTime } from "../../utils/helper";
 import { Anchor } from "@mantine/core";
+import { useNotification } from "../../hooks/useNotification";
+import { useMutation } from "@tanstack/react-query";
+import axios from "../../settings/axios";
+import { HANDLE_READ_NOTIFICATION } from "../../constants/apis";
 
 const NotificationPush: React.FC = () => {
   const token = localStorage.getItem("accessToken");
   const hasMounted = useRef(false);
+  const [reload, setReload] = useState(false);
+  const { refetch, refetchRead } = useNotification({ offset: 0, limit: 5 });
+  const handleSuccessRead = () => {
+    setReload((prev) => !prev);
+  };
+  const handleReadNoti = useMutation({
+    mutationKey: ["a-noti"],
+    mutationFn: (id: number) => {
+      return axios.put(HANDLE_READ_NOTIFICATION(id));
+    },
+    onSuccess: handleSuccessRead,
+  });
+  const onHandlReadNoti = (id: number) => {
+    handleReadNoti.mutate(id);
+  };
+
+  useEffect(() => {
+    refetch();
+    refetchRead();
+  }, [reload]);
 
   useEffect(() => {
     if (!hasMounted.current) {
@@ -52,7 +76,13 @@ const NotificationPush: React.FC = () => {
                     title: result?.title,
                     message: (
                       <>
-                        <Anchor href={result?.url} underline={false}>
+                        <Anchor
+                          onClick={() => {
+                            onHandlReadNoti(result?.id);
+                          }}
+                          href={result?.url}
+                          underline={false}
+                        >
                           <Flex py={5} gap="xs" align="center" direction="row">
                             <Image width={50} height={50} src={result?.image} />
                             <Flex
@@ -75,6 +105,7 @@ const NotificationPush: React.FC = () => {
                     ),
                     autoClose: 5000,
                   });
+                  handleSuccessRead();
                 } catch (e) {
                   console.log("Fetch onmessage error", e);
                 }
