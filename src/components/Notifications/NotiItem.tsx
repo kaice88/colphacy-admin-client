@@ -3,6 +3,7 @@ import { IconPointFilled } from "@tabler/icons-react";
 import { useMutation } from "@tanstack/react-query";
 import axios from "../../settings/axios";
 import { HANDLE_READ_NOTIFICATION } from "../../constants/apis";
+import { convertDateTime } from "../../utils/helper";
 
 interface NotiItemProps {
   id: number;
@@ -55,7 +56,7 @@ function NotiItem({
         >
           <Text fw={600}>{title}</Text>
           <Text>{description}</Text>
-          <Text style={{ color: "rgb(0, 67, 156)" }}>{createdTime}</Text>
+          <Text style={{ color: "rgb(0, 67, 156)" }}>{convertDateTime(createdTime)}</Text>
         </Flex>
         {read == false && (
           <IconPointFilled style={{ color: "rgb(0, 67, 156)" }} />
