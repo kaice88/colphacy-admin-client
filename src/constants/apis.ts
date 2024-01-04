@@ -69,3 +69,9 @@ export const REQUEST_CUSTOMER_SEARCH_KEY = (
   offset: number,
   limit: number
 ) => `/customers/customers?keyword=${keyword}&offset=${offset}&limit=${limit}`;
+
+//NOTIFICATIONS
+export const REQUEST_NOTIFICATION = `/notifications`;
+export const HANDLE_READ_NOTIFICATION = (id: number) =>
+  `/notifications/read/${id}`;
+export const HANDLE_READ_ALL_NOTIFICATION = `/notifications/read`;

@@ -5,17 +5,15 @@ import {
   Menu,
   Header,
   Flex,
-  Indicator,
-  ActionIcon,
 } from "@mantine/core";
 import Logo from "../assets/images/Logo.png";
 import {
-  IconBell,
   IconLogout,
   IconPassword,
   IconUserCircle,
 } from "@tabler/icons-react";
 import useAuth from "../hooks/useAuth";
+import NotiList from "../components/Notifications/NotiList";
 
 export default function HomeHeader() {
   const { userProfile } = useAuth();
@@ -29,17 +27,7 @@ export default function HomeHeader() {
         <Image maw={165} radius="md" src={Logo} alt="Random image" />
 
         <Flex gap="md" justify="center" align="center">
-          <Indicator
-            inline
-            label={1}
-            color="red"
-            size={20}
-            // disabled={prevCartData?.length ? false : true}
-          >
-            <ActionIcon color="indigo" variant="light">
-              <IconBell size="1.25rem" />
-            </ActionIcon>
-          </Indicator>
+          <NotiList />
           <Menu trigger="hover">
             <Menu.Target>
               <Button
