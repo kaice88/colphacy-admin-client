@@ -76,7 +76,7 @@ export const router = createBrowserRouter([
         element: <Review />,
       },
       {
-        path: '/dashboard',
+        path: 'dashboard',
         element: <Dashboard />,
       },
     ],

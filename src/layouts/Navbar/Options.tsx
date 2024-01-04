@@ -60,7 +60,7 @@ export const options: Option[] = [
   },
   {
     icon: <IconTruckDelivery size="1rem"></IconTruckDelivery>,
-    url: 'order-management',
+    url: 'order-management?tab=pending',
     label: 'Quản lý đơn hàng',
     links: [],
   },

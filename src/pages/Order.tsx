@@ -1,22 +1,28 @@
 import { Button, Flex, Modal, Pagination, Tabs, Title, useMantineTheme } from "@mantine/core";
 import { DatePickerInput, DatesProvider } from "@mantine/dates";
 import { IconPlus, IconSearch } from "@tabler/icons-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { OrderStatus } from "../enums/Order";
 import OrderTable from "../components/Order/OrderTable";
 import useOrder from "../hooks/useOrder";
 import { useDisclosure } from "@mantine/hooks";
 import AddOrderForm from "../components/Order/AddOrderForm";
+import {  useSearchParams } from "react-router-dom";
+import { isEmpty } from "lodash";
 const LIMIT = 10;
 
 const Order: React.FC = () => {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const [status, setStatus] = useState<string | null>("PENDING");
+  const [queryParameters, setSearchParams] = useSearchParams()
+  const [status, setStatus] = useState<string | null>(queryParameters.get("tab")?.toUpperCase());
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [keyword, setKeyWord] = useState<string>("");
 
+
+  
+  
 
   const theme = useMantineTheme();
   const { OrderData, handleChangeStatusOrder } = useOrder((currentPage - 1) * LIMIT, keyword, startDate, endDate, status);
@@ -91,7 +97,10 @@ const Order: React.FC = () => {
           Thêm đơn hàng
         </Button>
       </Flex>
-      <Tabs defaultValue="PENDING" onTabChange={setStatus}>
+      <Tabs defaultValue={ queryParameters.get("tab") ? queryParameters.get("tab")?.toUpperCase() : "PENDING"} onTabChange={(status) => {
+        setStatus(status);
+        setSearchParams({tab: status?.toLowerCase()});
+      }}>
         <Tabs.List grow>
           {Object.keys(OrderStatus).map((item) => (
             <Tabs.Tab key={item} value={item}>
