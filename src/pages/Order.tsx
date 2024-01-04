@@ -54,6 +54,7 @@ const Order: React.FC = () => {
         <Flex align="center" gap="sm">
           <DatesProvider settings={{ locale: "vn" }}>
             <DatePickerInput
+              w="9.8em"
               placeholder="Thời gian đặt từ"
               value={startDate}
               valueFormat="DD/MM/YYYY"
@@ -63,6 +64,7 @@ const Order: React.FC = () => {
           </DatesProvider>
           đến
           <DatePickerInput
+            w="9.8em"
             placeholder="ngày"
             value={endDate}
             valueFormat="DD/MM/YYYY"

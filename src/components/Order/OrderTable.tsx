@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import { Button, Center, Flex, Modal, Table } from "@mantine/core";
+import { Button, Center, Flex, Modal, Table, Text, Title } from "@mantine/core";
 import {
   IconChevronDown,
   IconChevronUp,
@@ -37,15 +37,95 @@ const OrderTable: FC<OrderTableProps> = ({
   status,
   changeStatusOrder,
 }) => {
+  const [title, setTitle] = useState()
   const changeStatusModal = (id: number, toStatus: string) =>
-    modals.openConfirmModal({
-      title: toStatus != "CANCELLED" ? <b>Xác nhận đơn hàng</b> : <b>Hủy đơn hàng</b>,
-      children: toStatus != "CANCELLED" ? "Bạn có chắc chắn muốn xác nhận đơn hàng" : "Bạn có chắc chắn muốn hủy đơn hàng",
+    modals.open({
+      title: "",
       centered: true,
-      confirmProps: { color: "red" },
-      labels: { confirm: "Xác nhận", cancel: "Hủy" },
-      onCancel: () => { },
-      onConfirm: () => changeStatusOrder({ id: id, toStatus: toStatus }),
+      children: (
+        <Flex direction="column">
+          <Flex align="center">
+            {toStatus == "PENDING" && <Title order={4}>Xác nhận đơn hàng</Title>}
+            {toStatus == "CONFIRMED" && <Title order={4}>Xác nhận giao hàng</Title>}
+            {toStatus == "SHIPPING" && <Title order={4}>Xác nhận đã giao hàng</Title>}
+            {toStatus == "CANCELLED" && <Title order={4}>Xác nhận hủy đơn hàng</Title>}
+          </Flex>
+          <Center>
+            <Flex gap="md" pb={20}>
+              {toStatus !== "CANCELLED" &&
+                <Button
+                  w={190}
+                  radius={50}
+                  onClick={() => {
+                    changeStatusOrder({ id: id, toStatus: toStatus }),
+                      modals.closeAll()
+                  }}
+                  styles={(theme) => ({
+                    root: {
+                      backgroundColor: theme.colors.munsellBlue[0],
+                      ...theme.fn.hover({
+                        backgroundColor: theme.fn.darken(
+                          theme.colors.munsellBlue[0],
+                          0.1
+                        ),
+                      }),
+                    },
+                  })}
+                >
+                  {toStatus == "PENDING" && "Xác nhận"}
+                  {toStatus == "CONFIRMED" && "Giao hàng"}
+                  {toStatus == "SHIPPING" && "Đã giao"}
+                  {toStatus == "PENDING" && "Xác nhận"}
+                </Button>
+              }
+              {toStatus === "CANCELLED" &&
+                <Button
+                  w={190}
+                  radius={50}
+                  onClick={() => {
+                    changeStatusOrder({ id: id, toStatus: toStatus }),
+                      modals.closeAll()
+                  }}
+                  styles={(theme) => ({
+                    root: {
+                      backgroundColor: theme.colors.red[5],
+                      ...theme.fn.hover({
+                        backgroundColor: theme.fn.darken(
+                          theme.colors.red[0],
+                          0.1
+                        ),
+                      }),
+                    },
+                  })}
+                >
+                  Hủy đơn
+                </Button>
+              }
+              <Button
+                w={190}
+                radius={50}
+                onClick={() => {
+                  modals.closeAll()
+                }}
+                styles={(theme) => ({
+                  root: {
+                    backgroundColor: theme.white,
+                    color: theme.colors.munsellBlue[0],
+                    ...theme.fn.hover({
+                      backgroundColor: theme.fn.darken(
+                        theme.white,
+                        0.1
+                      ),
+                    }),
+                  },
+                })}
+              >
+                Hủy
+              </Button>
+            </Flex>
+          </Center>
+        </Flex>
+      ),
     });
   const formattedDate = (date: Date) =>
     new Intl.DateTimeFormat("en-GB", {
@@ -90,9 +170,7 @@ const OrderTable: FC<OrderTableProps> = ({
           >
             Xem chi tiết
           </Button>
-          {(status == "PENDING" ||
-            status == "CONFIRMED" ||
-            status == "SHIPPING"
+          {(status == "PENDING"
           ) && (
               <>
                 <Button
@@ -118,7 +196,58 @@ const OrderTable: FC<OrderTableProps> = ({
                 </Button>
               </>
             )}
+          {status == "CONFIRMED" && (
+            <>
+              <Button
+                m={5}
+                size="xs"
+                styles={(theme) => ({
+                  root: {
+                    backgroundColor: theme.colors.munsellBlue[0],
+                    ...theme.fn.hover({
+                      backgroundColor: theme.fn.darken(
+                        theme.colors.munsellBlue[0],
+                        0.1
+                      ),
+                    }),
+                  },
+                })}
+                onClick={() => changeStatusModal(element.id, status)}
+              >
+                Vận chuyển
+              </Button>
+              <Button m={5} color="red" size="xs" onClick={() => changeStatusModal(element.id, "CANCELLED")}>
+                Hủy đơn
+              </Button>
+            </>
+          )}
+          {status == "SHIPPING" && (
+            <>
+              <Button
+                m={5}
+                size="xs"
+                styles={(theme) => ({
+                  root: {
+                    backgroundColor: theme.colors.munsellBlue[0],
+                    ...theme.fn.hover({
+                      backgroundColor: theme.fn.darken(
+                        theme.colors.munsellBlue[0],
+                        0.1
+                      ),
+                    }),
+                  },
+                })}
+                onClick={() => changeStatusModal(element.id, status)}
+              >
+                Đã giao
+              </Button>
+              <Button m={5} color="red" size="xs" onClick={() => changeStatusModal(element.id, "CANCELLED")}>
+                Hủy đơn
+              </Button>
+            </>
+          )}
         </Flex>
+
       </td>
     </tr>
   ));
