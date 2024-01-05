@@ -16,7 +16,9 @@ const OrderDetailModal: React.FC<{
   status: string;
   idDetailOrder: number | undefined;
   total: string;
-}> = ({ senderName, status, idDetailOrder, total }) => {
+  cancelBy: string;
+  resolveType: string;
+}> = ({ senderName, status, idDetailOrder, cancelBy, total, resolveType }) => {
   const formattedDate = (date) =>
     new Intl.DateTimeFormat("en-GB", {
       day: "2-digit",
@@ -41,6 +43,7 @@ const OrderDetailModal: React.FC<{
       fetchDetailBranch();
     }
   }, []);
+
   return (
     detailOrder && (
       <Flex direction="column">
@@ -123,6 +126,20 @@ const OrderDetailModal: React.FC<{
               <span style={{ fontWeight: "500" }}>Hình thức thanh toán: </span>
               <span> {convertPaymentMethod(detailOrder.paymentMethod)}</span>
             </Text>
+            {cancelBy && (
+              <Text py={8}>
+                <span style={{ fontWeight: "500" }}>Lý do hủy đơn hàng: </span>
+                <span>{cancelBy}</span>
+              </Text>
+            )}
+            {resolveType && (
+              <Text py={8}>
+                <span style={{ fontWeight: "500" }}>
+                  Trạng thái giải quyết đơn hàng:{" "}
+                </span>
+                <span>{resolveType}</span>
+              </Text>
+            )}
           </Flex>
         </Flex>
       </Flex>

@@ -91,6 +91,8 @@ const OrderTable: FC<OrderTableProps> = ({
   const [opened, { open, close }] = useDisclosure(false);
   const [sender, setSender] = useState("");
   const [total, setTotal] = useState(0);
+  const [resolveType, setResolveType] = useState<string | null>();
+  const [cancelBy, setCancelBy] = useState<string | null>();
   const [idDetailOrder, setIdDetailOrder] = useState<number>();
   const rows = orders?.map((element, index) => (
     <tr key={index}>
@@ -131,6 +133,8 @@ const OrderTable: FC<OrderTableProps> = ({
               setIdDetailOrder(element.id);
               setSender(element.customer);
               setTotal(element.total);
+              setResolveType(element.resolveType);
+              setCancelBy(element.cancelBy);
               open();
             }}
           >
@@ -339,6 +343,8 @@ const OrderTable: FC<OrderTableProps> = ({
             status={status}
             idDetailOrder={idDetailOrder}
             total={total.toLocaleString("vi-VN")}
+            resolveType={resolveType ? convertResolveType(resolveType) : ""}
+            cancelBy={cancelBy ? convertCancelBy(cancelBy) : ""}
           />
         </Modal>
       </tbody>
