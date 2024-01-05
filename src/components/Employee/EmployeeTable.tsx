@@ -5,23 +5,24 @@ import { EmployeeListItem } from './type';
 const EmployeeTable: React.FC<{
   startIndex: number | undefined;
   handleEdit: (Id: number) => void;
-  handleView: (Id: number) => void;
-  handleCancel: (Id: number) => void;
+  handleAdd: () => void;
+  handleDelete: (Id: number) => void;
   data: EmployeeListItem[] | undefined;
 }> = ({
   data,
   startIndex,
   handleEdit,
-  handleView,
-  handleCancel
+  handleAdd,
+  handleDelete
 }) => {
     const rows = (data || []).map((element, index) => (
       <tr key={element.id}>
         <td>{startIndex !== undefined ? startIndex + index + 1 : ''}</td>
-        <td onClick={() => handleView(element.id)}>{element.fullName}</td>
+        <td>{element.fullName}</td>
         <td>{element.username}</td>
         <td>{element.phone}</td>
         <td>{element.branch}</td>
+        <td>{element.gender}</td>
         <td>{element.role}</td>
         <td>
           <IconEdit
@@ -31,10 +32,11 @@ const EmployeeTable: React.FC<{
             onClick={() => handleEdit(element.id)}
           />
           <IconUserCancel
-            className="delete-button"
+            className={"delete-button"}
+            color={element.active ? 'black' : 'red'}
             strokeWidth="1.8"
             size="22px"
-            onClick={() => handleCancel(element.id)}
+            onClick={() => handleDelete(element.id)}
           />
         </td>
       </tr>
@@ -46,22 +48,22 @@ const EmployeeTable: React.FC<{
         striped
         highlightOnHover
         withBorder
-        styles={() => ({
-          '.mantine-Table-th': {
-            padding: '0px 0px',
-          },
-        })}
+        // styles={() => ({
+        //   // '.mantine-Table-th': {
+        //   //   padding: '0px 0px',
+        //   // },
+        // })}
         className="listTable"
       >
         <thead>
           <tr>
             <th>STT</th>
             <th>Họ và tên</th>
-            <th>Tên người dùng</th>
+            <th>Tên tài khoản</th>
             <th>SĐT</th>
             <th>Chi nhánh</th>
             <th>Giới tính</th>
-            <th></th>
+            <th>Vai trò</th>
             <th></th>
           </tr>
         </thead>

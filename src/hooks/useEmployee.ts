@@ -20,7 +20,8 @@ export default function useEmployee(
   limit: number,
   branchId: number | undefined,
   roleId: number | undefined,
-  gender: string | undefined
+  gender: string | undefined,
+  active: boolean
 ) {
   const fetchEmployee = useQuery<ApiResponse>({
     queryKey: ["get-employees"],
@@ -53,7 +54,7 @@ export default function useEmployee(
   });
   useEffect(() => {
     fetchEmployee.refetch();
-  }, [offset, keyword, branchId, roleId, gender, limit]);
+  }, [offset, keyword, branchId, roleId, gender, limit, active]);
   return {
     loading: fetchEmployee.isLoading,
     employeeData: fetchEmployee.data?.data,
@@ -65,13 +66,19 @@ export function useEmployeeDetail(employeeId: number | undefined) {
   const [loading, setLoading] = useState(false);
 
   const handleSubmitEmployeeForm = useMutation({
-    mutationKey: ["add-employee"],
+    mutationKey: ["add-or-edit-employee"],
     mutationFn: (data: Employee) => {
-      return !data.id
+      return data.id===undefined
         ? axios.post(REQUEST_EMPLOYEES, data)
-        : axios.put(REQUEST_EMPLOYEES, data);
+        : axios.put(REQUEST_EMPLOYEES, {
+          id: data.id,
+          gender: data.gender,
+          branchId: data.branchId,
+          active: data.active
+        });
     },
   });
+  
   const onSubmitEmployeeForm = (
     data: Employee,
     onError: (error: object) => void,
@@ -82,7 +89,11 @@ export function useEmployeeDetail(employeeId: number | undefined) {
       onError: (error) => onError(error),
     });
   };
-
+  // useEffect(()=>{
+  //   if(employeeId!==undefined){
+  //     fetchEmployeeById.refetch();
+  //   }
+  // }, [employeeId])
   // async function fetchData() {
   //   try {
   //     setLoading(true);
@@ -99,8 +110,8 @@ export function useEmployeeDetail(employeeId: number | undefined) {
   //   }
   // }
 
-  const fetchEmployee = useQuery({
-    queryKey: ["get-employees"],
+  const fetchEmployeeById = useQuery({
+    queryKey: ["get-employee"],
     queryFn: () => {
       return axios.get(`${REQUEST_EMPLOYEES}/${employeeId}`);
     },
@@ -118,10 +129,11 @@ export function useEmployeeDetail(employeeId: number | undefined) {
   });
 
   return {
-    loading,
     onSubmitEmployeeForm,
     fetchBranch,
-    fetchEmployee,
-    // branchData: fetchBranch.data?.data.items
+    fetchEmployeeById,
+    detailEmployee: fetchEmployeeById.data?.data as Employee,
+    branchData: fetchBranch.data?.data.items,
+    loading: handleSubmitEmployeeForm.isLoading,
   };
 }

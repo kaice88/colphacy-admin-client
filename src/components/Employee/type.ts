@@ -6,10 +6,10 @@ export interface EmployeeListItem {
   gender: string;
   role: string;
   branch: string;
-  active: true;
+  active: boolean;
 }
 export interface Employee {
-  id?: undefined;
+  id?: undefined | number;
   fullName: string;
   username: string;
   phone: string;
@@ -17,4 +17,6 @@ export interface Employee {
   gender: string;
   roleId: number;
   branchId: number;
+  branch: string;
+  active: boolean;
 }

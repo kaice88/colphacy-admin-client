@@ -1,4 +1,6 @@
 import {
+  Button,
+  Flex,
   PasswordInput,
   Select,
   TextInput
@@ -13,33 +15,33 @@ import { useEmployeeDetail } from '../../hooks/useEmployee';
 const EmployeeForm: React.FC<{
   onClose: () => void;
   employeeId: undefined | number;
-  mode: 'ADD' | 'VIEW' | 'EDIT' | 'CANCEL';
+  mode: 'ADD' | 'EDIT' | 'DELETE';
 }> = ({ onClose, employeeId, mode }) => {
   const {
     loading,
     onSubmitEmployeeForm,
     fetchBranch,
-    fetchEmployee
+    fetchEmployeeById,
+    detailEmployee,
+    branchData
   } = useEmployeeDetail(employeeId);
 
-  const [employeeData, setEmployeeData] = useState<Employee>();
-  const [branchData, setBranchData] = useState();
   useEffect(() => {
-    async function fetchData() {
-      try {
-        console.log(ok);
-        if (employeeId) {
-          const data = await fetchBranch.refetch()
-          setEmployeeData(data.data?.data.items);
+    if (branchData === undefined && detailEmployee === undefined) {
+      async function fetchData() {
+        try {
+          if (employeeId) {
+            await fetchEmployeeById.refetch();
+          }
+          await fetchBranch.refetch();
+        } catch (error) {
+          handleGlobalException(error, () => { });
         }
-        const data = await fetchBranch.refetch()
-        // setBranchData(data);
-      } catch (error) {
-        handleGlobalException(error, () => { });
       }
+      fetchData();
     }
-    fetchData();
-  }, [])
+  }, [branchData, detailEmployee])
+
   const [branchId, setBranchId] = useState();
   const {
     control,
@@ -51,12 +53,13 @@ const EmployeeForm: React.FC<{
     formState: { errors },
   } = useForm<Employee>({
     defaultValues: {
+      id: mode === "EDIT" ? detailEmployee?.id : undefined,
       fullName: "",
       username: '',
       phone: '',
       password: '',
       gender: '',
-      roleId: 0,
+      roleId: 1,
       branchId: 0,
     },
   });
@@ -64,13 +67,22 @@ const EmployeeForm: React.FC<{
     onSubmitEmployeeForm(
       data,
       (error) => {
+        console.log(data);
         handleGlobalException(error, () => {
-          Object.keys(error.response.data).forEach((key) => {
-            setError(key, {
-              type: 'manual',
-              message: error.response.data[key],
+          if (error.response.status !== 400) {
+            const data = error.response.data;
+            Object.keys(data).forEach((key) => {
+              notificationShow("error", "Error!", data[key]);
             });
-          });
+          }
+          else {
+            Object.keys(error.response.data).forEach((key) => {
+              setError(key, {
+                type: 'manual',
+                message: error.response.data[key],
+              });
+            });
+          }
         });
       },
       () => {
@@ -96,18 +108,13 @@ const EmployeeForm: React.FC<{
         render={({ field }) => (
           <TextInput
             {...field}
-            style={
-              mode === 'VIEW'
-                ? {
-                  pointerEvents: 'none',
-                }
-                : {}
-            }
+            disabled={mode === "EDIT"}
             required
             label="Tên nhân viên"
             radius="md"
             error={errors.fullName ? errors.fullName.message : false}
             className="employee-input"
+            value={mode === "EDIT" ? detailEmployee?.fullName : undefined}
           />
         )}
       />
@@ -118,18 +125,13 @@ const EmployeeForm: React.FC<{
         render={({ field }) => (
           <TextInput
             {...field}
-            style={
-              mode === 'VIEW'
-                ? {
-                  pointerEvents: 'none',
-                }
-                : {}
-            }
             required
-            label="Username"
+            disabled={mode === "EDIT"}
+            label="Tên tài khoản"
             radius="md"
             error={errors.username ? errors.username.message : false}
             className="employee-input"
+            value={mode === "EDIT" ? detailEmployee?.username : undefined}
           />
         )}
       />
@@ -140,41 +142,40 @@ const EmployeeForm: React.FC<{
         render={({ field }) => (
           <TextInput
             {...field}
-            style={
-              mode === 'VIEW'
-                ? {
-                  pointerEvents: 'none',
-                }
-                : {}
-            }
             required
+            disabled={mode === "EDIT"}
             label="SĐT"
             radius="md"
             error={errors.phone ? errors.phone.message : false}
             className="employee-input"
+            value={mode === "EDIT" ? detailEmployee?.phone : undefined}
           />
         )}
       />
-      <Controller
-        name="password"
-        control={control}
-        rules={{ required: true }}
-        render={({ field }) => (
-          <PasswordInput
-            {...field}
-            required
-            label="Mật khẩu"
-            radius="md"
-            error={
-              errors.password
-                ? errors.password.type === "minLength"
-                  ? "Mật khẩu có độ dài ít nhất 8 kí tự"
-                  : errors.password.message
-                : false
-            }
-          />
-        )}
-      />
+      {
+        mode === "ADD" &&
+        <Controller
+          name="password"
+          control={control}
+          rules={{ required: true }}
+          render={({ field }) => (
+            <PasswordInput
+              {...field}
+              required
+              label="Mật khẩu"
+              radius="md"
+              error={
+                errors.password
+                  ? errors.password.type === "minLength"
+                    ? "Mật khẩu có độ dài ít nhất 8 kí tự"
+                    : errors.password.message
+                  : false
+              }
+            />
+          )}
+        />
+      }
+
       <Controller
         name="gender"
         control={control}
@@ -182,10 +183,11 @@ const EmployeeForm: React.FC<{
           <Select
             {...field}
             label="Giới tính"
-            data={['MALE', 'FEMALE', 'OTHER']}
+            data={["MALE", "FEMALE", "OTHER"]}
             onChange={(value) => {
               field.onChange(value);
             }}
+            value={mode === "EDIT" ? detailEmployee?.gender : undefined}
           />
         )}
       />
@@ -201,15 +203,54 @@ const EmployeeForm: React.FC<{
               name="branchId"
               required
               label="Chọn chi nhánh"
-              // data={branchData.map(item => ({ label: item.address, value: item.id }))}
-              data={[]}
-              onChange={setBranchId}
-              value={branchId}
+              data={branchData ? branchData.map(item => ({ label: item.address, value: item.id })) : []}
+              onChange={(value) => {
+                field.onChange(value);
+              }}
               error={errors.branchId ? errors.branchId.message : false}
+              value={mode === "EDIT" && detailEmployee!==undefined ? detailEmployee.branch : undefined}
             />
           );
         }}
       ></Controller>
+      <Flex justify="center">
+        <Button
+          loading={loading}
+          className="button"
+          m={10}
+          styles={(theme) => ({
+            root: {
+              backgroundColor: theme.colors.munsellBlue[0],
+              ...theme.fn.hover({
+                backgroundColor: theme.fn.darken(
+                  theme.colors.munsellBlue[0],
+                  0.1,
+                ),
+              }),
+            },
+          })}
+          type="submit"
+        >
+          Lưu
+        </Button>
+        <Button
+          className="button cancel"
+          m={10}
+          variant="outline"
+          styles={(theme) => ({
+            root: {
+              color: theme.colors.munsellBlue[0],
+              ...theme.fn.hover({
+                color: theme.fn.darken(theme.colors.munsellBlue[0], 0.1),
+              }),
+            },
+          })}
+          onClick={onClose}
+        >
+          {' '}
+          Hủy
+        </Button>
+      </Flex>
     </form>
   )
 };
