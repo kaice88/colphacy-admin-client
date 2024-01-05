@@ -1,4 +1,12 @@
-import { Button, Flex, Modal, Pagination, Tabs, Title, useMantineTheme } from "@mantine/core";
+import {
+  Button,
+  Flex,
+  Modal,
+  Pagination,
+  Tabs,
+  Title,
+  useMantineTheme,
+} from "@mantine/core";
 import { DatePickerInput, DatesProvider } from "@mantine/dates";
 import { IconPlus, IconSearch } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
@@ -7,7 +15,7 @@ import OrderTable from "../components/Order/OrderTable";
 import useOrder from "../hooks/useOrder";
 import { useDisclosure } from "@mantine/hooks";
 import AddOrderForm from "../components/Order/AddOrderForm";
-import {  useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { isEmpty } from "lodash";
 const LIMIT = 10;
 
@@ -15,21 +23,40 @@ const Order: React.FC = () => {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const [queryParameters, setSearchParams] = useSearchParams()
-  const [status, setStatus] = useState<string | null>(queryParameters.get("tab")?.toUpperCase());
+  const [queryParameters, setSearchParams] = useSearchParams();
+  const [status, setStatus] = useState<string | null>(
+    queryParameters.get("tab")?.toUpperCase()
+  );
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [keyword, setKeyWord] = useState<string>("");
-
-
-  
-  
+  const [sortBy, setSortBy] = useState<"TIME" | "TOTAL" | null>(null);
+  const [order, setOrder] = useState<"desc" | "asc" | null>(null);
 
   const theme = useMantineTheme();
-  const { OrderData, handleChangeStatusOrder } = useOrder((currentPage - 1) * LIMIT, keyword, startDate, endDate, status);
+  const { OrderData, handleChangeStatusOrder, handleChangeResolveType } =
+    useOrder(
+      (currentPage - 1) * LIMIT,
+      keyword,
+      startDate,
+      endDate,
+      status,
+      sortBy,
+      order
+    );
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const keyword = e.target.value;
     setKeyWord(keyword);
     setCurrentPage(1);
+  };
+  const handleSortData = (sortBy: "TIME" | "TOTAL" | null) => {
+    if (order !== "asc") {
+      setSortBy(sortBy);
+    } else {
+      setSortBy(null);
+    }
+    setOrder((prev) =>
+      prev === "desc" ? "asc" : prev === "asc" ? null : "desc"
+    );
   };
   const [opened, { open, close }] = useDisclosure(false);
   const handleCloseModal = () => {
@@ -90,17 +117,23 @@ const Order: React.FC = () => {
             },
           })}
           onClick={() => {
-            open()
-          }
-          }
+            open();
+          }}
         >
           Thêm đơn hàng
         </Button>
       </Flex>
-      <Tabs defaultValue={ queryParameters.get("tab") ? queryParameters.get("tab")?.toUpperCase() : "PENDING"} onTabChange={(status) => {
-        setStatus(status);
-        setSearchParams({tab: status?.toLowerCase()});
-      }}>
+      <Tabs
+        defaultValue={
+          queryParameters.get("tab")
+            ? queryParameters.get("tab")?.toUpperCase()
+            : "PENDING"
+        }
+        onTabChange={(status) => {
+          setStatus(status);
+          setSearchParams({ tab: status?.toLowerCase() });
+        }}
+      >
         <Tabs.List grow>
           {Object.keys(OrderStatus).map((item) => (
             <Tabs.Tab key={item} value={item}>
@@ -112,14 +145,15 @@ const Order: React.FC = () => {
           <Tabs.Panel key={item} value={item} pt="xs">
             <OrderTable
               startIndex={OrderData?.offset}
-              sortBy={"order_time"}
-              order={"asc"}
-              time={"Thời gian đặt"}
+              sortBy={sortBy}
+              order={order}
               orders={OrderData?.items}
               status={item}
               changeStatusOrder={handleChangeStatusOrder}
+              changeResolveType={handleChangeResolveType}
+              handleSortData={handleSortData}
             />
-            { OrderData && (
+            {OrderData && (
               <Flex justify="space-between" align="center" py="lg">
                 <div>
                   {OrderData?.totalItems === 0 ? (
@@ -128,9 +162,9 @@ const Order: React.FC = () => {
                     <div>Tìm thấy 1 kết quả.</div>
                   ) : (
                     <div>
-                      Hiển thị {OrderData?.items.length} kết quả từ{' '}
-                      {OrderData?.offset + 1} -{' '}
-                      {OrderData?.offset + OrderData?.items.length} trong tổng{' '}
+                      Hiển thị {OrderData?.items.length} kết quả từ{" "}
+                      {OrderData?.offset + 1} -{" "}
+                      {OrderData?.offset + OrderData?.items.length} trong tổng{" "}
                       {OrderData?.totalItems} kết quả
                     </div>
                   )}
@@ -142,7 +176,7 @@ const Order: React.FC = () => {
                   position="center"
                   styles={(theme) => ({
                     control: {
-                      '&[data-active]': {
+                      "&[data-active]": {
                         backgroundColor: theme.colors.munsellBlue[0],
                         border: 0,
                       },
@@ -163,14 +197,11 @@ const Order: React.FC = () => {
         title="Thêm đơn hàng"
         styles={() => ({
           title: {
-            fontWeight: 'bold',
+            fontWeight: "bold",
           },
         })}
       >
-        <AddOrderForm
-          onClose={handleCloseModal}
-          setStatus={setStatus}
-        />
+        <AddOrderForm onClose={handleCloseModal} setStatus={setStatus} />
       </Modal>
     </div>
   );

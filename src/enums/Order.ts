@@ -3,8 +3,8 @@ export enum OrderStatus {
   CONFIRMED = 'Chờ vận chuyển',
   SHIPPING = 'Đang giao',
   DELIVERED = 'Đã giao',
-  COMPLETED = 'Hoàn thành',
   CANCELLED = 'Đã hủy',
+  RETURNED = 'Trả hàng/ Hoàn tiền'
 }
 
 export enum OrderTimeline {
@@ -13,5 +13,6 @@ export enum OrderTimeline {
   SHIP_TIME = 'Thời gian giao',
   DELIVER_TIME = 'Thời gian nhận',
   CANCEL_TIME = 'Thời gian hủy',
+  REQUEST_TIME = 'Thời gian yêu câù hoàn tiền'
 }
 
