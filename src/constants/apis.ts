@@ -75,3 +75,7 @@ export const REQUEST_NOTIFICATION = `/notifications`;
 export const HANDLE_READ_NOTIFICATION = (id: number) =>
   `/notifications/read/${id}`;
 export const HANDLE_READ_ALL_NOTIFICATION = `/notifications/read`;
+
+//ORDER
+export const REQUEST_RETURNED_ORDER = (id: number, accepted: boolean) =>
+  `/orders/requests/${id}?accepted=${accepted}`;

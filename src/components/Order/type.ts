@@ -13,7 +13,15 @@ export interface OrderItem {
 
   cancelTime: Date;
 
+  requestReturnTime: string;
+
   total: number;
+
+  adminConfirmDeliver?: boolean;
+
+  cancelBy?: string;
+
+  resolveType?: string;
 }
 
 export interface DetailOrderItem {
@@ -36,7 +44,9 @@ export interface DetailOrderItem {
   shipTime: Date;
   deliverTime: Date | undefined;
   cancelTime: Date | undefined;
+  requestReturnTime: Date | undefined;
   status: string;
+  paymentMethod: string;
   orderItems: [
     {
       product: {
